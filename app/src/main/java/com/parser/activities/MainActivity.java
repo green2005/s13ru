@@ -1,4 +1,4 @@
-package com.parser;
+package com.parser.activities;
 
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -13,6 +13,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+
+import com.parser.DrawingArrayAdapter;
+import com.parser.FragmentMenuItem;
+import com.parser.R;
+import com.parser.fragments.NewsFragment;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -66,7 +71,7 @@ public class MainActivity extends ActionBarActivity {
         Fragment fragment = null;
         switch (item){
             case NEWS_ITEM:{
-
+                fragment = new NewsFragment();
                 break;
             }
             case VK_ITEM:{

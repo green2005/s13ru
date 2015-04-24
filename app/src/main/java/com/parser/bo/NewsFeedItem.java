@@ -7,6 +7,7 @@ public class NewsFeedItem {
     private String mUrl;
     private String mId;
     private String mAuthor;
+    private String mText;
 
     public String getTitle() {
         return mTitle;
@@ -54,5 +55,13 @@ public class NewsFeedItem {
 
     public void setAuthor(String author) {
         mAuthor = author;
+    }
+
+    public void setText(String text){
+        mText = text;
+    }
+
+    public String getText(){
+        return mText;
     }
 }

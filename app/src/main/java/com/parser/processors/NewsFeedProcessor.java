@@ -15,7 +15,7 @@ public class NewsFeedProcessor extends Processor {
     public void process(InputStream stream) throws Exception{
         //html parsing is awful
         String html = getStringResponse(stream);
-
+        parseResponse(html);
     }
 
     private String getStringResponse(InputStream stream) throws  Exception{
@@ -58,9 +58,20 @@ public class NewsFeedProcessor extends Processor {
                 }
             }
 
+            Matcher textMatcher = textPattern.matcher(note);
+            if (textMatcher.find()){
+                newsNote.setText(textMatcher.group());
+            }
 
+            Matcher dateMatcher = datePattern.matcher(note);
+            if (dateMatcher.find()){
+                newsNote.setDate(dateMatcher.group());
+            }
 
-            newsNote.setAuthor();
+            Matcher authorMatcher = authorPattern.matcher(note);
+            if (authorMatcher.find()){
+                newsNote.setAuthor(authorMatcher.group());
+            }
 
         }
     }
