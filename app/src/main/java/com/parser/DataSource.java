@@ -33,7 +33,7 @@ public class DataSource {
                 try {
                     InputStream stream = getInputStream(url);
                     try {
-                        mProcessor.process(getInputStream(url));
+                        mProcessor.process(stream);
                     } finally {
                         if (stream != null) {
                             stream.close();

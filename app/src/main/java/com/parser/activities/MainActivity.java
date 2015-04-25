@@ -71,7 +71,7 @@ public class MainActivity extends ActionBarActivity {
         Fragment fragment = null;
         switch (item){
             case NEWS_ITEM:{
-                fragment = new NewsFragment();
+                fragment = NewsFragment.getNewFragment(null);
                 break;
             }
             case VK_ITEM:{
