@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 
 import com.parser.R;
 
-public abstract class BaseDataFragment extends Fragment {
+public abstract class BaseDataFragment extends Fragment implements PaginationSource {
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {

@@ -66,4 +66,14 @@ public class NewsFeedDBHelper {
         db.execSQL(DROP_TABLE);
         onCreate(db);
     }
+
+    public static String[] getDataFields(){
+        String[] dataFields = new String[5];
+        dataFields[0] = NewsFeedDBHelper.ID_COLUMN;
+        dataFields[1] = NewsFeedDBHelper.TEXT_COLUMN;
+        dataFields[2] = NewsFeedDBHelper.AUTHOR_COLUMN;
+        dataFields[3] = NewsFeedDBHelper.LINK_COLUMN;
+        dataFields[4] = NewsFeedDBHelper.TITLE_COLUMN;
+        return dataFields;
+    }
 }

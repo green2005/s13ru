@@ -14,10 +14,12 @@ public class DataSource {
     private Processor mProcessor;
     private Callbacks mCallbacks;
     private Handler mHandler;
+    private int mRecordsFetched = 0;
+
 
     public interface Callbacks {
         public void onError(String errorMessage);
-        public void onLoadDone();
+        public void onLoadDone(int recordsFetched);
     }
 
     public DataSource(Processor processor, Callbacks callbacks) {
@@ -26,14 +28,14 @@ public class DataSource {
         mHandler = new Handler();
     }
 
-    public void fillData(final String url) {
+    public void fillData(final String url, final boolean isTopRequest) {
         Thread loadThread = new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
                     InputStream stream = getInputStream(url);
                     try {
-                        mProcessor.process(stream);
+                         mRecordsFetched = mProcessor.process(stream, isTopRequest);
                     } finally {
                         if (stream != null) {
                             stream.close();
@@ -55,7 +57,7 @@ public class DataSource {
                     @Override
                     public void run() {
                         if (mCallbacks != null){
-                            mCallbacks.onLoadDone();
+                            mCallbacks.onLoadDone(mRecordsFetched);
                         }
                     }
                 });

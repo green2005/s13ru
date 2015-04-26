@@ -34,13 +34,16 @@ public class NewsFeedProcessor extends Processor {
     }
 
     @Override
-    public void process(InputStream stream) throws Exception {
+    public int process(InputStream stream, boolean isTopRequest) throws Exception {
         mParser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);
         mParser.setInput(stream, null);
         mParser.nextTag();
         List<NewsFeedItem> feedItems = parseResponse();
-        mDBHelper.clearOldEntries(mContext);
+        if (isTopRequest) {
+            mDBHelper.clearOldEntries(mContext);
+        }
         mDBHelper.bulkInsert(feedItems, mContext);
+        return feedItems.size();
     }
 
     private List<NewsFeedItem> parseResponse() throws Exception {
