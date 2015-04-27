@@ -17,7 +17,7 @@ import android.widget.ListView;
 import com.parser.DrawingArrayAdapter;
 import com.parser.FragmentMenuItem;
 import com.parser.R;
-import com.parser.fragments.NewsFragment;
+import com.parser.fragments.NewsFeedFragment;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -71,7 +71,7 @@ public class MainActivity extends ActionBarActivity {
         Fragment fragment = null;
         switch (item){
             case NEWS_ITEM:{
-                fragment = NewsFragment.getNewFragment(null);
+                fragment = NewsFeedFragment.getNewFragment(null);
                 break;
             }
             case VK_ITEM:{
