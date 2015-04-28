@@ -16,8 +16,6 @@ public class NewsContentProvider extends ContentProvider {
 
     private static final String AUTHORITY = "com.parser";
 
-    private static final String BASE_PATH = "todos";
-
     public static final String CONTENT_URI_PREFIX = "content://";
 
     public static final Uri NEWSFEED_CONTENT_URI = Uri.parse(CONTENT_URI_PREFIX
@@ -25,6 +23,13 @@ public class NewsContentProvider extends ContentProvider {
 
     public static Uri NEWSFEED_CONTENT_URI_ID = Uri.parse(CONTENT_URI_PREFIX
             + AUTHORITY + "/" + NewsFeedDBHelper.TABLE_NAME + "/#");
+
+    public static final Uri VKFEED_CONTENT_URI = Uri.parse(CONTENT_URI_PREFIX
+            + AUTHORITY + "/" + NewsFeedDBHelper.TABLE_NAME);
+
+    public static Uri VKFEED_CONTENT_URI_ID = Uri.parse(CONTENT_URI_PREFIX
+            + AUTHORITY + "/" + NewsFeedDBHelper.TABLE_NAME + "/#");
+
 
 
     public static final String CONTENT_TYPE_PREFIX = "vnd.android.cursor.dir/vnd.";
