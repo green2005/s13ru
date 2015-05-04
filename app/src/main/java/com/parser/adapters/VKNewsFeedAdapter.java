@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 
@@ -13,15 +14,15 @@ import com.parser.db.CursorHelper;
 import com.parser.db.NewsFeedDBHelper;
 import com.parser.fragments.PaginationSource;
 
-public class NewsAdapter extends SimpleCursorAdapter {
+public class VKNewsFeedAdapter extends SimpleCursorAdapter{
     private LayoutInflater mInflater;
     private PaginationSource mSource;
 
-
-    public NewsAdapter(Context context, int layout, Cursor c, String[] from, int[] to, int flags) {
+    public VKNewsFeedAdapter(Context context, int layout, Cursor c, String[] from, int[] to, int flags) {
         super(context, layout, c, from, to, flags);
         mInflater = LayoutInflater.from(context);
     }
+
 
     public void setPaginationSource(PaginationSource source) {
         mSource = source;
@@ -47,6 +48,7 @@ public class NewsAdapter extends SimpleCursorAdapter {
             viewHolder.tvDate = (TextView) cnView.findViewById(R.id.tvDate);
             viewHolder.tvText = (TextView) cnView.findViewById(R.id.tvText);
             viewHolder.tvTitle = (TextView) cnView.findViewById(R.id.tvTitle);
+            viewHolder.imageView = (ImageView) cnView.findViewById(R.id.image);
             cnView.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder) cnView.getTag();
@@ -54,6 +56,8 @@ public class NewsAdapter extends SimpleCursorAdapter {
         viewHolder.tvText.setText(CursorHelper.getString(cursor, NewsFeedDBHelper.TEXT_COLUMN));
         viewHolder.tvTitle.setText(CursorHelper.getString(cursor, NewsFeedDBHelper.TITLE_COLUMN));
         viewHolder.tvDate.setText(CursorHelper.getString(cursor, NewsFeedDBHelper.DATE_COLUMN));
+
+
         return cnView;
     }
 
@@ -61,6 +65,8 @@ public class NewsAdapter extends SimpleCursorAdapter {
         TextView tvTitle;
         TextView tvText;
         TextView tvDate;
+        ImageView imageView;
         //TextView tvAuthor;
     }
+
 }

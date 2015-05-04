@@ -13,10 +13,10 @@ public class NewsContentProvider extends ContentProvider {
 
     private static final int NEWS = 10;
     private static final int NEWS_ID = 20;
+    private static final int VK_FEED = 30;
+    private static final int VK_FEED_ID = 40;
 
     private static final String AUTHORITY = "com.parser";
-
-    private static final String BASE_PATH = "todos";
 
     public static final String CONTENT_URI_PREFIX = "content://";
 
@@ -27,6 +27,13 @@ public class NewsContentProvider extends ContentProvider {
             + AUTHORITY + "/" + NewsFeedDBHelper.TABLE_NAME + "/#");
 
 
+    public static final Uri VKFEED_CONTENT_URI = Uri.parse(CONTENT_URI_PREFIX
+            + AUTHORITY + "/" + VKFeedDBHelper.TABLE_NAME);
+
+    public static Uri VKFEED_CONTENT_URI_ID = Uri.parse(CONTENT_URI_PREFIX
+            + AUTHORITY + "/" + VKFeedDBHelper.TABLE_NAME + "/#");
+
+
     public static final String CONTENT_TYPE_PREFIX = "vnd.android.cursor.dir/vnd.";
     public static final String CONTENT_ITEM_TYPE_PREFIX = "vnd.android.cursor.item/vnd.";
 
@@ -35,7 +42,8 @@ public class NewsContentProvider extends ContentProvider {
     static {
         sURIMatcher.addURI(AUTHORITY, NewsFeedDBHelper.TABLE_NAME, NEWS);
         sURIMatcher.addURI(AUTHORITY, NewsFeedDBHelper.TABLE_NAME + "/#", NEWS_ID);
-
+        sURIMatcher.addURI(AUTHORITY, VKFeedDBHelper.TABLE_NAME, VK_FEED);
+        sURIMatcher.addURI(AUTHORITY, VKFeedDBHelper.TABLE_NAME + "/#", VK_FEED_ID);
     }
 
 
@@ -48,20 +56,8 @@ public class NewsContentProvider extends ContentProvider {
     @Override
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
         int uriType = sURIMatcher.match(uri);
-        String tableName = null;
-        Uri contentUri = null;
-        switch (uriType) {
-            case (NEWS): {
-                tableName = NewsFeedDBHelper.TABLE_NAME;
-                contentUri = NEWSFEED_CONTENT_URI;
-                break;
-            }
-            case (NEWS_ID): {
-                tableName = NewsFeedDBHelper.TABLE_NAME;
-                contentUri = NEWSFEED_CONTENT_URI_ID;
-                break;
-            }
-        }
+        String tableName = getTableNameByUriType(uriType);
+        Uri contentUri = getContectUribyUriType(uriType);
         Cursor cr = mDbHelper.getReadableDatabase().query(tableName, projection, selection, selectionArgs, null, null, sortOrder);
         cr.setNotificationUri(getContext().getContentResolver(), contentUri);
         return cr;
@@ -81,22 +77,8 @@ public class NewsContentProvider extends ContentProvider {
     @Override
     public int bulkInsert(Uri uri, ContentValues[] values) {
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
-
         int uriType = sURIMatcher.match(uri);
-        String tableName = null;
-        Uri contentUri = null;
-        switch (uriType) {
-            case (NEWS): {
-                tableName = NewsFeedDBHelper.TABLE_NAME;
-                contentUri = NEWSFEED_CONTENT_URI;
-                break;
-            }
-            case (NEWS_ID): {
-                tableName = NewsFeedDBHelper.TABLE_NAME;
-                contentUri = NEWSFEED_CONTENT_URI_ID;
-                break;
-            }
-        }
+        String tableName = getTableNameByUriType(uriType);
         db.beginTransaction();
         try {
             for (ContentValues value : values) {
@@ -106,28 +88,60 @@ public class NewsContentProvider extends ContentProvider {
         } finally {
             db.endTransaction();
         }
-
         return super.bulkInsert(uri, values);
     }
 
     @Override
     public int delete(Uri uri, String selection, String[] selectionArgs) {
         int uriType = sURIMatcher.match(uri);
-        String tableName = null;
+        String tableName = getTableNameByUriType(uriType);
+        return mDbHelper.getWritableDatabase().delete(tableName, selection, selectionArgs);
+    }
+
+    private Uri getContectUribyUriType(int uriType) {
         Uri contentUri = null;
         switch (uriType) {
             case (NEWS): {
-                tableName = NewsFeedDBHelper.TABLE_NAME;
                 contentUri = NEWSFEED_CONTENT_URI;
                 break;
             }
             case (NEWS_ID): {
-                tableName = NewsFeedDBHelper.TABLE_NAME;
                 contentUri = NEWSFEED_CONTENT_URI_ID;
                 break;
             }
+            case (VK_FEED): {
+                contentUri = VKFEED_CONTENT_URI;
+                break;
+            }
+            case (VK_FEED_ID): {
+                contentUri = VKFEED_CONTENT_URI_ID;
+                break;
+            }
         }
-        return mDbHelper.getWritableDatabase().delete(tableName, selection, selectionArgs);
+        return contentUri;
+    }
+
+    private String getTableNameByUriType(int uriType) {
+        String tableName = null;
+        switch (uriType) {
+            case (NEWS): {
+                tableName = NewsFeedDBHelper.TABLE_NAME;
+                break;
+            }
+            case (NEWS_ID): {
+                tableName = NewsFeedDBHelper.TABLE_NAME;
+                break;
+            }
+            case (VK_FEED): {
+                tableName = VKFeedDBHelper.TABLE_NAME;
+                break;
+            }
+            case (VK_FEED_ID): {
+                tableName = VKFeedDBHelper.TABLE_NAME;
+                break;
+            }
+        }
+        return tableName;
     }
 
     @Override

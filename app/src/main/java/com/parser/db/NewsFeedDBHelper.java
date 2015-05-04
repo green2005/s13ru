@@ -68,12 +68,13 @@ public class NewsFeedDBHelper {
     }
 
     public static String[] getDataFields(){
-        String[] dataFields = new String[5];
+        String[] dataFields = new String[6];
         dataFields[0] = NewsFeedDBHelper.ID_COLUMN;
         dataFields[1] = NewsFeedDBHelper.TEXT_COLUMN;
         dataFields[2] = NewsFeedDBHelper.AUTHOR_COLUMN;
         dataFields[3] = NewsFeedDBHelper.LINK_COLUMN;
         dataFields[4] = NewsFeedDBHelper.TITLE_COLUMN;
+        dataFields[5] = NewsFeedDBHelper.DATE_COLUMN;
         return dataFields;
     }
 }

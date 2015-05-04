@@ -18,5 +18,7 @@
 
     <string name="drawer_open">Open navigation drawer</string>
     <string name="drawer_close">Close navigation drawer</string>
+    <string name ="unknown_server_error">Неизвестная ошибка</string>
+    <string name="response_is_empty">Неизвестная ошибка</string>
 
 </resources>

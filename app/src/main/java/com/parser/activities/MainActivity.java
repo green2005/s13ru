@@ -18,6 +18,7 @@ import com.parser.DrawingArrayAdapter;
 import com.parser.FragmentMenuItem;
 import com.parser.R;
 import com.parser.fragments.NewsFeedFragment;
+import com.parser.fragments.VKFeedFragment;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -75,7 +76,7 @@ public class MainActivity extends ActionBarActivity {
                 break;
             }
             case VK_ITEM:{
-
+                fragment = VKFeedFragment.getNewFragment(null);
                 break;
             }
             case POSTERS_ITEM:{
