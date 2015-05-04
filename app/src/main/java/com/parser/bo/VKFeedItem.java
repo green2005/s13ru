@@ -1,6 +1,7 @@
 package com.parser.bo;
 
 
+<<<<<<< HEAD
 import android.content.Context;
 
 import org.json.JSONObject;
@@ -54,4 +55,16 @@ public class VKFeedItem {
     public String getText() {
         return mJo.optString("text");
     }
+=======
+public class VKFeedItem {
+    private String mTitle;
+    private String mImageUrl;
+    private String mDate;
+    private String mUrl;
+    private String mId;
+    private String mAuthor;
+    private String mText;
+
+
+>>>>>>> origin/master
 }

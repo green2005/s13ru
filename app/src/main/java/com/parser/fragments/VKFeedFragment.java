@@ -14,11 +14,17 @@ import com.parser.processors.Processor;
 import com.parser.processors.VKFeedProcessor;
 
 public class VKFeedFragment extends BaseDataFragment {
+<<<<<<< HEAD
     private static final int RECORD_PORTION = 10;
     private static final String VK_WALL_URL = API.VK_BASE_URL + "/method/wall.get?owner_id=" + API.VK_S13_OWNER_ID + "&count=" + RECORD_PORTION + "&offset=%d";
     private VKFeedProcessor mProcessor;
     private VKNewsFeedAdapter mAdapter;
 
+=======
+    private static final int RECORD_PORTION_SIZE = 10;
+    private static final String VK_WALL_URL = API.VK_BASE_URL + "/method/wall.get?owner_id=" + API.VK_S13_OWNER_ID +
+            "&count=" + RECORD_PORTION_SIZE + "&offset=%d";
+>>>>>>> origin/master
 
     public static VKFeedFragment getNewFragment(Bundle args) {
         VKFeedFragment fragment = new VKFeedFragment();
@@ -44,7 +50,7 @@ public class VKFeedFragment extends BaseDataFragment {
 
     @Override
     protected int getNextDataOffset(int offset) {
-        return offset + RECORD_PORTION;
+        return offset + RECORD_PORTION_SIZE;
     }
 
     @Override
