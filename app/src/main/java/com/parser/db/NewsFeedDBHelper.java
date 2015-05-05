@@ -62,7 +62,7 @@ public class NewsFeedDBHelper {
         db.execSQL(CREATE_TABLE);
     }
 
-    public static void onUpgrade(SQLiteDatabase db) {
+    public static void onUpdate(SQLiteDatabase db) {
         db.execSQL(DROP_TABLE);
         onCreate(db);
     }

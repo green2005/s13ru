@@ -16,12 +16,11 @@ public class DBHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         NewsFeedDBHelper.onCreate(db);
         VKFeedDBHelper.onCreate(db);
-
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        NewsFeedDBHelper.onUpgrade(db);
+        NewsFeedDBHelper.onUpdate(db);
         VKFeedDBHelper.onUpdate(db);
     }
 }

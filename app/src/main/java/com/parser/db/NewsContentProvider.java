@@ -26,13 +26,6 @@ public class NewsContentProvider extends ContentProvider {
     public static Uri NEWSFEED_CONTENT_URI_ID = Uri.parse(CONTENT_URI_PREFIX
             + AUTHORITY + "/" + NewsFeedDBHelper.TABLE_NAME + "/#");
 
-    public static final Uri VKFEED_CONTENT_URI = Uri.parse(CONTENT_URI_PREFIX
-            + AUTHORITY + "/" + NewsFeedDBHelper.TABLE_NAME);
-
-    public static Uri VKFEED_CONTENT_URI_ID = Uri.parse(CONTENT_URI_PREFIX
-            + AUTHORITY + "/" + NewsFeedDBHelper.TABLE_NAME + "/#");
-
-
 
     public static final Uri VKFEED_CONTENT_URI = Uri.parse(CONTENT_URI_PREFIX
             + AUTHORITY + "/" + VKFeedDBHelper.TABLE_NAME);

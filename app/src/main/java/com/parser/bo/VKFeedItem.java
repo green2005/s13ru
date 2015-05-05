@@ -1,7 +1,4 @@
 package com.parser.bo;
-
-
-<<<<<<< HEAD
 import android.content.Context;
 
 import org.json.JSONObject;
@@ -45,7 +42,22 @@ public class VKFeedItem {
     }
 
     public String getImageUrl() {
-        return mImageUrl;
+        JSONObject attachmentJson = mJo.optJSONObject("attachment");
+        if (attachmentJson == null){
+            return "";
+        }
+        JSONObject photoJson = attachmentJson.optJSONObject("photo");
+        if (photoJson != null){
+            return photoJson.optString("src");
+        }
+        JSONObject albumJson = attachmentJson.optJSONObject("album");
+        if (albumJson != null){
+            JSONObject thumbJson = albumJson.optJSONObject("thumb");
+            if (thumbJson != null){
+                return thumbJson.optString("src");
+            }
+        }
+        return "";
     }
 
     public String getDescription() {
@@ -55,16 +67,4 @@ public class VKFeedItem {
     public String getText() {
         return mJo.optString("text");
     }
-=======
-public class VKFeedItem {
-    private String mTitle;
-    private String mImageUrl;
-    private String mDate;
-    private String mUrl;
-    private String mId;
-    private String mAuthor;
-    private String mText;
-
-
->>>>>>> origin/master
 }
