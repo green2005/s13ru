@@ -48,13 +48,13 @@ public class VKFeedItem {
         }
         JSONObject photoJson = attachmentJson.optJSONObject("photo");
         if (photoJson != null){
-            return photoJson.optString("src");
+            return photoJson.optString("src_big");
         }
         JSONObject albumJson = attachmentJson.optJSONObject("album");
         if (albumJson != null){
             JSONObject thumbJson = albumJson.optJSONObject("thumb");
             if (thumbJson != null){
-                return thumbJson.optString("src");
+                return thumbJson.optString("src_big");
             }
         }
         return "";

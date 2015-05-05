@@ -2,6 +2,7 @@ package com.parser.adapters;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,18 +12,20 @@ import android.widget.TextView;
 
 import com.parser.R;
 import com.parser.db.CursorHelper;
-import com.parser.db.NewsFeedDBHelper;
+import com.parser.db.VKFeedDBHelper;
 import com.parser.fragments.PaginationSource;
+import com.parser.loader.ImageLoader;
 
-public class VKNewsFeedAdapter extends SimpleCursorAdapter{
+public class VKNewsFeedAdapter extends SimpleCursorAdapter {
     private LayoutInflater mInflater;
     private PaginationSource mSource;
+    private ImageLoader mImageLoader;
 
     public VKNewsFeedAdapter(Context context, int layout, Cursor c, String[] from, int[] to, int flags) {
         super(context, layout, c, from, to, flags);
         mInflater = LayoutInflater.from(context);
+        mImageLoader = ImageLoader.get(context);
     }
-
 
     public void setPaginationSource(PaginationSource source) {
         mSource = source;
@@ -43,7 +46,7 @@ public class VKNewsFeedAdapter extends SimpleCursorAdapter{
         View cnView = convertView;
         ViewHolder viewHolder;
         if (cnView == null) {
-            cnView = mInflater.inflate(R.layout.item_news_feed, null);
+            cnView = mInflater.inflate(R.layout.item_news_feed_image, null);
             viewHolder = new ViewHolder();
             viewHolder.tvDate = (TextView) cnView.findViewById(R.id.tvDate);
             viewHolder.tvText = (TextView) cnView.findViewById(R.id.tvText);
@@ -53,12 +56,22 @@ public class VKNewsFeedAdapter extends SimpleCursorAdapter{
         } else {
             viewHolder = (ViewHolder) cnView.getTag();
         }
-        viewHolder.tvText.setText(CursorHelper.getString(cursor, NewsFeedDBHelper.TEXT_COLUMN));
-        viewHolder.tvTitle.setText(CursorHelper.getString(cursor, NewsFeedDBHelper.TITLE_COLUMN));
-        viewHolder.tvDate.setText(CursorHelper.getString(cursor, NewsFeedDBHelper.DATE_COLUMN));
-
-
+        viewHolder.tvText.setText(CursorHelper.getString(cursor, VKFeedDBHelper.TEXT_COLUMN));
+        viewHolder.tvTitle.setText(CursorHelper.getString(cursor, VKFeedDBHelper.TITLE_COLUMN));
+        viewHolder.tvDate.setText(CursorHelper.getString(cursor, VKFeedDBHelper.DATE_COLUMN));
+        setImage(viewHolder.imageView, CursorHelper.getString(cursor, VKFeedDBHelper.IMAGE_URL_COLUMN));
         return cnView;
+    }
+
+    private void setImage(ImageView imageView, String imageUrl) {
+        if (TextUtils.isEmpty(imageUrl)) {
+            imageView.setVisibility(View.GONE);
+        } else {
+            imageView.setVisibility(View.VISIBLE);
+            if (mImageLoader != null) {
+                mImageLoader.loadImage(imageView, imageUrl);
+            }
+        }
     }
 
     private class ViewHolder {

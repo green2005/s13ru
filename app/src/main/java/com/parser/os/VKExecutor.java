@@ -3,6 +3,8 @@ package com.parser.os;
 import android.content.Context;
 
 
+import com.parser.ErrorHelper;
+import com.parser.NewsApplication;
 
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -20,7 +22,7 @@ public class VKExecutor   {
 
     public static VKExecutor getExecutor(Context context) {
         try {
-            return VKApplication.get(context, VKExecutor.KEY);
+            return (VKExecutor)NewsApplication.get(context, VKExecutor.KEY);
         } catch (Exception e) {
             ErrorHelper.showError(context, e);
         }

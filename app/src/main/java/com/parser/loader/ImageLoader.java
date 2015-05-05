@@ -7,6 +7,8 @@ import android.text.TextUtils;
 import android.widget.ImageView;
 
 
+import com.parser.ErrorHelper;
+import com.parser.NewsApplication;
 import com.parser.os.VKExecutor;
 
 import java.io.InputStream;
@@ -88,7 +90,7 @@ public class ImageLoader {
 
     public static ImageLoader get(Context context) {
         try {
-            ImageLoader imageLoader = VKApplication.get(context, ImageLoader.KEY);
+            ImageLoader imageLoader = (ImageLoader)NewsApplication.get(context, ImageLoader.KEY);
             if (imageLoader.getIsPaused()){
                 imageLoader.resumeLoadingImages();
             }

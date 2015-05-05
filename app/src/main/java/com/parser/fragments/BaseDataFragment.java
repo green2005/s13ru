@@ -13,11 +13,13 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.CursorAdapter;
 import android.widget.ListView;
 
 import com.parser.DataSource;
 import com.parser.R;
+import com.parser.loader.ImageLoader;
 import com.parser.processors.Processor;
 
 public abstract class BaseDataFragment extends Fragment implements PaginationSource, LoaderManager.LoaderCallbacks<Cursor> {
@@ -28,7 +30,7 @@ public abstract class BaseDataFragment extends Fragment implements PaginationSou
     private boolean mIsTopRequest = true;
     private int mOffset = 0;
     private DataSource mDataSource;
-
+    private ImageLoader mImageLoader;
 
     private enum LoadState {
         LOADING,
@@ -47,11 +49,12 @@ public abstract class BaseDataFragment extends Fragment implements PaginationSou
 
     protected abstract Uri getUri();
 
-    protected abstract  String[] getFields();
+    protected abstract String[] getFields();
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_main, null);
+        mImageLoader = ImageLoader.get(getActivity());
         loadData(0);
         initView(view);
         return view;
@@ -72,6 +75,21 @@ public abstract class BaseDataFragment extends Fragment implements PaginationSou
         LoaderManager.LoaderCallbacks<Cursor> loaderCallbacks = this;
         getLoaderManager().initLoader(0, null, loaderCallbacks);
         listView.setAdapter(getAdapter());
+        listView.setOnScrollListener(new AbsListView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+                if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE) {
+                    mImageLoader.resumeLoadingImages();
+                }
+            }
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                if (firstVisibleItem > 0) {
+                    mImageLoader.pauseLoadingImages(); //stopLoadingImages();
+                }
+            }
+        });
     }
 
     protected void loadData(int offset) {

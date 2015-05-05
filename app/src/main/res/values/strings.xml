@@ -14,11 +14,10 @@
     <string name="posters">Афиша</string>
     <string name="vk">ВКонтакте</string>
     <string name="adverts">Объявления</string>
-
-
     <string name="drawer_open">Open navigation drawer</string>
     <string name="drawer_close">Close navigation drawer</string>
-    <string name ="unknown_server_error">Неизвестная ошибка</string>
+    <string name="unknown_server_error">Неизвестная ошибка</string>
     <string name="response_is_empty">Неизвестная ошибка</string>
-
+    <string name="ok">OK</string>
+    <string name="error">Ошибка</string>
 </resources>
