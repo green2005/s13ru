@@ -17,6 +17,7 @@ import android.widget.ListView;
 import com.parser.DrawingArrayAdapter;
 import com.parser.FragmentMenuItem;
 import com.parser.R;
+import com.parser.fragments.PosterFeedFragment;
 import com.parser.fragments.NewsFeedFragment;
 import com.parser.fragments.VKFeedFragment;
 
@@ -68,22 +69,22 @@ public class MainActivity extends ActionBarActivity {
 
     }
 
-    private void selectItem(FragmentMenuItem item){
+    private void selectItem(FragmentMenuItem item) {
         Fragment fragment = null;
-        switch (item){
-            case NEWS_ITEM:{
+        switch (item) {
+            case NEWS_ITEM: {
                 fragment = NewsFeedFragment.getNewFragment(null);
                 break;
             }
-            case VK_ITEM:{
+            case VK_ITEM: {
                 fragment = VKFeedFragment.getNewFragment(null);
                 break;
             }
-            case POSTERS_ITEM:{
-
+            case POSTER_ITEM: {
+                fragment = PosterFeedFragment.getNewFragment(null);
                 break;
             }
-            case ADVERTS_ITEM:{
+            case ADVERTS_ITEM: {
 
                 break;
             }
@@ -98,7 +99,7 @@ public class MainActivity extends ActionBarActivity {
         mDrawerLayout.closeDrawer(mDrawerList);
     }
 
-    private void initNavigationDrawer(){
+    private void initNavigationDrawer() {
         mFragmentMenuItems = FragmentMenuItem.values();
     }
 

@@ -4,6 +4,7 @@ import android.content.Context;
 import org.json.JSONObject;
 
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 
 public class VKFeedItem {
     private String mImageUrl;
@@ -12,12 +13,14 @@ public class VKFeedItem {
     private JSONObject mJo;
 
     public VKFeedItem(DateFormat df, JSONObject jo) {
-        mDf = df;
+        //mDf = df;
+        mDf = new SimpleDateFormat("dd.MM.yyyy");
         mJo = jo;
     }
 
     public VKFeedItem(Context context, JSONObject jo) {
-        mDf = android.text.format.DateFormat.getDateFormat(context);
+        mDf = new SimpleDateFormat("dd.MM.yyyy");
+        // mDf = android.text.format.DateFormat.getDateFormat(context);
         mJo = jo;
     }
 
@@ -34,7 +37,7 @@ public class VKFeedItem {
 
     public String getDate() {
         String date = mJo.optString("date");
-        return new java.util.Date(Long.parseLong(date) * 1000).toString();
+        return mDf.format(new java.util.Date(Long.parseLong(date) * 1000));
     }
 
     public String getTitle() {

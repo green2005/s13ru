@@ -22,7 +22,7 @@ public class NewsFeedProcessor extends Processor {
     private static final String ITEM_TITLE = "title";
     private static final String ITEM_DESCRIPTION = "description";
     private static final String ITEM_LINK = "link";
-    private static final String ITEM_DATE = "pubdate";
+    private static final String ITEM_DATE = "pubDate"; //"pubdate";
     private static final String ITEM_AUTHOR = "dc:creator";
 
     private Context mContext;

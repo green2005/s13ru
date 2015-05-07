@@ -3,7 +3,7 @@ package com.parser;
 public enum FragmentMenuItem {
 
     NEWS_ITEM(R.string.news, R.drawable.ic_drawer),
-    POSTERS_ITEM(R.string.posters, R.drawable.ic_launcher),
+    POSTER_ITEM(R.string.posters, R.drawable.ic_launcher),
     VK_ITEM(R.string.vk, R.drawable.ic_drawer),
     ADVERTS_ITEM(R.string.adverts, R.drawable.ic_drawer);
 
