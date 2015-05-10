@@ -127,6 +127,14 @@ public class NewsContentProvider extends ContentProvider {
                 contentUri = VKFEED_CONTENT_URI_ID;
                 break;
             }
+            case (POSTER_FEED):{
+                contentUri = POSTERFEED_CONTENT_URI;
+                break;
+            }
+            case (POSTER_FEED_ID):{
+                contentUri = POSTERFEED_CONTENT_URI_ID;
+                break;
+            }
         }
         return contentUri;
     }
@@ -148,6 +156,14 @@ public class NewsContentProvider extends ContentProvider {
             }
             case (VK_FEED_ID): {
                 tableName = VKFeedDBHelper.TABLE_NAME;
+                break;
+            }
+            case (POSTER_FEED):{
+                tableName = PosterFeedDBHelper.TABLE_NAME;
+                break;
+            }
+            case (POSTER_FEED_ID):{
+                tableName = PosterFeedDBHelper.TABLE_NAME;
                 break;
             }
         }

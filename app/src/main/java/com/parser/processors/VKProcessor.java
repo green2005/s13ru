@@ -58,17 +58,6 @@ public abstract class VKProcessor extends Processor {
         throw new VKException(errorMsg);
     }
 
-    private String getStringFromStream(InputStream stream) throws Exception{
-        InputStreamReader is = new InputStreamReader(stream);
-        StringBuilder sb=new StringBuilder();
-        BufferedReader br = new BufferedReader(is);
-        String read = br.readLine();
-        while(read != null) {
-            //System.out.println(read);
-            sb.append(read);
-            read =br.readLine();
-        }
-        return sb.toString();
-    }
+
 
 }

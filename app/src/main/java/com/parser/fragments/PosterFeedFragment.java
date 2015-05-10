@@ -8,6 +8,7 @@ import com.parser.R;
 import com.parser.adapters.PosterAdapter;
 import com.parser.db.NewsContentProvider;
 import com.parser.db.NewsFeedDBHelper;
+import com.parser.db.PosterFeedDBHelper;
 import com.parser.processors.PosterFeedProcessor;
 import com.parser.processors.Processor;
 
@@ -26,7 +27,7 @@ public class PosterFeedFragment extends BaseDataFragment {
     @Override
     protected CursorAdapter getAdapter() {
         if (mAdapter == null){
-            mAdapter = new PosterAdapter(getActivity(),  R.layout.item_news_feed, null, NewsFeedDBHelper.getDataFields(), null, 0);
+            mAdapter = new PosterAdapter(getActivity(),  R.layout.item_news_feed, null, PosterFeedDBHelper.getDataFields(), null, 0);
         }
         return mAdapter;
     }
@@ -56,6 +57,6 @@ public class PosterFeedFragment extends BaseDataFragment {
 
     @Override
     protected String[] getFields() {
-        return PosterFeedDBHelper.getDataFields;
+        return PosterFeedDBHelper.getDataFields();
     }
 }

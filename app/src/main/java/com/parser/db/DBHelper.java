@@ -5,7 +5,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 public class DBHelper extends SQLiteOpenHelper {
-    private static final int DB_VERSION = 3;
+    private static final int DB_VERSION = 4;
     private static final String DB_NAME = "s13news.db";
 
     public DBHelper(Context context) {
@@ -16,11 +16,13 @@ public class DBHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         NewsFeedDBHelper.onCreate(db);
         VKFeedDBHelper.onCreate(db);
+        PosterFeedDBHelper.onCreate(db);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         NewsFeedDBHelper.onUpdate(db);
         VKFeedDBHelper.onUpdate(db);
+        PosterFeedDBHelper.onUpdate(db);
     }
 }
