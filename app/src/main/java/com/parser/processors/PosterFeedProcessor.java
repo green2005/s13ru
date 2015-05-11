@@ -34,13 +34,11 @@ public class PosterFeedProcessor extends Processor {
 
     private List<PosterFeedItem> getPosters(InputStream stream) throws Exception {
         List<PosterFeedItem> items = new ArrayList<>();
-        String response = getStringFromStream(stream);
+        String response = getStringFromStream(stream, WIN_CHARSET);
         Pattern pItem = Pattern.compile("class=\"home-events-item-poster\">.*?</a></div>");
         Pattern pLink = Pattern.compile("<a href=\".*?\"");
         Pattern pDate = Pattern.compile("\"home-events-item-date\">.*?</div>");
         Pattern pTitle = Pattern.compile("title=\".*?\"");
-        //Pattern pTitle2 = Pattern.compile(">.*?<");
-        Pattern pCat = Pattern.compile("/cat/.*?/");
         Pattern pImage = Pattern.compile("<img src=\".*?\"");
         Matcher mItem = pItem.matcher(response);
         while (mItem.find()) {
@@ -56,10 +54,8 @@ public class PosterFeedProcessor extends Processor {
             }
             Matcher mTitle = pTitle.matcher(item);
             if (mTitle.find()) {
-                // mTitle = pTitle2.matcher(mTitle.group());
-                if (mTitle.find()) {
-                    posterItem.setTitle(mTitle.group().substring(1).replace("\"", ""));
-                }
+                String title = mTitle.group().substring("title=".length()).replace("\"", "");
+                posterItem.setTitle(title);
             }
 
             Matcher mImage = pImage.matcher(item);

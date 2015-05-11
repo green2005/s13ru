@@ -12,15 +12,19 @@ import android.widget.TextView;
 
 import com.parser.R;
 import com.parser.db.CursorHelper;
+import com.parser.db.PosterFeedDBHelper;
 import com.parser.db.VKFeedDBHelper;
+import com.parser.loader.ImageLoader;
 
 public class PosterAdapter extends SimpleCursorAdapter {
     private LayoutInflater mInflater;
+    private ImageLoader mImageLoader;
 
 
     public PosterAdapter(Context context, int layout, Cursor c, String[] from, int[] to, int flags) {
         super(context, layout, c, from, to, flags);
         mInflater = LayoutInflater.from(context);
+        mImageLoader = ImageLoader.get(context);
     }
 
     @Override
@@ -43,10 +47,10 @@ public class PosterAdapter extends SimpleCursorAdapter {
         } else {
             viewHolder = (ViewHolder) cnView.getTag();
         }
-        viewHolder.tvText.setText(CursorHelper.getString(cursor, VKFeedDBHelper.TEXT_COLUMN));
-        viewHolder.tvTitle.setText(CursorHelper.getString(cursor, VKFeedDBHelper.TITLE_COLUMN));
-        viewHolder.tvDate.setText(CursorHelper.getString(cursor, VKFeedDBHelper.DATE_COLUMN));
-        setImage(viewHolder.imageView, CursorHelper.getString(cursor, VKFeedDBHelper.IMAGE_URL_COLUMN));
+        //viewHolder.tvText.setText(CursorHelper.getString(cursor, PosterFeedDBHelper.TEXT_COLUMN));
+        viewHolder.tvTitle.setText(CursorHelper.getString(cursor, PosterFeedDBHelper.TITLE_COLUMN));
+        viewHolder.tvDate.setText(CursorHelper.getString(cursor, PosterFeedDBHelper.DATE_COLUMN));
+        setImage(viewHolder.imageView, CursorHelper.getString(cursor, PosterFeedDBHelper.IMAGE_URL_COLUMN));
         return cnView;
     }
 

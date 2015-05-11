@@ -30,7 +30,7 @@ public abstract class VKProcessor extends Processor {
         if (stream == null) {
             throw new IllegalArgumentException(mContext.getResources().getString(R.string.response_is_empty));
         }
-        String s = getStringFromStream(stream);
+        String s = getStringFromStream(stream, null);
         JSONObject serverResponse = new JSONObject(s);
         if (!serverResponse.has(RESPONSE)) {  //Process VK Errors
             generateVKServerError(serverResponse);

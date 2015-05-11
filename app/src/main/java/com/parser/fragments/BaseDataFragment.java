@@ -86,14 +86,13 @@ public abstract class BaseDataFragment extends Fragment implements PaginationSou
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
                 if (firstVisibleItem > 0) {
-                    mImageLoader.pauseLoadingImages(); //stopLoadingImages();
+                    mImageLoader.pauseLoadingImages();
                 }
             }
         });
     }
 
     protected void loadData(int offset) {
-        //    private static final String FEED_URL = "http://s13.ru/archives/date/%s/feed";
         if (mState != LoadState.BROWSING) {
             return;
         }
@@ -101,7 +100,7 @@ public abstract class BaseDataFragment extends Fragment implements PaginationSou
             mIsTopRequest = true;
         }
         mOffset = offset;
-        String url = getUrl(offset);//String.format(FEED_URL, CalendarUtils.getCurrentDate(-offset));
+        String url = getUrl(offset);
         Activity activity = getActivity();
         if (activity == null) {
             return;

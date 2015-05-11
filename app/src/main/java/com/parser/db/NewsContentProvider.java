@@ -11,12 +11,14 @@ public class NewsContentProvider extends ContentProvider {
 
     private static final UriMatcher sURIMatcher = new UriMatcher(UriMatcher.NO_MATCH);
 
-    private static final int NEWS = 10;
-    private static final int NEWS_ID = 20;
-    private static final int VK_FEED = 30;
-    private static final int VK_FEED_ID = 40;
-    private static final int POSTER_FEED = 50;
-    private static final int POSTER_FEED_ID = 60;
+    private static final int NEWS = 1;
+    private static final int NEWS_ID = 2;
+    private static final int VK_FEED = 3;
+    private static final int VK_FEED_ID = 4;
+    private static final int POSTER_FEED = 5;
+    private static final int POSTER_FEED_ID = 6;
+    private static final int NEWS_DETAIL = 7;
+    private static final int NEWS_DETAIL_ID = 8;
 
 
     private static final String AUTHORITY = "com.parser";
@@ -42,6 +44,11 @@ public class NewsContentProvider extends ContentProvider {
     public static Uri POSTERFEED_CONTENT_URI_ID = Uri.parse(CONTENT_URI_PREFIX
             + AUTHORITY + "/" + PosterFeedDBHelper.TABLE_NAME + "/#");
 
+    public static final Uri NEWS_DETAIL_URI =  Uri.parse(CONTENT_URI_PREFIX
+            + AUTHORITY + "/" + NewsDetailDBHelper.TABLE_NAME);
+
+    public static Uri NEWS_DETAIL_CONTENT_URI_ID = Uri.parse(CONTENT_URI_PREFIX
+            + AUTHORITY + "/" + NewsDetailDBHelper.TABLE_NAME + "/#");
 
     public static final String CONTENT_TYPE_PREFIX = "vnd.android.cursor.dir/vnd.";
     public static final String CONTENT_ITEM_TYPE_PREFIX = "vnd.android.cursor.item/vnd.";
@@ -55,6 +62,8 @@ public class NewsContentProvider extends ContentProvider {
         sURIMatcher.addURI(AUTHORITY, VKFeedDBHelper.TABLE_NAME + "/#", VK_FEED_ID);
         sURIMatcher.addURI(AUTHORITY, PosterFeedDBHelper.TABLE_NAME, POSTER_FEED);
         sURIMatcher.addURI(AUTHORITY, PosterFeedDBHelper.TABLE_NAME + "/#", POSTER_FEED_ID);
+        sURIMatcher.addURI(AUTHORITY, NewsDetailDBHelper.TABLE_NAME, NEWS_DETAIL);
+        sURIMatcher.addURI(AUTHORITY, NewsDetailDBHelper.TABLE_NAME + "/#", NEWS_DETAIL_ID);
     }
 
     @Override
@@ -135,6 +144,14 @@ public class NewsContentProvider extends ContentProvider {
                 contentUri = POSTERFEED_CONTENT_URI_ID;
                 break;
             }
+            case (NEWS_DETAIL):{
+                contentUri = NEWS_DETAIL_URI;
+                break;
+            }
+            case (NEWS_DETAIL_ID):{
+                contentUri = NEWS_DETAIL_CONTENT_URI_ID;
+                break;
+            }
         }
         return contentUri;
     }
@@ -164,6 +181,14 @@ public class NewsContentProvider extends ContentProvider {
             }
             case (POSTER_FEED_ID):{
                 tableName = PosterFeedDBHelper.TABLE_NAME;
+                break;
+            }
+            case (NEWS_DETAIL):{
+                tableName = NewsDetailDBHelper.TABLE_NAME;
+                break;
+            }
+            case (NEWS_DETAIL_ID):{
+                tableName = NewsDetailDBHelper.TABLE_NAME;
                 break;
             }
         }

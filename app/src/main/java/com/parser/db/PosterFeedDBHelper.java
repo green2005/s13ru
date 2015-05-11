@@ -46,13 +46,13 @@ public class PosterFeedDBHelper {
     public void bulkInsert(List<PosterFeedItem> feedItems, Context context) {
         ContentResolver resolver = context.getContentResolver();
         ContentValues[] contentValues = getContentValues(feedItems);
-        resolver.bulkInsert(NewsContentProvider.NEWSFEED_CONTENT_URI, contentValues);
-        resolver.notifyChange(NewsContentProvider.NEWSFEED_CONTENT_URI, null);
+        resolver.bulkInsert(NewsContentProvider.POSTERFEED_CONTENT_URI, contentValues);
+        resolver.notifyChange(NewsContentProvider.POSTERFEED_CONTENT_URI, null);
     }
 
     public void clearOldEntries(Context context){
         ContentResolver resolver = context.getContentResolver();
-        resolver.delete(NewsContentProvider.NEWSFEED_CONTENT_URI, null, null);
+        resolver.delete(NewsContentProvider.POSTERFEED_CONTENT_URI, null, null);
     }
 
     private ContentValues[] getContentValues(List<PosterFeedItem> feedItems) {
