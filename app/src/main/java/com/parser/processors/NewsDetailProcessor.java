@@ -36,22 +36,40 @@ public class NewsDetailProcessor extends Processor {
         Pattern pText = Pattern.compile("class=\"itemtext\".*?<script");
         Pattern pTitle = Pattern.compile("rel=\"bookmark\">.*/</h3>");
         Pattern pDate = Pattern.compile("class=\"metadata\">.*?</a>");
-        Pattern pDate2 = Pattern.compile("</strong>" +". * ?" +"</a>");
-        Pattern pImage = Pattern.compile("<a href=\".*?"+"</a>");
+        Pattern pDate2 = Pattern.compile("</strong>" + ". * ?" + "</a>");
+        Pattern pImage = Pattern.compile("<a href=\".*?" + "</a>");
         Pattern pImage2 = Pattern.compile("<img class=.*?/>");
         Pattern pImageUrl = Pattern.compile("src=\".*?\"");
+
+
         Pattern pComment = Pattern.compile("li class=\" item\" id=\"comment.*?</li>");
+        Pattern pAuthor = Pattern.compile("class=\"commentauthor\".*?</span>");
+
+        Pattern pAuthorName1 = Pattern.compile("'>.*?</span>");
+        Pattern pAuthorName2 = Pattern.compile("/>.*?</span>");
+        Pattern pAuthorImage = Pattern.compile("src='.*?'");
+
+        Pattern pCommentText = Pattern.compile("<span id=\"co_.*?</span>");
+        Pattern pCommentId = Pattern.compile("id=\"co_.*?\"");
+        Pattern pCommentTex2t = Pattern.compile(">.*?</span>");
+
+        Pattern pThumbsDown = Pattern.compile("alt=\"Thumb down\".*?</span>");
+        Pattern pThumbsUp = Pattern.compile("alt=\"Thumb up\".*?</span>");
+        Pattern pThumb2 = Pattern.compile("\">.*?</span>");
+
+        Pattern pCommentDate = Pattern.compile("<small>.*?</small>");
+
 
         Matcher mDate = pDate.matcher(response);
         String date = "";
-        if (mDate.find()){
+        if (mDate.find()) {
             mDate = pDate2.matcher(mDate.group());
-            if (mDate.find()){
-                date = mDate.group().substring("</strong>".length()).replace("</a>","");
+            if (mDate.find()) {
+                date = mDate.group().substring("</strong>".length()).replace("</a>", "");
             }
         }
         Matcher mTitle = pTitle.matcher(response);
-        if (mTitle.find()){
+        if (mTitle.find()) {
             String itemText = mTitle.group().substring("rel=\"bookmark\">".length()).replace("</a></h3>\n", "");
             NewsDetailItem item = new NewsDetailItem();
             item.setText(itemText);
@@ -60,15 +78,15 @@ public class NewsDetailProcessor extends Processor {
             items.add(item);
         }
 
-        Matcher mText =  pText.matcher(response);
-        if (mText.find()){
-            String text = mText.group().substring("class=\"itemtext\"".length()).replace("<script","");
+        Matcher mText = pText.matcher(response);
+        if (mText.find()) {
+            String text = mText.group().substring("class=\"itemtext\"".length()).replace("<script", "");
             Matcher mImage = pImage.matcher(text);
-            while (mImage.find()){
-                int textEnd=mImage.start();
+            while (mImage.find()) {
+                int textEnd = mImage.start();
                 int imageEnd = mImage.end();
                 Matcher mImage2 = pImage2.matcher(mImage.group());
-                if (mImage2.find()){
+                if (mImage2.find()) {
                     String itemText = text.substring(0, textEnd);
                     NewsDetailItem item = new NewsDetailItem();
                     item.setText(itemText);
@@ -76,8 +94,8 @@ public class NewsDetailProcessor extends Processor {
                     items.add(item);
                     text = text.substring(imageEnd);
                     Matcher mImageUrl = pImageUrl.matcher(mImage2.group());
-                    if (mImageUrl.find()){
-                        String imageUrl = mImageUrl.group().substring("src=\"".length()).replace("\"","");
+                    if (mImageUrl.find()) {
+                        String imageUrl = mImageUrl.group().substring("src=\"".length()).replace("\"", "");
                         NewsDetailItem imageItem = new NewsDetailItem();
                         item.setText(imageUrl);
                         item.setContentType(NewsDetailDBHelper.NewsItemType.IMAGE.ordinal());
@@ -91,9 +109,52 @@ public class NewsDetailProcessor extends Processor {
             items.add(item);
         }
 
-        Matcher mComment = pComment.matcher(response);
-        while (mComment.find()){
+        NewsDetailItem item = new NewsDetailItem();
+        item.setContentType(NewsDetailDBHelper.NewsItemType.REPLY_HEADER.ordinal());
+        items.add(item);
 
+        Matcher mComment = pComment.matcher(response);
+        while (mComment.find()) {
+            item = new NewsDetailItem();
+            item.setContentType(NewsDetailDBHelper.NewsItemType.REPLY.ordinal());
+            items.add(item);
+
+            String comment = mComment.group();
+
+            Matcher mAuthor = pAuthor.matcher(comment);
+            if (mAuthor.find()) {
+                String author = mAuthor.group();
+
+                Matcher mImage = pAuthorImage.matcher(author);
+                if (mImage.find()) {
+                    item.setAuthorImage(mImage.group().substring(("src='").length()).replace("'", ""));
+                }
+                mAuthor = pAuthorName1.matcher(author);
+                if (mAuthor.find()) {
+
+                } else {
+                    mAuthor
+                }
+            }
+
+
+            /*
+            Pattern pAuthor = Pattern.compile("class=\"commentauthor\".*?</span>");
+
+        Pattern pAuthorName1 = Pattern.compile("'>.*?</span>");
+        Pattern pAuthorName2 = Pattern.compile("/>.*?</span>");
+        Pattern pAuthorImage = Pattern.compile("src='.*?'");
+
+        Pattern pCommentText = Pattern.compile("<span id=\"co_.*?</span>");
+        Pattern pCommentId = Pattern.compile("id=\"co_.*?\"");
+        Pattern pCommentTex2t = Pattern.compile(">.*?</span>");
+
+        Pattern pThumbsDown = Pattern.compile("alt=\"Thumb down\".*?</span>");
+        Pattern pThumbsUp = Pattern.compile("alt=\"Thumb up\".*?</span>");
+        Pattern pThumb2 = Pattern.compile("\">.*?</span>");
+
+        Pattern pCommentDate = Pattern.compile("<small>.*?</small>");
+             */
 
 
         }

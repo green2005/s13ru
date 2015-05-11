@@ -9,25 +9,27 @@ import com.parser.R;
 import com.parser.adapters.NewsDetailAdapter;
 import com.parser.db.NewsContentProvider;
 import com.parser.db.NewsDetailDBHelper;
+import com.parser.processors.NewsDetailProcessor;
 import com.parser.processors.Processor;
 
-public class NewsDetailFragment extends BaseDataFragment implements DetailFragment{
+public class NewsDetailFragment extends BaseDataFragment implements DetailFragment {
     //todo move to resources
-    private static final String NEWS_TITLE  = "Новости";
+    private static final String NEWS_TITLE = "Новости";
     public static final String URL_PARAM = "url_param";
     private String mUrl;
     private NewsDetailAdapter mAdapter;
+    private NewsDetailProcessor mProcessor;
 
 
-    public static NewsDetailFragment getNewFragment(Bundle params){
+    public static NewsDetailFragment getNewFragment(Bundle params) {
         NewsDetailFragment fragment = new NewsDetailFragment();
         fragment.setArguments(params);
         return fragment;
     }
 
-    public void setArguments(Bundle arguments){
+    public void setArguments(Bundle arguments) {
         super.setArguments(arguments);
-        if (arguments != null){
+        if (arguments != null) {
             mUrl = arguments.getString(URL_PARAM);
         }
     }
@@ -53,7 +55,13 @@ public class NewsDetailFragment extends BaseDataFragment implements DetailFragme
 
     @Override
     protected Processor getProcessor() {
-        return null;
+        if (mProcessor == null) {
+            Activity activity = getActivity();
+            if (activity != null) {
+                mProcessor = new NewsDetailProcessor(activity);
+            }
+        }
+        return mProcessor;
     }
 
     @Override
