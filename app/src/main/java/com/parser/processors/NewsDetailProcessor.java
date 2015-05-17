@@ -33,6 +33,8 @@ public class NewsDetailProcessor extends Processor {
     }
 
     private void parseResponse(String response, List<NewsDetailItem> items) {
+        //its awful without API
+
         Pattern pText = Pattern.compile("class=\"itemtext\".*?<script");
         Pattern pTitle = Pattern.compile(" dc:title=\".*?\"");
         Pattern pDate = Pattern.compile("class=\"metadata\">.*?</a>");
@@ -130,13 +132,14 @@ public class NewsDetailProcessor extends Processor {
             Matcher mAuthor = pAuthor.matcher(comment);
             if (mAuthor.find()) {
                 String author = mAuthor.group();
-
+                String authorName = null;
                 Matcher mImage = pAuthorImage.matcher(author);
                 if (mImage.find()) {
                     item.setAuthorImage(mImage.group().substring(("src='").length()).replace("'", ""));
                 }
                 mAuthor = pAuthorName1.matcher(author);
                 if (mAuthor.find()) {
+<<<<<<< HEAD
                     item.setAuthor(mAuthor.group());
                 } else {
                     mAuthor = pAuthorName2.matcher(author);
@@ -165,8 +168,31 @@ public class NewsDetailProcessor extends Processor {
                 mThumb = pThumb2.matcher(mThumb.group());
                 if (mThumb.find()) {
                     item.setKarma_up(mThumb.group().length());
+=======
+                    authorName = mAuthor.group();
+                } else {
+                    mAuthor = pAuthorName2.matcher(author);
+                    if (mAuthor.find()){
+                        authorName = mAuthor.group();
+                    }
+                }
+                item.setAuthor(authorName);
+
+                Matcher mCommentId = pCommentId.matcher(comment);
+                if (mCommentId.find()){
+                    item.setCommentId(mCommentId.group());
+                }
+                Matcher mCommentDate = pCommentDate.matcher(comment);
+                if (mCommentDate.find()){
+                    item.setDate(mCommentDate.group());
+>>>>>>> origin/master
                 }
             }
+            Matcher mCommentText = pCommentText.matcher(comment);
+            if (mCommentText.find()){
+                mCommentText = pCommentTex2t.matcher()
+            }
+
 
             mThumb = pThumbsDown.matcher(comment);
             if (mThumb.find()) {
