@@ -33,6 +33,7 @@ public class NewsDetailProcessor extends Processor {
     }
 
     private void parseResponse(String response, List<NewsDetailItem> items) {
+        
         //its awful without API
 
         Pattern pText = Pattern.compile("class=\"itemtext\".*?<script");
