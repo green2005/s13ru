@@ -5,7 +5,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 public class DBHelper extends SQLiteOpenHelper {
-    private static final int DB_VERSION = 4;
+    private static final int DB_VERSION = 9;
     private static final String DB_NAME = "s13news.db";
 
     public DBHelper(Context context) {
@@ -17,6 +17,7 @@ public class DBHelper extends SQLiteOpenHelper {
         NewsFeedDBHelper.onCreate(db);
         VKFeedDBHelper.onCreate(db);
         PosterFeedDBHelper.onCreate(db);
+        NewsDetailDBHelper.onCreate(db);
     }
 
     @Override
@@ -24,5 +25,6 @@ public class DBHelper extends SQLiteOpenHelper {
         NewsFeedDBHelper.onUpdate(db);
         VKFeedDBHelper.onUpdate(db);
         PosterFeedDBHelper.onUpdate(db);
+        NewsDetailDBHelper.onUpdate(db);
     }
 }

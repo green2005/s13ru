@@ -2,6 +2,8 @@ package com.parser.fragments;
 
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.CursorAdapter;
 
 import com.parser.R;
@@ -59,4 +61,6 @@ public class PosterFeedFragment extends BaseDataFragment {
     protected String[] getFields() {
         return PosterFeedDBHelper.getDataFields();
     }
+
+
 }

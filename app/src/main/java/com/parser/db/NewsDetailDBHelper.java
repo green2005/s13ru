@@ -32,14 +32,14 @@ public class NewsDetailDBHelper {
     public static final String KARMA_DOWN_COLUMN = "karma_down";
     public static final String COMMENT_ID_COLUMN = "comment_id";
 
-    private static final String CREATE_TABLE = " create table" + TABLE_NAME + " ( " +
+    private static final String CREATE_TABLE = " create table " + TABLE_NAME + " ( " +
             ID_COLUMN + " integer primary key AUTOINCREMENT , " +
             RECORD_TYPE_COLUMN + " integer, " +
             AUTHOR_COLUMN + " text, " +
             DATE_COLUMN + " text, " +
-            IMAGE_WIDTH_COLUMN + " integer ,"+
+            IMAGE_WIDTH_COLUMN + " integer , "+
             IMAGE_HEIGTH_COLUMN+" integer, "+
-            AUTHOR_IMAGE_COLUMN +"integer, "+
+            AUTHOR_IMAGE_COLUMN +" text, "+
             KARMA_DOWN_COLUMN+" integer, "+
             KARMA_UP_COLUMN +" integer, "+
             COMMENT_ID_COLUMN+" text, "+
@@ -47,16 +47,16 @@ public class NewsDetailDBHelper {
 
     private static final String DROP_TABLE = "drop table if exists " + TABLE_NAME;
 
-    public void onCreate(SQLiteDatabase db) {
+    public static void onCreate(SQLiteDatabase db) {
         if (db != null) {
             db.execSQL(CREATE_TABLE);
         }
     }
 
-    public void onUpdate(SQLiteDatabase db) {
+    public static void onUpdate(SQLiteDatabase db) {
         if (db != null) {
             db.execSQL(DROP_TABLE);
-            onUpdate(db);
+            onCreate(db);
         }
     }
 

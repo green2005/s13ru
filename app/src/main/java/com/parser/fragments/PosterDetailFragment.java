@@ -2,6 +2,8 @@ package com.parser.fragments;
 
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.CursorAdapter;
 
 import com.parser.processors.Processor;
@@ -50,4 +52,5 @@ public class PosterDetailFragment extends BaseDataFragment implements DetailFrag
     public String getTitle() {
         return POSTER_TITLE;
     }
+
 }

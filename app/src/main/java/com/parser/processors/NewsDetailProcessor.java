@@ -34,13 +34,12 @@ public class NewsDetailProcessor extends Processor {
 
     private void parseResponse(String response, List<NewsDetailItem> items) {
         Pattern pText = Pattern.compile("class=\"itemtext\".*?<script");
-        Pattern pTitle = Pattern.compile("rel=\"bookmark\">.*/</h3>");
+        Pattern pTitle = Pattern.compile(" dc:title=\".*?\"");
         Pattern pDate = Pattern.compile("class=\"metadata\">.*?</a>");
         Pattern pDate2 = Pattern.compile("</strong>" + ". * ?" + "</a>");
         Pattern pImage = Pattern.compile("<a href=\".*?" + "</a>");
         Pattern pImage2 = Pattern.compile("<img class=.*?/>");
         Pattern pImageUrl = Pattern.compile("src=\".*?\"");
-
 
         Pattern pComment = Pattern.compile("li class=\" item\" id=\"comment.*?</li>");
         Pattern pAuthor = Pattern.compile("class=\"commentauthor\".*?</span>");
@@ -59,18 +58,20 @@ public class NewsDetailProcessor extends Processor {
 
         Pattern pCommentDate = Pattern.compile("<small>.*?</small>");
 
+        Matcher itemMatcher;
 
-        Matcher mDate = pDate.matcher(response);
+        itemMatcher = pDate.matcher(response);
         String date = "";
-        if (mDate.find()) {
-            mDate = pDate2.matcher(mDate.group());
-            if (mDate.find()) {
-                date = mDate.group().substring("</strong>".length()).replace("</a>", "");
+        if (itemMatcher.find()) {
+            itemMatcher = pDate2.matcher(itemMatcher.group());
+            if (itemMatcher.find()) {
+                date = itemMatcher.group().substring("</strong>".length()).replace("</a>", "");
             }
         }
+
         Matcher mTitle = pTitle.matcher(response);
         if (mTitle.find()) {
-            String itemText = mTitle.group().substring("rel=\"bookmark\">".length()).replace("</a></h3>\n", "");
+            String itemText = mTitle.group().substring(" dc:title=\"".length()).replace("\"", "");
             NewsDetailItem item = new NewsDetailItem();
             item.setText(itemText);
             item.setDate(date);
@@ -79,31 +80,36 @@ public class NewsDetailProcessor extends Processor {
         }
 
         Matcher mText = pText.matcher(response);
+        int imageEnd = 0;
+        int textStart;
         if (mText.find()) {
             String text = mText.group().substring("class=\"itemtext\"".length()).replace("<script", "");
             Matcher mImage = pImage.matcher(text);
             while (mImage.find()) {
-                int textEnd = mImage.start();
-                int imageEnd = mImage.end();
                 Matcher mImage2 = pImage2.matcher(mImage.group());
                 if (mImage2.find()) {
-                    String itemText = text.substring(0, textEnd);
+                    mImage.start();
+                    int textEnd = mImage.start();
+                    textStart = imageEnd;
+                    imageEnd = mImage.end();
+                    String itemText = text.substring(textStart, textEnd);
                     NewsDetailItem item = new NewsDetailItem();
                     item.setText(itemText);
                     item.setContentType(NewsDetailDBHelper.NewsItemType.TEXT.ordinal());
                     items.add(item);
-                    text = text.substring(imageEnd);
+                    //  text = text.substring(imageEnd);
                     Matcher mImageUrl = pImageUrl.matcher(mImage2.group());
                     if (mImageUrl.find()) {
                         String imageUrl = mImageUrl.group().substring("src=\"".length()).replace("\"", "");
                         NewsDetailItem imageItem = new NewsDetailItem();
-                        item.setText(imageUrl);
-                        item.setContentType(NewsDetailDBHelper.NewsItemType.IMAGE.ordinal());
+                        imageItem.setText(imageUrl);
+                        imageItem.setContentType(NewsDetailDBHelper.NewsItemType.IMAGE.ordinal());
                         items.add(imageItem);
                     }
                 }
             }
             NewsDetailItem item = new NewsDetailItem();
+            text = text.substring(imageEnd);
             item.setText(text);
             item.setContentType(NewsDetailDBHelper.NewsItemType.TEXT.ordinal());
             items.add(item);
@@ -131,30 +137,44 @@ public class NewsDetailProcessor extends Processor {
                 }
                 mAuthor = pAuthorName1.matcher(author);
                 if (mAuthor.find()) {
-
+                    item.setAuthor(mAuthor.group());
                 } else {
-                    mAuthor
+                    mAuthor = pAuthorName2.matcher(author);
+                    if (mAuthor.find()) {
+                        item.setAuthor(mAuthor.group());
+                    }
+                }
+            }
+            Matcher mCommentText = pCommentText.matcher(comment);
+            if (mCommentText.find()) {
+                mCommentText = pCommentTex2t.matcher(mCommentText.group());
+                if (mCommentText.find()) {
+                    item.setText(mCommentText.group());
+                }
+            }
+            Matcher mCommentId = pCommentId.matcher(comment);
+            if (mCommentId.find()) {
+                item.setCommentId(mCommentId.group());
+            }
+            Matcher mCommentDate = pCommentDate.matcher(comment);
+            if (mCommentDate.find()) {
+                item.setDate(mCommentDate.group());
+            }
+            Matcher mThumb = pThumbsUp.matcher(comment);
+            if (mThumb.find()) {
+                mThumb = pThumb2.matcher(mThumb.group());
+                if (mThumb.find()) {
+                    item.setKarma_up(mThumb.group().length());
                 }
             }
 
-
-            /*
-            Pattern pAuthor = Pattern.compile("class=\"commentauthor\".*?</span>");
-
-        Pattern pAuthorName1 = Pattern.compile("'>.*?</span>");
-        Pattern pAuthorName2 = Pattern.compile("/>.*?</span>");
-        Pattern pAuthorImage = Pattern.compile("src='.*?'");
-
-        Pattern pCommentText = Pattern.compile("<span id=\"co_.*?</span>");
-        Pattern pCommentId = Pattern.compile("id=\"co_.*?\"");
-        Pattern pCommentTex2t = Pattern.compile(">.*?</span>");
-
-        Pattern pThumbsDown = Pattern.compile("alt=\"Thumb down\".*?</span>");
-        Pattern pThumbsUp = Pattern.compile("alt=\"Thumb up\".*?</span>");
-        Pattern pThumb2 = Pattern.compile("\">.*?</span>");
-
-        Pattern pCommentDate = Pattern.compile("<small>.*?</small>");
-             */
+            mThumb = pThumbsDown.matcher(comment);
+            if (mThumb.find()) {
+                mThumb = pThumb2.matcher(mThumb.group());
+                if (mThumb.find()) {
+                    item.setkarmaDown(mThumb.group().length());
+                }
+            }
 
 
         }

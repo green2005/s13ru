@@ -78,4 +78,6 @@ public class NewsDetailFragment extends BaseDataFragment implements DetailFragme
     public String getTitle() {
         return NEWS_TITLE;
     }
+
+
 }

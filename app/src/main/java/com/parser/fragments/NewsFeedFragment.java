@@ -3,6 +3,8 @@ package com.parser.fragments;
 import android.app.Activity;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.CursorAdapter;
 
 import com.parser.CalendarUtils;
@@ -13,7 +15,7 @@ import com.parser.db.NewsFeedDBHelper;
 import com.parser.processors.NewsFeedProcessor;
 import com.parser.processors.Processor;
 
-public class NewsFeedFragment extends BaseDataFragment {
+public class NewsFeedFragment extends BaseDataFragment implements AdapterView.OnItemClickListener {
     private NewsAdapter mAdapter;
     private Processor mNewsProcessor;
 
@@ -68,4 +70,8 @@ public class NewsFeedFragment extends BaseDataFragment {
     }
 
 
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+    }
 }

@@ -3,6 +3,8 @@ package com.parser.fragments;
 import android.app.Activity;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.CursorAdapter;
 
 import com.parser.API;
@@ -69,4 +71,5 @@ public class VKFeedFragment extends BaseDataFragment {
     protected String[] getFields() {
         return VKFeedDBHelper.getDataFields();
     }
+
 }

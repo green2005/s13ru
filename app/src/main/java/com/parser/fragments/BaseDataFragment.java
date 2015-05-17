@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
+import android.widget.AdapterView;
 import android.widget.CursorAdapter;
 import android.widget.ListView;
 
@@ -22,7 +23,7 @@ import com.parser.R;
 import com.parser.loader.ImageLoader;
 import com.parser.processors.Processor;
 
-public abstract class BaseDataFragment extends Fragment implements PaginationSource, LoaderManager.LoaderCallbacks<Cursor> {
+public abstract class BaseDataFragment extends Fragment implements PaginationSource, LoaderManager.LoaderCallbacks<Cursor>{
 
     private LoadState mState = LoadState.BROWSING;
     private SwipeRefreshLayout mSwipe;
@@ -60,6 +61,7 @@ public abstract class BaseDataFragment extends Fragment implements PaginationSou
         return view;
     }
 
+
     private void initView(View view) {
         ListView listView = (ListView) view.findViewById(R.id.mainListView);
         mSwipe = (SwipeRefreshLayout) view.findViewById(R.id.swipe);
@@ -74,7 +76,14 @@ public abstract class BaseDataFragment extends Fragment implements PaginationSou
         });
         LoaderManager.LoaderCallbacks<Cursor> loaderCallbacks = this;
         getLoaderManager().initLoader(0, null, loaderCallbacks);
-        listView.setAdapter(getAdapter());
+        CursorAdapter adapter = getAdapter();
+        if (adapter != null) {
+            listView.setAdapter(adapter);
+            if (adapter instanceof AdapterView.OnItemClickListener){
+                listView.setOnItemClickListener((AdapterView.OnItemClickListener)adapter);
+            }
+        }
+
         listView.setOnScrollListener(new AbsListView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(AbsListView view, int scrollState) {

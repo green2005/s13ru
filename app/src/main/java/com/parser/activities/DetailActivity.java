@@ -5,7 +5,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBarActivity;
 import android.text.TextUtils;
-
 import com.parser.FragmentMenuItem;
 import com.parser.R;
 import com.parser.fragments.DetailFragment;
