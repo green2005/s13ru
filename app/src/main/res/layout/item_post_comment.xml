@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingLeft="12dp"
+    android:paddingTop="8dp"
+    android:paddingRight="12dp">
+
+    <ImageView
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:background="@drawable/ic_launcher"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:id="@+id/userPick" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="userName"
+        android:id="@+id/tvUserName"
+        android:paddingLeft="8dp"
+        android:paddingTop="8dp"
+        android:layout_alignTop="@+id/userPick"
+        android:layout_toRightOf="@+id/userPick"
+        android:layout_toEndOf="@+id/userPick" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/commentdown"
+        android:id="@+id/imagedown"
+        android:layout_alignBottom="@+id/tvUserName"
+        android:layout_toRightOf="@+id/tvUserName"
+
+        android:layout_marginLeft="22dp"
+        android:layout_marginStart="22dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/tvDowns"
+        android:text="do"
+        android:layout_alignBottom="@+id/tvUserName"
+        android:layout_toRightOf="@+id/imagedown"
+        android:paddingLeft="4dp" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/commentup"
+        android:id="@+id/imageup"
+        android:layout_marginLeft="8dp"
+        android:layout_alignBottom="@+id/tvUserName"
+        android:layout_toRightOf="@+id/tvDowns" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="ups"
+        android:id="@+id/tvUps"
+        android:paddingRight="4dp"
+        android:paddingLeft="4dp"
+        android:layout_alignBottom="@+id/tvUserName"
+        android:layout_toRightOf="@+id/imageup" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/tvDate"
+        android:text="it's a date"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@id/tvUserName"
+        android:paddingTop="12dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/tvComment"
+        android:text="it's a text"
+        android:paddingTop="8dp"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/tvDate" />
+</RelativeLayout>

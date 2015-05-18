@@ -3,7 +3,8 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="12dp">
+    android:paddingTop="8dp"
+    android:paddingLeft="12dp">
 
     <TextView
         android:layout_width="wrap_content"
@@ -11,7 +12,8 @@
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:text="it's a date"
         android:id="@+id/tvDate"
-       android:layout_alignParentLeft="true"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/tvTitle"
         android:layout_alignParentStart="true" />
 
     <TextView
@@ -21,9 +23,7 @@
         android:textSize="@dimen/abc_text_size_title_material"
         android:id="@+id/tvTitle"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/tvDate"
-        android:layout_marginTop="18dp" />
+        android:layout_alignParentStart="true" />
 
 
 </RelativeLayout>

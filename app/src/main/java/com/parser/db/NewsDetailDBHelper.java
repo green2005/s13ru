@@ -63,8 +63,8 @@ public class NewsDetailDBHelper {
     public void bulkInsert(List<NewsDetailItem> detailItems, Context context) {
         ContentResolver resolver = context.getContentResolver();
         ContentValues[] contentValues = getContentValues(detailItems);
-        resolver.bulkInsert(NewsContentProvider.NEWSFEED_CONTENT_URI, contentValues);
-        resolver.notifyChange(NewsContentProvider.NEWSFEED_CONTENT_URI, null);
+        resolver.bulkInsert(NewsContentProvider.NEWS_DETAIL_URI, contentValues);
+        resolver.notifyChange(NewsContentProvider.NEWS_DETAIL_URI, null);
     }
 
     public void clearOldEntries(Context context) {
@@ -85,7 +85,7 @@ public class NewsDetailDBHelper {
 
 
 
-            contentValues.put(TEXT_COLUMN, item.getContentType());
+            contentValues.put(TEXT_COLUMN, item.getText());
             values[i++] = contentValues;
         }
         return values;
