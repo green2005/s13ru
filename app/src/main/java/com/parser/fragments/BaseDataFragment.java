@@ -32,6 +32,7 @@ public abstract class BaseDataFragment extends Fragment implements PaginationSou
     private int mOffset = 0;
     private DataSource mDataSource;
     private ImageLoader mImageLoader;
+    private ListView mListView;
 
     private enum LoadState {
         LOADING,
@@ -66,13 +67,16 @@ public abstract class BaseDataFragment extends Fragment implements PaginationSou
         return view;
     }
 
+    protected ListView getListView(){
+        return mListView;
+    }
 
     private void initView(View view) {
-        ListView listView = (ListView) view.findViewById(R.id.mainListView);
+        mListView = (ListView) view.findViewById(R.id.mainListView);
         mSwipe = (SwipeRefreshLayout) view.findViewById(R.id.swipe);
         mFooterView = LayoutInflater.from(getActivity()).inflate(R.layout.footer_view, null);
         mFooterView.setVisibility(View.GONE);
-        listView.addFooterView(mFooterView);
+        mListView.addFooterView(mFooterView);
         mSwipe.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -83,13 +87,13 @@ public abstract class BaseDataFragment extends Fragment implements PaginationSou
         getLoaderManager().initLoader(0, null, loaderCallbacks);
         CursorAdapter adapter = getAdapter();
         if (adapter != null) {
-            listView.setAdapter(adapter);
+            mListView.setAdapter(adapter);
             if (adapter instanceof AdapterView.OnItemClickListener){
-                listView.setOnItemClickListener((AdapterView.OnItemClickListener)adapter);
+                mListView.setOnItemClickListener((AdapterView.OnItemClickListener) adapter);
             }
         }
 
-        listView.setOnScrollListener(new AbsListView.OnScrollListener() {
+        mListView.setOnScrollListener(new AbsListView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(AbsListView view, int scrollState) {
                 if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE) {

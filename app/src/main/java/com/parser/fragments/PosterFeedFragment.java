@@ -62,5 +62,15 @@ public class PosterFeedFragment extends BaseDataFragment {
         return PosterFeedDBHelper.getDataFields();
     }
 
+    @Override
+    protected String getSelection() {
+        return null;
+    }
+
+    @Override
+    protected String[] getSelectionArgs() {
+        return new String[0];
+    }
+
 
 }

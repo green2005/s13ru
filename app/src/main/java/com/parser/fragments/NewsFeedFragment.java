@@ -69,6 +69,16 @@ public class NewsFeedFragment extends BaseDataFragment implements AdapterView.On
         return NewsFeedDBHelper.getDataFields();
     }
 
+    @Override
+    protected String getSelection() {
+        return null;
+    }
+
+    @Override
+    protected String[] getSelectionArgs() {
+        return new String[0];
+    }
+
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {

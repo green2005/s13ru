@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.net.Uri;
 import android.os.Bundle;
 import android.widget.CursorAdapter;
+import android.widget.ListView;
 
 import com.parser.R;
 import com.parser.adapters.NewsDetailAdapter;
@@ -24,6 +25,11 @@ public class NewsDetailFragment extends BaseDataFragment implements DetailFragme
     public static NewsDetailFragment getNewFragment(Bundle params) {
         NewsDetailFragment fragment = new NewsDetailFragment();
         fragment.setArguments(params);
+        ListView listView = fragment.getListView();
+        if (listView != null){
+            listView.setDivider(null);
+        }
+
         return fragment;
     }
 
@@ -76,7 +82,7 @@ public class NewsDetailFragment extends BaseDataFragment implements DetailFragme
 
     @Override
     protected String getSelection() {
-        return NewsDetailDBHelper."";
+        return "";//NewsDetailDBHelper."";
     }
 
     @Override

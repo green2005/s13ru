@@ -16,20 +16,16 @@ import com.parser.R;
 import com.parser.ResizableImageView;
 import com.parser.db.NewsDetailDBHelper;
 import com.parser.loader.ImageLoader;
-import com.parser.processors.NewsDetailProcessor;
 
 public class NewsDetailAdapter extends SimpleCursorAdapter {
     private static final int VIEW_TYPE_COUNT = 5;
-    private static final int VIEW_TYPE = 1;
 
     private LayoutInflater mInflater;
-    private Context mContext;
     private ImageLoader mImageLoader;
 
 
     public NewsDetailAdapter(Context context, int layout, Cursor c, String[] from, int[] to, int flags) {
         super(context, layout, c, from, to, flags);
-        mContext = context;
         mInflater = LayoutInflater.from(context);
         mImageLoader = ImageLoader.get(context);
     }

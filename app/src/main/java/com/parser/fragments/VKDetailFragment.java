@@ -49,6 +49,16 @@ public class VKDetailFragment extends BaseDataFragment implements DetailFragment
     }
 
     @Override
+    protected String getSelection() {
+        return null;
+    }
+
+    @Override
+    protected String[] getSelectionArgs() {
+        return new String[0];
+    }
+
+    @Override
     public String getTitle() {
         return VK_TITLE;
     }

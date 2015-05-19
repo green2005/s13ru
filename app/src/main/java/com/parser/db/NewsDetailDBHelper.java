@@ -45,7 +45,7 @@ public class NewsDetailDBHelper {
             KARMA_UP_COLUMN + " integer, " +
             COMMENT_ID_COLUMN + " text, " +
             TEXT_COLUMN + " text, " +
-            POST_ID + "text" +
+            POST_ID + " text " +
             " ) ";
 
     private static final String DROP_TABLE = "drop table if exists " + TABLE_NAME;
@@ -102,7 +102,7 @@ public class NewsDetailDBHelper {
     }
 
     public static String[] getFields() {
-        String fields[] = new String[11];
+        String fields[] = new String[12];
         fields[0] = ID_COLUMN;
         fields[1] = RECORD_TYPE_COLUMN;
         fields[2] = AUTHOR_COLUMN;

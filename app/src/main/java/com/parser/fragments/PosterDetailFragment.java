@@ -49,6 +49,16 @@ public class PosterDetailFragment extends BaseDataFragment implements DetailFrag
     }
 
     @Override
+    protected String getSelection() {
+        return null;
+    }
+
+    @Override
+    protected String[] getSelectionArgs() {
+        return new String[0];
+    }
+
+    @Override
     public String getTitle() {
         return POSTER_TITLE;
     }

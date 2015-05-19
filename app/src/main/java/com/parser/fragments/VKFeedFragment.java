@@ -72,4 +72,14 @@ public class VKFeedFragment extends BaseDataFragment {
         return VKFeedDBHelper.getDataFields();
     }
 
+    @Override
+    protected String getSelection() {
+        return null;
+    }
+
+    @Override
+    protected String[] getSelectionArgs() {
+        return new String[0];
+    }
+
 }
