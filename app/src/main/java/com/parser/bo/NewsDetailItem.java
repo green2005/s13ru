@@ -28,6 +28,7 @@ public class NewsDetailItem {
     private int mKarma_up;
     private int mKarma_down;
     private String mAuthor_image;
+    private String mPost_id;
 
 
     public String getText() {
@@ -36,6 +37,14 @@ public class NewsDetailItem {
 
     public void setText(String text) {
         mText = text;
+    }
+
+    public String getPostId(){
+        return mPost_id;
+    }
+
+    public void setPostId(String postId){
+        mPost_id = postId;
     }
 
     public void setContentType(int contentType) {
@@ -62,16 +71,16 @@ public class NewsDetailItem {
         mDate = date;
     }
 
-    public void setHeight(int height){
-        mImageHeight = height;
+    public void setHeight(String height){
+        mImageHeight = Integer.parseInt(height);
     }
 
     public int getHeight(){
         return mImageHeight;
     }
 
-    public void setWidth(int width){
-        mImageWidth = width;
+    public void setWidth(String width){
+        mImageWidth = Integer.parseInt(width);
     }
 
     public int getWidth(){
@@ -96,16 +105,16 @@ public class NewsDetailItem {
         return mKarma_up;
     }
 
-    public void setKarma_up(int ups){
-        mKarma_up = ups;
+    public void setKarma_up(String ups){
+        mKarma_up = Integer.parseInt(ups);
     }
 
     public int getKarmaDown(){
         return mKarma_down;
     }
 
-    public void setkarmaDown(int downs){
-        mKarma_down = downs;
+    public void setkarmaDown(String downs){
+        mKarma_down = Integer.parseInt(downs);
     }
 
     public String getAuthorImage(){

@@ -31,19 +31,22 @@ public class NewsDetailDBHelper {
     public static final String KARMA_UP_COLUMN = "karma_up";
     public static final String KARMA_DOWN_COLUMN = "karma_down";
     public static final String COMMENT_ID_COLUMN = "comment_id";
+    public static final String POST_ID = "post_id";
 
     private static final String CREATE_TABLE = " create table " + TABLE_NAME + " ( " +
             ID_COLUMN + " integer primary key AUTOINCREMENT , " +
             RECORD_TYPE_COLUMN + " integer, " +
             AUTHOR_COLUMN + " text, " +
             DATE_COLUMN + " text, " +
-            IMAGE_WIDTH_COLUMN + " integer , "+
-            IMAGE_HEIGTH_COLUMN+" integer, "+
-            AUTHOR_IMAGE_COLUMN +" text, "+
-            KARMA_DOWN_COLUMN+" integer, "+
-            KARMA_UP_COLUMN +" integer, "+
-            COMMENT_ID_COLUMN+" text, "+
-            TEXT_COLUMN + " text" + " ) ";
+            IMAGE_WIDTH_COLUMN + " integer , " +
+            IMAGE_HEIGTH_COLUMN + " integer, " +
+            AUTHOR_IMAGE_COLUMN + " text, " +
+            KARMA_DOWN_COLUMN + " integer, " +
+            KARMA_UP_COLUMN + " integer, " +
+            COMMENT_ID_COLUMN + " text, " +
+            TEXT_COLUMN + " text, " +
+            POST_ID + "text" +
+            " ) ";
 
     private static final String DROP_TABLE = "drop table if exists " + TABLE_NAME;
 
@@ -76,28 +79,42 @@ public class NewsDetailDBHelper {
         ContentValues[] values = new ContentValues[items.size()];
         int i = 0;
         for (NewsDetailItem item : items) {
+            /*
+            KARMA_DOWN_COLUMN + " integer, " +
+            KARMA_UP_COLUMN + " integer, " +
+            COMMENT_ID_COLUMN + " text, " +
+             */
             ContentValues contentValues = new ContentValues();
             contentValues.put(AUTHOR_COLUMN, item.getAuthor());
             contentValues.put(DATE_COLUMN, item.getDate());
             contentValues.put(RECORD_TYPE_COLUMN, item.getContentType());
             contentValues.put(IMAGE_WIDTH_COLUMN, item.getWidth());
             contentValues.put(IMAGE_HEIGTH_COLUMN, item.getHeight());
-
-
-
+            contentValues.put(AUTHOR_IMAGE_COLUMN, item.getAuthorImage());
+            contentValues.put(COMMENT_ID_COLUMN, item.getCommentId());
+            contentValues.put(KARMA_DOWN_COLUMN, item.getKarmaDown());
+            contentValues.put(KARMA_UP_COLUMN, item.getmKarma_up());
             contentValues.put(TEXT_COLUMN, item.getText());
+            contentValues.put(POST_ID, item.getPostId());
             values[i++] = contentValues;
         }
         return values;
     }
 
     public static String[] getFields() {
-        String fields[] = new String[5];
+        String fields[] = new String[11];
         fields[0] = ID_COLUMN;
         fields[1] = RECORD_TYPE_COLUMN;
         fields[2] = AUTHOR_COLUMN;
         fields[3] = DATE_COLUMN;
         fields[4] = TEXT_COLUMN;
+        fields[5] = IMAGE_WIDTH_COLUMN;
+        fields[6] = IMAGE_HEIGTH_COLUMN;
+        fields[7] = AUTHOR_IMAGE_COLUMN;
+        fields[8] = KARMA_UP_COLUMN;
+        fields[9] = KARMA_DOWN_COLUMN;
+        fields[10] = COMMENT_ID_COLUMN;
+        fields[11] = POST_ID;
         return fields;
     }
 

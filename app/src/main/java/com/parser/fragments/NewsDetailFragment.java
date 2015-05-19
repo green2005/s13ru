@@ -37,7 +37,7 @@ public class NewsDetailFragment extends BaseDataFragment implements DetailFragme
     @Override
     protected CursorAdapter getAdapter() {
         Activity activity = getActivity();
-        if (activity != null) {
+        if (activity != null && mAdapter == null) {
             mAdapter = new NewsDetailAdapter(activity, R.layout.item_news_feed_image, null, NewsDetailDBHelper.getFields(), null, 0);
         }
         return mAdapter;
@@ -72,6 +72,16 @@ public class NewsDetailFragment extends BaseDataFragment implements DetailFragme
     @Override
     protected String[] getFields() {
         return NewsDetailDBHelper.getFields();
+    }
+
+    @Override
+    protected String getSelection() {
+        return NewsDetailDBHelper."";
+    }
+
+    @Override
+    protected String[] getSelectionArgs() {
+        return new String[0];
     }
 
     @Override

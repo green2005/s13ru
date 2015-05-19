@@ -52,6 +52,11 @@ public abstract class BaseDataFragment extends Fragment implements PaginationSou
 
     protected abstract String[] getFields();
 
+    protected abstract String getSelection();
+
+    protected abstract String[] getSelectionArgs();
+
+
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_main, null);
@@ -162,7 +167,7 @@ public abstract class BaseDataFragment extends Fragment implements PaginationSou
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
         return new CursorLoader(this.getActivity(),
-                getUri(), getFields(), null, null, null);
+                getUri(), getFields(), getSelection(), getSelectionArgs(), null);
     }
 
     @Override

@@ -28,8 +28,8 @@ public class NewsDetailProcessor extends Processor {
         List<NewsDetailItem> items = new ArrayList<>();
         parseResponse(response, items);
         mDBHelper.clearOldEntries(mContext);
-        return mDBHelper.bulkInsert(items, mContext);
-        //return 0;
+        mDBHelper.bulkInsert(items, mContext);
+        return items.size();
     }
 
     private void parseResponse(String response, List<NewsDetailItem> items) {
@@ -39,7 +39,7 @@ public class NewsDetailProcessor extends Processor {
         Pattern pText = Pattern.compile("class=\"itemtext\".*?<script");
         Pattern pTitle = Pattern.compile(" dc:title=\".*?\"");
         Pattern pDate = Pattern.compile("class=\"metadata\">.*?</a>");
-        Pattern pDate2 = Pattern.compile("</strong>" + ". * ?" + "</a>");
+        Pattern pDate2 = Pattern.compile("</strong>.*?<");
         Pattern pImage = Pattern.compile("<a href=\".*?" + "</a>");
         Pattern pImage2 = Pattern.compile("<img class=.*?/>");
         Pattern pImageUrl = Pattern.compile("src=\".*?\"");
@@ -60,6 +60,8 @@ public class NewsDetailProcessor extends Processor {
         Pattern pThumb2 = Pattern.compile("\">.*?</span>");
 
         Pattern pCommentDate = Pattern.compile("<small>.*?</small>");
+        Pattern pWidth = Pattern.compile( "width=\".*?\"");
+        Pattern pHeight = Pattern.compile("height=\".*?\"");
 
         Matcher itemMatcher;
 
@@ -68,7 +70,8 @@ public class NewsDetailProcessor extends Processor {
         if (itemMatcher.find()) {
             itemMatcher = pDate2.matcher(itemMatcher.group());
             if (itemMatcher.find()) {
-                date = itemMatcher.group().substring("</strong>".length()).replace("</a>", "");
+                date = itemMatcher.group().substring(10);
+                date = date.substring(0,date.length() - 2);
             }
         }
 
@@ -86,7 +89,7 @@ public class NewsDetailProcessor extends Processor {
         int imageEnd = 0;
         int textStart;
         if (mText.find()) {
-            String text = mText.group().substring("class=\"itemtext\"".length()).replace("<script", "");
+            String text = mText.group().substring("class=\"itemtext\"".length()).replace("<script", "").substring(1);
             Matcher mImage = pImage.matcher(text);
             while (mImage.find()) {
                 Matcher mImage2 = pImage2.matcher(mImage.group());
@@ -101,11 +104,24 @@ public class NewsDetailProcessor extends Processor {
                     items.add(item);
                     //  text = text.substring(imageEnd);
                     Matcher mImageUrl = pImageUrl.matcher(mImage2.group());
+                    Matcher mWidth = pWidth.matcher(mImage2.group());
+                    Matcher mHeight = pHeight.matcher(mImage2.group());
+
                     if (mImageUrl.find()) {
                         String imageUrl = mImageUrl.group().substring("src=\"".length()).replace("\"", "");
                         NewsDetailItem imageItem = new NewsDetailItem();
                         imageItem.setText(imageUrl);
                         imageItem.setContentType(NewsDetailDBHelper.NewsItemType.IMAGE.ordinal());
+                        if (mWidth.find()){
+                            String width = mWidth.group().substring(7);
+                            width = width.substring(0, width.length() - 1);
+                            imageItem.setWidth(width);
+                        }
+                        if (mHeight.find()){
+                            String height = mHeight.group().substring(8);
+                            height = height.substring(0, height.length() - 1);
+                            imageItem.setHeight(height);
+                        }
                         items.add(imageItem);
                     }
                 }
@@ -138,19 +154,24 @@ public class NewsDetailProcessor extends Processor {
                 }
                 mAuthor = pAuthorName1.matcher(author);
                 if (mAuthor.find()) {
-                    item.setAuthor(mAuthor.group());
+                    author = mAuthor.group().substring(2);
                 } else {
                     mAuthor = pAuthorName2.matcher(author);
                     if (mAuthor.find()) {
-                        item.setAuthor(mAuthor.group());
+                        author = mAuthor.group().substring(8);
                     }
                 }
+                int authorLen = author.length();
+                if (authorLen > 7){
+                 author = author.substring(0,author.length()-7);
+                }
+                item.setAuthor(author);
             }
             Matcher mCommentText = pCommentText.matcher(comment);
             if (mCommentText.find()) {
                 mCommentText = pCommentTex2t.matcher(mCommentText.group());
                 if (mCommentText.find()) {
-                    item.setText(mCommentText.group());
+                    item.setText(mCommentText.group().substring(1));
                 }
             }
             Matcher mCommentId = pCommentId.matcher(comment);
@@ -159,20 +180,27 @@ public class NewsDetailProcessor extends Processor {
             }
             Matcher mCommentDate = pCommentDate.matcher(comment);
             if (mCommentDate.find()) {
-                item.setDate(mCommentDate.group());
+                String commentDate = mCommentDate.group().substring(7);
+                commentDate = commentDate.substring(0, commentDate.length() - 8);
+                item.setDate(commentDate);
             }
             Matcher mThumb = pThumbsUp.matcher(comment);
+            String thumbs;
             if (mThumb.find()) {
                 mThumb = pThumb2.matcher(mThumb.group());
                 if (mThumb.find()) {
-                    item.setKarma_up(mThumb.group().length());
+                    thumbs = mThumb.group().substring(2);
+                    thumbs = thumbs.substring(0, thumbs.length() - 7);
+                    item.setKarma_up(thumbs);
                 }
             }
             mThumb = pThumbsDown.matcher(comment);
             if (mThumb.find()) {
                 mThumb = pThumb2.matcher(mThumb.group());
                 if (mThumb.find()) {
-                    item.setkarmaDown(mThumb.group().length());
+                    thumbs = mThumb.group().substring(2);
+                    thumbs = thumbs.substring(0, thumbs.length() - 7);
+                    item.setkarmaDown(thumbs);
                 }
             }
 
