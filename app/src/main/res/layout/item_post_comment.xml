@@ -3,8 +3,16 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingLeft="12dp"
-    android:paddingTop="8dp"
+    android:paddingTop="2dp"
     android:paddingRight="12dp">
+    <View
+        android:paddingBottom="6dp"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:background="@color/divider" />
+
 
     <ImageView
         android:layout_width="32dp"

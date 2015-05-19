@@ -3,6 +3,10 @@ package com.parser.fragments;
 import android.app.Activity;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.CursorAdapter;
 import android.widget.ListView;
 
@@ -25,11 +29,6 @@ public class NewsDetailFragment extends BaseDataFragment implements DetailFragme
     public static NewsDetailFragment getNewFragment(Bundle params) {
         NewsDetailFragment fragment = new NewsDetailFragment();
         fragment.setArguments(params);
-        ListView listView = fragment.getListView();
-        if (listView != null){
-            listView.setDivider(null);
-        }
-
         return fragment;
     }
 
@@ -37,6 +36,22 @@ public class NewsDetailFragment extends BaseDataFragment implements DetailFragme
         super.setArguments(arguments);
         if (arguments != null) {
             mUrl = arguments.getString(URL_PARAM);
+        }
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View view= super.onCreateView(inflater, container, savedInstanceState);
+        initListView();
+        return view;
+    }
+
+    private void initListView(){
+        ListView listView = getListView();
+        if (listView != null){
+            listView.setDivider(null);
+            listView.setDividerHeight(0);
+          //  listView.setEnabled(false);
         }
     }
 
