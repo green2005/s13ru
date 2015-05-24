@@ -4,6 +4,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.text.Html;
 import android.text.TextUtils;
+import android.text.method.LinkMovementMethod;
 import android.text.util.Linkify;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 
+import com.parser.LinkifiedTextView;
 import com.parser.R;
 import com.parser.ResizableImageView;
 import com.parser.db.NewsDetailDBHelper;
@@ -45,10 +47,12 @@ public class NewsDetailAdapter extends SimpleCursorAdapter {
         }
     }
 
-    @Override
-    public boolean isEnabled(int position) {
-        return false;
-    }
+  //  @Override
+ //   public boolean isEnabled(int position) {
+ //       return false;
+ //   }
+
+
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
@@ -72,9 +76,11 @@ public class NewsDetailAdapter extends SimpleCursorAdapter {
         } else if (viewType == NewsDetailDBHelper.NewsItemType.TEXT.ordinal()) {
             if (convertedViewType != viewType || cnView == null)
                 cnView = mInflater.inflate(R.layout.item_post_text, null);
-            TextView tvText = (TextView) cnView.findViewById(R.id.tvText);
+            LinkifiedTextView tvText = (LinkifiedTextView) cnView.findViewById(R.id.tvText);
+         //   tvText.setMovementMethod(LinkMovementMethod.getInstance());
             tvText.setText(Html.fromHtml(cursor.getString(cursor.getColumnIndex(NewsDetailDBHelper.TEXT_COLUMN))));
             Linkify.addLinks(tvText, Linkify.ALL);
+
         } else if (viewType == NewsDetailDBHelper.NewsItemType.IMAGE.ordinal()) {
             if (convertedViewType != viewType || cnView == null)
                 cnView = mInflater.inflate(R.layout.item_post_image, null);
