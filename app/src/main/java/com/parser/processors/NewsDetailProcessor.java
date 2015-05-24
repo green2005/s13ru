@@ -14,9 +14,11 @@ import java.util.regex.Pattern;
 public class NewsDetailProcessor extends Processor {
     private NewsDetailDBHelper mDBHelper;
     private Context mContext;
+    private String mUrl;
 
-    public NewsDetailProcessor(Context context) {
+    public NewsDetailProcessor(String url, Context context) {
         mContext = context;
+        mUrl = url;
     }
 
     @Override
@@ -82,6 +84,7 @@ public class NewsDetailProcessor extends Processor {
             item.setText(itemText);
             item.setDate(date);
             item.setContentType(NewsDetailDBHelper.NewsItemType.TITLE.ordinal());
+            item.setPostId(mUrl);
             items.add(item);
         }
 
@@ -101,6 +104,7 @@ public class NewsDetailProcessor extends Processor {
                     NewsDetailItem item = new NewsDetailItem();
                     item.setText(itemText);
                     item.setContentType(NewsDetailDBHelper.NewsItemType.TEXT.ordinal());
+                    item.setPostId(mUrl);
                     items.add(item);
                     //  text = text.substring(imageEnd);
                     Matcher mImageUrl = pImageUrl.matcher(mImage2.group());
@@ -122,6 +126,7 @@ public class NewsDetailProcessor extends Processor {
                             height = height.substring(0, height.length() - 1);
                             imageItem.setHeight(height);
                         }
+                        imageItem.setPostId(mUrl);
                         items.add(imageItem);
                     }
                 }
@@ -130,17 +135,20 @@ public class NewsDetailProcessor extends Processor {
             text = text.substring(imageEnd);
             item.setText(text);
             item.setContentType(NewsDetailDBHelper.NewsItemType.TEXT.ordinal());
+            item.setPostId(mUrl);
             items.add(item);
         }
 
         NewsDetailItem item = new NewsDetailItem();
         item.setContentType(NewsDetailDBHelper.NewsItemType.REPLY_HEADER.ordinal());
+        item.setPostId(mUrl);
         items.add(item);
 
         Matcher mComment = pComment.matcher(response);
         while (mComment.find()) {
             item = new NewsDetailItem();
             item.setContentType(NewsDetailDBHelper.NewsItemType.REPLY.ordinal());
+            item.setPostId(mUrl);
             items.add(item);
 
             String comment = mComment.group();
@@ -150,15 +158,19 @@ public class NewsDetailProcessor extends Processor {
                 String author = mAuthor.group();
                 Matcher mImage = pAuthorImage.matcher(author);
                 if (mImage.find()) {
-                    item.setAuthorImage(mImage.group().substring(("src='").length()).replace("'", ""));
+                    String authorImage = mImage.group().substring(("src='").length()).replace("'", "");
+                    authorImage = authorImage.replace("#038;", "");
+                    item.setAuthorImage(authorImage);
                 }
                 mAuthor = pAuthorName1.matcher(author);
                 if (mAuthor.find()) {
                     author = mAuthor.group().substring(2);
+                    author = author.substring(0, author.length() - 4);
                 } else {
                     mAuthor = pAuthorName2.matcher(author);
-                    if (mAuthor.find()) {
+                    while (mAuthor.find()) {
                         author = mAuthor.group().substring(8);
+                        mAuthor = pAuthorName2.matcher(author);
                     }
                 }
                 int authorLen = author.length();

@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.text.Html;
+import android.text.util.Linkify;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -59,7 +61,8 @@ public class NewsAdapter extends SimpleCursorAdapter implements AdapterView.OnIt
         } else {
             viewHolder = (ViewHolder) cnView.getTag();
         }
-        viewHolder.tvText.setText(CursorHelper.getString(cursor, NewsFeedDBHelper.TEXT_COLUMN));
+        viewHolder.tvText.setText(Html.fromHtml(CursorHelper.getString(cursor, NewsFeedDBHelper.TEXT_COLUMN)));
+       // Linkify.addLinks(viewHolder.tvText, Linkify.ALL);
         viewHolder.tvTitle.setText(CursorHelper.getString(cursor, NewsFeedDBHelper.TITLE_COLUMN));
         viewHolder.tvDate.setText(CursorHelper.getString(cursor, NewsFeedDBHelper.DATE_COLUMN));
         return cnView;

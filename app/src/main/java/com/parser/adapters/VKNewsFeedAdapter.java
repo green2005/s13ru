@@ -2,7 +2,9 @@ package com.parser.adapters;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.text.Html;
 import android.text.TextUtils;
+import android.text.util.Linkify;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -56,7 +58,8 @@ public class VKNewsFeedAdapter extends SimpleCursorAdapter {
         } else {
             viewHolder = (ViewHolder) cnView.getTag();
         }
-        viewHolder.tvText.setText(CursorHelper.getString(cursor, VKFeedDBHelper.TEXT_COLUMN));
+        viewHolder.tvText.setText(Html.fromHtml(CursorHelper.getString(cursor, VKFeedDBHelper.TEXT_COLUMN)));
+       // Linkify.addLinks(viewHolder.tvText, Linkify.ALL);
         viewHolder.tvTitle.setText(CursorHelper.getString(cursor, VKFeedDBHelper.TITLE_COLUMN));
         viewHolder.tvDate.setText(CursorHelper.getString(cursor, VKFeedDBHelper.DATE_COLUMN));
         setImage(viewHolder.imageView, CursorHelper.getString(cursor, VKFeedDBHelper.IMAGE_URL_COLUMN));

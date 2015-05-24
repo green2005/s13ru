@@ -79,7 +79,7 @@ public class NewsDetailFragment extends BaseDataFragment implements DetailFragme
         if (mProcessor == null) {
             Activity activity = getActivity();
             if (activity != null) {
-                mProcessor = new NewsDetailProcessor(activity);
+                mProcessor = new NewsDetailProcessor(mUrl, activity);
             }
         }
         return mProcessor;
@@ -97,12 +97,14 @@ public class NewsDetailFragment extends BaseDataFragment implements DetailFragme
 
     @Override
     protected String getSelection() {
-        return "";//NewsDetailDBHelper."";
+        return NewsDetailDBHelper.POST_ID + "=?";//NewsDetailDBHelper."";
     }
 
     @Override
     protected String[] getSelectionArgs() {
-        return new String[0];
+        String args[]= new String[1];
+        args[0] = mUrl;
+        return args;
     }
 
     @Override

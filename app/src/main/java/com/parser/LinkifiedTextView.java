@@ -20,7 +20,7 @@ public class LinkifiedTextView extends TextView {
         TextView widget = (TextView) this;
         Object text = widget.getText();
         if (text instanceof Spanned) {
-            SpannedString buffer = (SpannedString) text;
+            Spanned buffer = (Spanned) text;
 
             int action = event.getAction();
 

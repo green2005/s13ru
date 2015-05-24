@@ -65,8 +65,7 @@ public class MainActivity extends ActionBarActivity {
             }
         };
         mDrawerLayout.setDrawerListener(mDrawerToggle);
-
-
+        selectItem(FragmentMenuItem.NEWS_ITEM);
     }
 
     private void selectItem(FragmentMenuItem item) {

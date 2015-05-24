@@ -2,24 +2,27 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingLeft="12dp"
+    android:paddingLeft="8dp"
     android:paddingTop="2dp"
-    android:paddingRight="12dp">
+    android:paddingRight="8dp">
     <View
         android:paddingBottom="6dp"
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
-        android:background="@color/divider" />
+        android:background="@color/divider"
+        android:id="@+id/view" />
 
 
     <ImageView
         android:layout_width="32dp"
         android:layout_height="32dp"
-        android:layout_alignParentTop="true"
+        android:id="@+id/userPick"
+        android:layout_below="@+id/view"
         android:layout_alignParentLeft="true"
-        android:id="@+id/userPick" />
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="6dp" />
 
     <TextView
         android:layout_width="wrap_content"
