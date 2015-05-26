@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingLeft="12dp"
-    android:paddingTop="16dp">
+    android:paddingTop="12dp">
 
     <TextView
         android:id="@+id/tvTitle"
@@ -46,6 +46,5 @@
         android:layout_below="@+id/tvText"
         android:adjustViewBounds="true"
         android:scaleType="fitCenter"
-        android:src="@drawable/ic_launcher"
         android:visibility="visible" />
 </RelativeLayout>

@@ -4,15 +4,14 @@ import android.content.Context;
 import android.database.Cursor;
 import android.text.Html;
 import android.text.TextUtils;
-import android.text.util.Linkify;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 
 import com.parser.R;
+import com.parser.ResizableImageView;
 import com.parser.db.CursorHelper;
 import com.parser.db.VKFeedDBHelper;
 import com.parser.fragments.PaginationSource;
@@ -53,24 +52,30 @@ public class VKNewsFeedAdapter extends SimpleCursorAdapter {
             viewHolder.tvDate = (TextView) cnView.findViewById(R.id.tvDate);
             viewHolder.tvText = (TextView) cnView.findViewById(R.id.tvText);
             viewHolder.tvTitle = (TextView) cnView.findViewById(R.id.tvTitle);
-            viewHolder.imageView = (ImageView) cnView.findViewById(R.id.image);
+            viewHolder.imageView = (ResizableImageView) cnView.findViewById(R.id.image);
             cnView.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder) cnView.getTag();
         }
         viewHolder.tvText.setText(Html.fromHtml(CursorHelper.getString(cursor, VKFeedDBHelper.TEXT_COLUMN)));
-       // Linkify.addLinks(viewHolder.tvText, Linkify.ALL);
-        viewHolder.tvTitle.setText(CursorHelper.getString(cursor, VKFeedDBHelper.TITLE_COLUMN));
+        // Linkify.addLinks(viewHolder.tvText, Linkify.ALL);
+        viewHolder.tvTitle.setVisibility(View.GONE);
+
+        //viewHolder.tvTitle.setText(CursorHelper.getString(cursor, VKFeedDBHelper.TITLE_COLUMN));
         viewHolder.tvDate.setText(CursorHelper.getString(cursor, VKFeedDBHelper.DATE_COLUMN));
-        setImage(viewHolder.imageView, CursorHelper.getString(cursor, VKFeedDBHelper.IMAGE_URL_COLUMN));
+        setImage(viewHolder.imageView, CursorHelper.getString(cursor, VKFeedDBHelper.IMAGE_URL_COLUMN),
+                CursorHelper.getInt(cursor, VKFeedDBHelper.IMAGE_WIDTH),
+                CursorHelper.getInt(cursor, VKFeedDBHelper.IMAGE_HEIGHT)
+        );
         return cnView;
     }
 
-    private void setImage(ImageView imageView, String imageUrl) {
+    private void setImage(ResizableImageView imageView, String imageUrl, int width, int height) {
         if (TextUtils.isEmpty(imageUrl)) {
             imageView.setVisibility(View.GONE);
         } else {
             imageView.setVisibility(View.VISIBLE);
+            imageView.setOriginalImageSize(width, height);
             if (mImageLoader != null) {
                 mImageLoader.loadImage(imageView, imageUrl);
             }
@@ -81,7 +86,7 @@ public class VKNewsFeedAdapter extends SimpleCursorAdapter {
         TextView tvTitle;
         TextView tvText;
         TextView tvDate;
-        ImageView imageView;
+        ResizableImageView imageView;
         //TextView tvAuthor;
     }
 

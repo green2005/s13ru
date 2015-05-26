@@ -29,7 +29,7 @@ public class VKFeedProcessor extends VKProcessor {
         for (int i = 0; i < ja.length(); i++) {
             JSONObject joItem = ja.optJSONObject(i);
             if (joItem != null) {
-                VKFeedItem item = new VKFeedItem(mContext, joItem);
+                VKFeedItem item = new VKFeedItem(joItem);
                 values.add(item);
             }
         }

@@ -21,7 +21,11 @@ public class VKFeedDBHelper {
 
     public static final String POST_ID_COLUMN = "post_id";
     public static final String IMAGE_URL_COLUMN = "image_url";
+    public static final String IMAGE_WIDTH = "image_width";
+    public static final String IMAGE_HEIGHT = "image_height";
+
     public static final String DESCRIPTION_COLUMN = "description";
+
 
     public static final String TITLE_COLUMN = "title";
 
@@ -37,7 +41,9 @@ public class VKFeedDBHelper {
                     TITLE_COLUMN + " text, " +
                     POST_ID_COLUMN + " text, " +
                     IMAGE_URL_COLUMN + " text, " +
-                    DESCRIPTION_COLUMN +" text " +
+                    DESCRIPTION_COLUMN +" text, " +
+                    IMAGE_WIDTH + " Integer, " +
+                    IMAGE_HEIGHT +" Integer "+
                     ")";
     private static final String DROP_TABLE = "drop table if exists " + TABLE_NAME;
 
@@ -73,6 +79,9 @@ public class VKFeedDBHelper {
             value.put(TEXT_COLUMN, item.getText());
             value.put(TITLE_COLUMN, item.getTitle());
             value.put(IMAGE_URL_COLUMN, item.getImageUrl());
+            value.put(IMAGE_WIDTH, item.getImageWidth());
+            value.put(IMAGE_HEIGHT, item.getImageHeight());
+
             value.put(POST_ID_COLUMN, item.getPostId());
             value.put(DATE_COLUMN, item.getDate());
             value.put(DESCRIPTION_COLUMN, item.getDescription());
@@ -88,7 +97,7 @@ public class VKFeedDBHelper {
     }
 
     public static String[] getDataFields(){
-        String[] dataFields = new String[8];
+        String[] dataFields = new String[10];
         dataFields[0] =  ID_COLUMN;
         dataFields[1] =  TEXT_COLUMN;
         dataFields[2] =  AUTHOR_COLUMN;
@@ -97,16 +106,9 @@ public class VKFeedDBHelper {
         dataFields[5] = IMAGE_URL_COLUMN;
         dataFields[6] = DESCRIPTION_COLUMN;
         dataFields[7] = POST_ID_COLUMN;
+        dataFields[8] = IMAGE_WIDTH;
+        dataFields[9] = IMAGE_HEIGHT;
         return dataFields;
     }
-
-
-
-    public static void onUpgrade(SQLiteDatabase db) {
-        db.execSQL(DROP_TABLE);
-        onCreate(db);
-    }
-
-
 
 }

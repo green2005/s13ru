@@ -19,7 +19,6 @@ import com.parser.processors.Processor;
 
 public class NewsDetailFragment extends BaseDataFragment implements DetailFragment {
     //todo move to resources
-    private static final String NEWS_TITLE = "Новости";
     public static final String URL_PARAM = "url_param";
     private String mUrl;
     private NewsDetailAdapter mAdapter;
@@ -41,17 +40,17 @@ public class NewsDetailFragment extends BaseDataFragment implements DetailFragme
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view= super.onCreateView(inflater, container, savedInstanceState);
+        View view = super.onCreateView(inflater, container, savedInstanceState);
         initListView();
         return view;
     }
 
-    private void initListView(){
+    private void initListView() {
         ListView listView = getListView();
-        if (listView != null){
+        if (listView != null) {
             listView.setDivider(null);
             listView.setDividerHeight(0);
-          //  listView.setEnabled(false);
+            //  listView.setEnabled(false);
         }
     }
 
@@ -102,15 +101,19 @@ public class NewsDetailFragment extends BaseDataFragment implements DetailFragme
 
     @Override
     protected String[] getSelectionArgs() {
-        String args[]= new String[1];
+        String args[] = new String[1];
         args[0] = mUrl;
         return args;
     }
 
     @Override
     public String getTitle() {
-        return NEWS_TITLE;
+        Activity activity = getActivity();
+        if (activity != null) {
+            activity.getResources().getString(R.string.news_fragment_title);
+        } else {
+            return "";
+        }
+        return "";
     }
-
-
 }
