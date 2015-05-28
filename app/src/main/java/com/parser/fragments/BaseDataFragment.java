@@ -23,7 +23,7 @@ import com.parser.R;
 import com.parser.loader.ImageLoader;
 import com.parser.processors.Processor;
 
-public abstract class BaseDataFragment extends Fragment implements PaginationSource, LoaderManager.LoaderCallbacks<Cursor>{
+public abstract class BaseDataFragment extends Fragment implements PaginationSource, LoaderManager.LoaderCallbacks<Cursor> {
 
     private LoadState mState = LoadState.BROWSING;
     private SwipeRefreshLayout mSwipe;
@@ -33,6 +33,7 @@ public abstract class BaseDataFragment extends Fragment implements PaginationSou
     private DataSource mDataSource;
     private ImageLoader mImageLoader;
     private ListView mListView;
+    private boolean mEofData = false;
 
     private enum LoadState {
         LOADING,
@@ -67,7 +68,7 @@ public abstract class BaseDataFragment extends Fragment implements PaginationSou
         return view;
     }
 
-    protected ListView getListView(){
+    protected ListView getListView() {
         return mListView;
     }
 
@@ -88,7 +89,7 @@ public abstract class BaseDataFragment extends Fragment implements PaginationSou
         CursorAdapter adapter = getAdapter();
         if (adapter != null) {
             mListView.setAdapter(adapter);
-            if (adapter instanceof AdapterView.OnItemClickListener){
+            if (adapter instanceof AdapterView.OnItemClickListener) {
                 mListView.setOnItemClickListener((AdapterView.OnItemClickListener) adapter);
             }
         }
@@ -155,7 +156,9 @@ public abstract class BaseDataFragment extends Fragment implements PaginationSou
                     }
                     if (recordsFetched == 0) {
                         onEmptyDataFetched();
+                        mEofData = true;
                     } else {
+                        mEofData = false;
                         mIsTopRequest = false;
                     }
                 }
@@ -186,10 +189,12 @@ public abstract class BaseDataFragment extends Fragment implements PaginationSou
 
     @Override
     public void loadMore() {
-        int nextDataOffset = getNextDataOffset(mOffset);
-        if (nextDataOffset > 0) {
-            mFooterView.setVisibility(View.VISIBLE);
-            loadData(nextDataOffset);
+        if (!mEofData) {
+            int nextDataOffset = getNextDataOffset(mOffset);
+            if (nextDataOffset > 0) {
+                mFooterView.setVisibility(View.VISIBLE);
+                loadData(nextDataOffset);
+            }
         }
     }
 

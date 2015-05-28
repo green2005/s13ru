@@ -23,4 +23,6 @@
     <string name="commentHeader">Комментарии</string>
     <string name="DETAIL_VIEW_TYPE">detail_view_type</string>
     <string name="news_fragment_title">Новости</string>
+    <string name="vk_fragment_title">ВКонтакте</string>
+
 </resources>
