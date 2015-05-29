@@ -23,7 +23,7 @@ public class VKFeedProcessor extends VKProcessor {
     }
 
     @Override
-    public int process(InputStream stream, boolean isTopRequest) throws Exception {
+    public int process(InputStream stream, boolean isTopRequest, String url) throws Exception {
         JSONArray ja = getVKResponseArray(stream);
         ArrayList<VKFeedItem> values = new ArrayList<>();
         for (int i = 0; i < ja.length(); i++) {
@@ -39,6 +39,8 @@ public class VKFeedProcessor extends VKProcessor {
         mDBHelper.bulkInsert(values, mContext);
         return values.size();
     }
+
+
 
 
 }

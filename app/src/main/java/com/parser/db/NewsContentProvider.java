@@ -6,6 +6,7 @@ import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
+import android.support.annotation.NonNull;
 
 public class NewsContentProvider extends ContentProvider {
 
@@ -19,6 +20,8 @@ public class NewsContentProvider extends ContentProvider {
     private static final int POSTER_FEED_ID = 6;
     private static final int NEWS_DETAIL = 7;
     private static final int NEWS_DETAIL_ID = 8;
+    private static final int VK_DETAIL = 9;
+    private static final int VK_DETAIL_ID = 10;
 
 
     private static final String AUTHORITY = "com.parser";
@@ -44,14 +47,22 @@ public class NewsContentProvider extends ContentProvider {
     public static Uri POSTERFEED_CONTENT_URI_ID = Uri.parse(CONTENT_URI_PREFIX
             + AUTHORITY + "/" + PosterFeedDBHelper.TABLE_NAME + "/#");
 
-    public static final Uri NEWS_DETAIL_URI =  Uri.parse(CONTENT_URI_PREFIX
+    public static final Uri NEWS_DETAIL_URI = Uri.parse(CONTENT_URI_PREFIX
             + AUTHORITY + "/" + NewsDetailDBHelper.TABLE_NAME);
 
     public static Uri NEWS_DETAIL_CONTENT_URI_ID = Uri.parse(CONTENT_URI_PREFIX
             + AUTHORITY + "/" + NewsDetailDBHelper.TABLE_NAME + "/#");
 
-    public static final String CONTENT_TYPE_PREFIX = "vnd.android.cursor.dir/vnd.";
-    public static final String CONTENT_ITEM_TYPE_PREFIX = "vnd.android.cursor.item/vnd.";
+    public static Uri VK_DETAIL_CONTENT_URI = Uri.parse(CONTENT_URI_PREFIX
+                    + AUTHORITY + "/" + VKDetailDBHelper.TABLE_NAME
+    );
+
+    public static Uri VK_DETAIL_CONTENT_URI_ID = Uri.parse(CONTENT_URI_PREFIX
+                    + AUTHORITY + "/" + VKDetailDBHelper.TABLE_NAME + "/#"
+    );
+
+//    public static final String CONTENT_TYPE_PREFIX = "vnd.android.cursor.dir/vnd.";
+  //  public static final String CONTENT_ITEM_TYPE_PREFIX = "vnd.android.cursor.item/vnd.";
 
     private DBHelper mDbHelper;
 
@@ -64,6 +75,8 @@ public class NewsContentProvider extends ContentProvider {
         sURIMatcher.addURI(AUTHORITY, PosterFeedDBHelper.TABLE_NAME + "/#", POSTER_FEED_ID);
         sURIMatcher.addURI(AUTHORITY, NewsDetailDBHelper.TABLE_NAME, NEWS_DETAIL);
         sURIMatcher.addURI(AUTHORITY, NewsDetailDBHelper.TABLE_NAME + "/#", NEWS_DETAIL_ID);
+        sURIMatcher.addURI(AUTHORITY, VKDetailDBHelper.TABLE_NAME, VK_DETAIL);
+        sURIMatcher.addURI(AUTHORITY, VKDetailDBHelper.TABLE_NAME + "/#", VK_DETAIL_ID);
     }
 
     @Override
@@ -94,7 +107,7 @@ public class NewsContentProvider extends ContentProvider {
     }
 
     @Override
-    public int bulkInsert(Uri uri, ContentValues[] values) {
+    public int bulkInsert(Uri uri, @NonNull ContentValues[] values) {
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
         int uriType = sURIMatcher.match(uri);
         String tableName = getTableNameByUriType(uriType);
@@ -136,20 +149,28 @@ public class NewsContentProvider extends ContentProvider {
                 contentUri = VKFEED_CONTENT_URI_ID;
                 break;
             }
-            case (POSTER_FEED):{
+            case (POSTER_FEED): {
                 contentUri = POSTERFEED_CONTENT_URI;
                 break;
             }
-            case (POSTER_FEED_ID):{
+            case (POSTER_FEED_ID): {
                 contentUri = POSTERFEED_CONTENT_URI_ID;
                 break;
             }
-            case (NEWS_DETAIL):{
+            case (NEWS_DETAIL): {
                 contentUri = NEWS_DETAIL_URI;
                 break;
             }
-            case (NEWS_DETAIL_ID):{
+            case (NEWS_DETAIL_ID): {
                 contentUri = NEWS_DETAIL_CONTENT_URI_ID;
+                break;
+            }
+            case (VK_DETAIL): {
+                contentUri = VK_DETAIL_CONTENT_URI;
+                break;
+            }
+            case (VK_DETAIL_ID): {
+                contentUri = VK_DETAIL_CONTENT_URI_ID;
                 break;
             }
         }
@@ -175,20 +196,28 @@ public class NewsContentProvider extends ContentProvider {
                 tableName = VKFeedDBHelper.TABLE_NAME;
                 break;
             }
-            case (POSTER_FEED):{
+            case (POSTER_FEED): {
                 tableName = PosterFeedDBHelper.TABLE_NAME;
                 break;
             }
-            case (POSTER_FEED_ID):{
+            case (POSTER_FEED_ID): {
                 tableName = PosterFeedDBHelper.TABLE_NAME;
                 break;
             }
-            case (NEWS_DETAIL):{
+            case (NEWS_DETAIL): {
                 tableName = NewsDetailDBHelper.TABLE_NAME;
                 break;
             }
-            case (NEWS_DETAIL_ID):{
+            case (NEWS_DETAIL_ID): {
                 tableName = NewsDetailDBHelper.TABLE_NAME;
+                break;
+            }
+            case (VK_DETAIL): {
+                tableName = VKDetailDBHelper.TABLE_NAME;
+                break;
+            }
+            case (VK_DETAIL_ID): {
+                tableName = VKDetailDBHelper.TABLE_NAME;
                 break;
             }
         }

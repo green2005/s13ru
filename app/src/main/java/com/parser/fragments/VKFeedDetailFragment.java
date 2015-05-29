@@ -8,6 +8,8 @@ import android.widget.CursorAdapter;
 import com.parser.API;
 import com.parser.R;
 import com.parser.adapters.VKNewsDetailAdapter;
+import com.parser.db.NewsContentProvider;
+import com.parser.db.VKDetailDBHelper;
 import com.parser.processors.Processor;
 import com.parser.processors.VKDetailsProcessor;
 
@@ -18,7 +20,7 @@ public class VKFeedDetailFragment extends BaseDataFragment implements DetailFrag
     private static final String VK_WALL_URL = API.VK_BASE_URL + "/method/wall.getById?posts=" + API.VK_S13_OWNER_ID + "_%s" +
             "&extended=1";
     private static final String VK_COMMENT_URL = API.VK_BASE_URL + "/method/wall.getComments?owner_id=" + API.VK_S13_OWNER_ID +
-            "&post_id=%s&need_likes=1&count=" + COMMENT_COUNT + "&offset=%d";
+            "&post_id=%s&need_likes=1&count=" + COMMENT_COUNT + "&offset=%d&extended=1";
 
     private VKDetailsProcessor mProcessor;
     private VKNewsDetailAdapter mAdapter;
@@ -61,10 +63,7 @@ public class VKFeedDetailFragment extends BaseDataFragment implements DetailFrag
         if (offset == 0) { //first we get data, then - comments
             url = String.format(VK_WALL_URL, mPost_id);
         } else {
-            if (offset == 1){
-                offset = 0;
-            }
-            url = String.format(VK_COMMENT_URL, mPost_id, offset);
+            url = String.format(VK_COMMENT_URL, mPost_id, offset - 1);
         }
         return url;
     }
@@ -91,22 +90,24 @@ public class VKFeedDetailFragment extends BaseDataFragment implements DetailFrag
 
     @Override
     protected Uri getUri() {
-        return null;
+        return NewsContentProvider.NEWS_DETAIL_URI;
     }
 
     @Override
     protected String[] getFields() {
-        return new String[0];
+        return VKDetailDBHelper.getFields();
     }
 
     @Override
     protected String getSelection() {
-        return null;
+        return VKDetailDBHelper.POST_ID +"=?";
     }
 
     @Override
     protected String[] getSelectionArgs() {
-        return new String[0];
+        String [] ids = new String[1];
+        ids[0] = mPost_id;
+        return ids;
     }
 
     @Override
