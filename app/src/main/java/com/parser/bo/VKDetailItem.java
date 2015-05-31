@@ -11,6 +11,14 @@ public class VKDetailItem {
             AUTHOR_IMAGE + " text, " +
             DATE + " text " +
      */
+    public enum ItemType{
+        CONTENT,
+        COMMENT,
+        ATTACHMENT,
+        DELIMITER
+    }
+
+
     private String mPostId;
     private String mText;
     private int mItemType;
