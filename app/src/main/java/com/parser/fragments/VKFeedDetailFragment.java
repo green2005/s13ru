@@ -18,9 +18,9 @@ public class VKFeedDetailFragment extends BaseDataFragment implements DetailFrag
     public static final String POST_ID_KEY = "post_id";
     private static final int COMMENT_COUNT = 10;
     private static final String VK_WALL_URL = API.VK_BASE_URL + "/method/wall.getById?posts=" + API.VK_S13_OWNER_ID + "_%s" +
-            "&extended=1";
+            "&extended=1&v="+API.VK_API_VERSION;
     private static final String VK_COMMENT_URL = API.VK_BASE_URL + "/method/wall.getComments?owner_id=" + API.VK_S13_OWNER_ID +
-            "&post_id=%s&need_likes=1&count=" + COMMENT_COUNT + "&offset=%d&extended=1";
+            "&post_id=%s&need_likes=1&count=" + COMMENT_COUNT + "&offset=%d&extended=1&v="+API.VK_API_VERSION;
 
     private VKDetailsProcessor mProcessor;
     private VKNewsDetailAdapter mAdapter;

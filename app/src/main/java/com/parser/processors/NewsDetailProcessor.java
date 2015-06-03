@@ -22,7 +22,7 @@ public class NewsDetailProcessor extends Processor {
     }
 
     @Override
-    public int process(InputStream stream, boolean isTopRequest) throws Exception {
+    public int process(InputStream stream, boolean isTopRequest, String url) throws Exception {
         String response = getStringFromStream(stream, UTF8_CHARSET);
         if (mDBHelper == null) {
             mDBHelper = new NewsDetailDBHelper();
@@ -221,5 +221,6 @@ public class NewsDetailProcessor extends Processor {
 
 
     }
+
 
 }

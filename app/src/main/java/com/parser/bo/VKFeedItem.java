@@ -14,7 +14,6 @@ public class VKFeedItem {
 
     public VKFeedItem(JSONObject jo) {
         mDf = new SimpleDateFormat("dd.MM.yyyy");
-        // mDf = android.text.format.DateFormat.getDateFormat(context);
         mJo = jo;
         processImageAttachment();
     }

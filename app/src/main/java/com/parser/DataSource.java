@@ -35,7 +35,7 @@ public class DataSource {
                 try {
                     InputStream stream = getInputStream(url);
                     try {
-                         mRecordsFetched = mProcessor.process(stream, isTopRequest);
+                         mRecordsFetched = mProcessor.process(stream, isTopRequest, url);
                     } finally {
                         if (stream != null) {
                             stream.close();

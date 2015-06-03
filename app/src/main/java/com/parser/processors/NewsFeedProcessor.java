@@ -34,7 +34,7 @@ public class NewsFeedProcessor extends Processor {
     }
 
     @Override
-    public int process(InputStream stream, boolean isTopRequest) throws Exception {
+    public int process(InputStream stream, boolean isTopRequest, String url) throws Exception {
         mParser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);
         mParser.setInput(stream, null);
         mParser.nextTag();

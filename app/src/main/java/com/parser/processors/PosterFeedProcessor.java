@@ -22,7 +22,7 @@ public class PosterFeedProcessor extends Processor {
     }
 
     @Override
-    public int process(InputStream stream, boolean isTopRequest) throws Exception {
+    public int process(InputStream stream, boolean isTopRequest, String url) throws Exception {
         List<PosterFeedItem> items = getPosters(stream);
         if (items != null && items.size() > 0) {
             mDbHelper.clearOldEntries(mContext);

@@ -1,29 +1,38 @@
 package com.parser.adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
+import android.os.Bundle;
 import android.text.Html;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 
+import com.parser.FragmentMenuItem;
 import com.parser.R;
 import com.parser.ResizableImageView;
+import com.parser.activities.DetailActivity;
 import com.parser.db.CursorHelper;
 import com.parser.db.VKFeedDBHelper;
 import com.parser.fragments.PaginationSource;
+import com.parser.fragments.VKFeedDetailFragment;
 import com.parser.loader.ImageLoader;
 
-public class VKNewsFeedAdapter extends SimpleCursorAdapter {
+public class VKNewsFeedAdapter extends SimpleCursorAdapter implements ListView.OnItemClickListener {
     private LayoutInflater mInflater;
     private PaginationSource mSource;
     private ImageLoader mImageLoader;
+    private Context mContext;
 
     public VKNewsFeedAdapter(Context context, int layout, Cursor c, String[] from, int[] to, int flags) {
         super(context, layout, c, from, to, flags);
+        mContext = context;
         mInflater = LayoutInflater.from(context);
         mImageLoader = ImageLoader.get(context);
     }
@@ -80,6 +89,21 @@ public class VKNewsFeedAdapter extends SimpleCursorAdapter {
                 mImageLoader.loadImage(imageView, imageUrl);
             }
         }
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        Cursor cursor = getCursor();
+        if (cursor == null) {
+            return;
+        }
+        String postId = CursorHelper.getString(cursor, VKFeedDBHelper.POST_ID_COLUMN);
+        Bundle args = new Bundle();
+        args.putInt(DetailActivity.DETAIL_TYPE, FragmentMenuItem.VK_ITEM.ordinal());
+        args.putString(VKFeedDetailFragment.POST_ID_KEY, postId);
+        Intent intent = new Intent(mContext, DetailActivity.class);
+        intent.putExtras(args);
+        mContext.startActivity(intent);
     }
 
     private class ViewHolder {

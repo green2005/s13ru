@@ -15,7 +15,7 @@ import com.parser.db.NewsFeedDBHelper;
 import com.parser.processors.NewsFeedProcessor;
 import com.parser.processors.Processor;
 
-public class NewsFeedFragment extends BaseDataFragment implements AdapterView.OnItemClickListener {
+public class NewsFeedFragment extends BaseDataFragment {
     private NewsAdapter mAdapter;
     private Processor mNewsProcessor;
 
@@ -80,8 +80,4 @@ public class NewsFeedFragment extends BaseDataFragment implements AdapterView.On
     }
 
 
-    @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-    }
 }
