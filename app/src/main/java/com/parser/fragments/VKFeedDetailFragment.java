@@ -52,6 +52,7 @@ public class VKFeedDetailFragment extends BaseDataFragment implements DetailFrag
             Activity activity = getActivity();
             if (activity != null) {
                 mAdapter = new VKNewsDetailAdapter(activity, R.layout.item_news_feed_image, null, getFields(), null, 0);
+                mAdapter.setPaginationSource(this);
             }
         }
         return mAdapter;
@@ -90,7 +91,7 @@ public class VKFeedDetailFragment extends BaseDataFragment implements DetailFrag
 
     @Override
     protected Uri getUri() {
-        return NewsContentProvider.NEWS_DETAIL_URI;
+        return NewsContentProvider.VK_DETAIL_CONTENT_URI;
     }
 
     @Override

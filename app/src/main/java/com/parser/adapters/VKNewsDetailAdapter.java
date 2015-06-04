@@ -14,13 +14,14 @@ import com.parser.R;
 import com.parser.ResizableImageView;
 import com.parser.bo.VKDetailItem;
 import com.parser.db.CursorHelper;
-import com.parser.db.NewsDetailDBHelper;
 import com.parser.db.VKDetailDBHelper;
+import com.parser.fragments.PaginationSource;
 import com.parser.loader.ImageLoader;
 
 public class VKNewsDetailAdapter extends SimpleCursorAdapter {
     private LayoutInflater mInflater;
     private ImageLoader mImageLoader;
+    private PaginationSource mSource;
 
     public VKNewsDetailAdapter(Context context, int layout, Cursor c, String[] from, int[] to, int flags) {
         super(context, layout, c, from, to, flags);
@@ -47,13 +48,20 @@ public class VKNewsDetailAdapter extends SimpleCursorAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         Cursor cursor = getCursor();
         if (cursor != null) {
+
+            if (position == cursor.getCount() - 1) {
+                if (mSource != null) {
+                    mSource.loadMore();
+                }
+            }
+
             cursor.moveToPosition(position);
             int itemType = getItemViewType(position);
             if (itemType == VKDetailItem.ItemType.CONTENT.ordinal()) {
                 convertView = getContentView(convertView, cursor);
             } else if (itemType == VKDetailItem.ItemType.COMMENT.ordinal()) {
                 convertView = getCommentView(convertView, cursor);
-            } else if (itemType == VKDetailItem.ItemType.ATTACHMENT.ordinal()) {
+            } else if (itemType == VKDetailItem.ItemType.ATTACHMENT_PHOTO.ordinal()) {
                 convertView = getAttachmentView(convertView, cursor);
             } else if (itemType == VKDetailItem.ItemType.DELIMITER.ordinal()) {
                 convertView = getDelimiterView(convertView);
@@ -70,7 +78,8 @@ public class VKNewsDetailAdapter extends SimpleCursorAdapter {
             viewHolder.tvAuthor = (TextView) view.findViewById(R.id.tvUserName);
             viewHolder.uPick = (ImageView) view.findViewById(R.id.userPick);
             viewHolder.tvDate = (TextView) view.findViewById(R.id.tvDate);
-            viewHolder.tvText = (TextView)view.findViewById(R.id.tvText);
+            viewHolder.tvText = (TextView)view.findViewById(R.id.tvComment);
+            view.setTag(viewHolder);
         } else{
             viewHolder = (PostViewHolder)view.getTag();
         }
@@ -92,6 +101,10 @@ public class VKNewsDetailAdapter extends SimpleCursorAdapter {
         ResizableImageView imageView = (ResizableImageView) view.findViewById(R.id.image);
         setImage(imageView, CursorHelper.getString(cursor, VKDetailDBHelper.TEXT));
         return view;
+    }
+
+    public void setPaginationSource(PaginationSource source) {
+        mSource = source;
     }
 
     private View getDelimiterView(View view) {

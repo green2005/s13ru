@@ -82,12 +82,8 @@ public class VKDetailsProcessor extends VKProcessor {
     }
 
     private boolean isWallPost(String url){
-        if (url.contains("getComments")){
-            return false;
-        } else
-        {
-            return  true;
-        }
+        //todo refactor it
+        return url.contains("wall.getById");
     }
 
     private void processGroups(JSONArray jGroups, Map<String, Profile> profilesMap) {
@@ -146,10 +142,22 @@ public class VKDetailsProcessor extends VKProcessor {
                 JSONObject photo = attachment.optJSONObject("photo");
                 if (photo != null) {
                     VKDetailItem photoItem = new VKDetailItem();
-                    photoItem.setItemType(VKDetailItem.ItemType.ATTACHMENT.ordinal());
+                    photoItem.setItemType(VKDetailItem.ItemType.ATTACHMENT_PHOTO.ordinal());
                     photoItem.setPostId(postId);
+                    photoItem.setText(photo.optString("photo_604"));
+                    photoItem.setWidth(photo.optInt("width"));
+                    photoItem.setHeight(photo.optInt("height"));
                     photoItem.setCommentId(commentId);
                     postItems.add(photoItem);
+                }
+                JSONObject video = attachment.optJSONObject("video");
+                if (video != null){
+                    VKDetailItem videoItem = new VKDetailItem();
+                    videoItem.setItemType(VKDetailItem.ItemType.ATTACHMENT_VIDEO.ordinal());
+                    videoItem.setPostId(postId);
+                    videoItem.setText(video.optString("photo_640"));
+                    videoItem.setCommentId(video.optString("id"));
+                    postItems.add(videoItem);
                 }
             }
         }
@@ -161,7 +169,7 @@ public class VKDetailsProcessor extends VKProcessor {
         }
         JSONObject jWall = jWallArray.optJSONObject(0);
         VKDetailItem item = new VKDetailItem();
-        item.setItemType(VKDetailItem.ItemType.COMMENT.ordinal());
+        item.setItemType(VKDetailItem.ItemType.CONTENT.ordinal());
         item.setPostId(postId);
         item.setText(jWall.optString("text"));
         String date = jWall.optString("date");

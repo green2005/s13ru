@@ -15,24 +15,28 @@ public class VKDetailDBHelper {
     public static final String ID = "_id";
     public static final String POST_ID = "post_id";
     public static final String COMMENT_ID = "comment_id";
-    public static final String TEXT = "text";
+    public static final String TEXT = "item_text";
     public static final String ITEM_TYPE = "item_type";
     public static final String AUTHOR_NAME = "author_name";
     public static final String AUTHOR_ID = "author_id";
     public static final String AUTHOR_IMAGE = "author_image";
     public static final String DATE = "date";
+    public static final String WIDTH = "width";
+    public static final String HEIGHT = "height";
 
 
     private static final String CREATE_TABLE = "create table " + TABLE_NAME + " (" +
             ID + " integer primary key AUTOINCREMENT, " +
             POST_ID + " text, " +
-            COMMENT_ID + " text," +
+            COMMENT_ID + " text, " +
             TEXT + " text, " +
-            ITEM_TYPE + " integer," +
-            AUTHOR_NAME + "text, " +
-            AUTHOR_ID + "text, " +
+            ITEM_TYPE + " integer, " +
+            AUTHOR_NAME + " text, " +
+            AUTHOR_ID + " text, " +
             AUTHOR_IMAGE + " text, " +
-            DATE + " text " +
+            DATE + " text, " +
+            WIDTH+" integer, "+
+            HEIGHT+" integer "+
             ")";
 
     private static final String DROP_TABLE = "drop table if exists " + TABLE_NAME;
@@ -53,6 +57,7 @@ public class VKDetailDBHelper {
         ContentValues[] values = new ContentValues[items.size()];
         int i = 0;
         for (VKDetailItem item : items) {
+            values[i] = new ContentValues();
             values[i].put(VKDetailDBHelper.POST_ID, item.getPostId());
             values[i].put(VKDetailDBHelper.COMMENT_ID, item.getCommentId());
             values[i].put(VKDetailDBHelper.TEXT, item.getText());
@@ -61,6 +66,8 @@ public class VKDetailDBHelper {
             values[i].put(VKDetailDBHelper.AUTHOR_ID, item.getAuthorId());
             values[i].put(VKDetailDBHelper.AUTHOR_IMAGE, item.getAuthorImage());
             values[i].put(VKDetailDBHelper.DATE, item.getDate());
+            values[i].put(VKDetailDBHelper.WIDTH, item.getWidth());
+            values[i].put(VKDetailDBHelper.HEIGHT, item.getHeight());
             i++;
         }
         return values;
@@ -78,7 +85,7 @@ public class VKDetailDBHelper {
     }
 
     public static String[] getFields() {
-        String fields[] = new String[9];
+        String fields[] = new String[11];
         fields[0] = ID;
         fields[1] = POST_ID;
         fields[2] = COMMENT_ID;
@@ -88,6 +95,8 @@ public class VKDetailDBHelper {
         fields[6] = AUTHOR_ID;
         fields[7] = AUTHOR_IMAGE;
         fields[8] = DATE;
+        fields[9] = WIDTH;
+        fields[10] = HEIGHT;
         return fields;
     }
 }

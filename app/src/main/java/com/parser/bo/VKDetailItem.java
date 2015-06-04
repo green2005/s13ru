@@ -1,32 +1,26 @@
 package com.parser.bo;
 
 public class VKDetailItem {
-    /*
-     POST_ID + " text, " +
-            COMMENT_ID + " text," +
-            TEXT + " text, " +
-            ITEM_TYPE + " integer," +
-            AUTHOR_NAME + "text, " +
-            AUTHOR_ID + "text, " +
-            AUTHOR_IMAGE + " text, " +
-            DATE + " text " +
-     */
+
     public enum ItemType{
         CONTENT,
         COMMENT,
-        ATTACHMENT,
+        ATTACHMENT_PHOTO,
+        ATTACHMENT_VIDEO,
         DELIMITER
     }
 
 
-    private String mPostId;
+    private String mPostId = "";
     private String mText;
     private int mItemType;
     private String mAuthorName;
     private String mAuthorId;
     private String mAuthorImage;
     private String mDate;
-    private String mCommentId;
+    private String mCommentId = "";
+    private int mWidth;
+    private int mHeight;
 
     public String getPostId() {
         return mPostId;
@@ -90,5 +84,21 @@ public class VKDetailItem {
 
     public void setCommentId(String commentId) {
         mCommentId = commentId;
+    }
+
+    public void setWidth(int width){
+        mWidth = width;
+    }
+
+    public void setHeight(int height){
+        mHeight = height;
+    }
+
+    public int getHeight(){
+        return mHeight;
+    }
+
+    public int getWidth(){
+        return mWidth;
     }
 }
