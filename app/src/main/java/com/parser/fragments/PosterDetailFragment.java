@@ -9,13 +9,25 @@ import android.widget.CursorAdapter;
 import com.parser.processors.Processor;
 
 public class PosterDetailFragment extends BaseDataFragment implements DetailFragment{
+    public static final String POSTER_LINK_KEY = "link";
+
     //todo move to resources
     private static final String POSTER_TITLE = "Афиша";
+
+    private String mLink;
 
     public static PosterDetailFragment getNewFragment(Bundle params){
         PosterDetailFragment fragment = new PosterDetailFragment();
         fragment.setArguments(params);
         return fragment;
+    }
+
+    @Override
+    public void setArguments(Bundle args) {
+        super.setArguments(args);
+        if (args != null){
+            mLink = args.getString(POSTER_LINK_KEY);
+        }
     }
 
     @Override

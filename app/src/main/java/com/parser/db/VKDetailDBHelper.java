@@ -73,7 +73,6 @@ public class VKDetailDBHelper {
         return values;
     }
 
-
     public static void onCreate(SQLiteDatabase db) {
         db.execSQL(CREATE_TABLE);
 

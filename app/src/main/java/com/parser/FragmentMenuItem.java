@@ -2,10 +2,10 @@ package com.parser;
 
 public enum FragmentMenuItem {
 
-    NEWS_ITEM(R.string.news, R.drawable.ic_drawer),
-    POSTER_ITEM(R.string.posters, R.drawable.ic_launcher),
-    VK_ITEM(R.string.vk, R.drawable.ic_drawer),
-    ADVERTS_ITEM(R.string.adverts, R.drawable.ic_drawer);
+    NEWS_ITEM(R.string.news, R.drawable.ic_news),
+    POSTER_ITEM(R.string.posters, R.drawable.ic_posters),
+    VK_ITEM(R.string.vk, R.drawable.ic_vk),
+    SETTINGS_ITEM(R.string.settings, R.drawable.ic_settings);
 
     private int mImageResId;
     private int mNameResId;

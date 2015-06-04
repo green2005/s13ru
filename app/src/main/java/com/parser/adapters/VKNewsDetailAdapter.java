@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.parser.R;
 import com.parser.ResizableImageView;
@@ -22,11 +23,13 @@ public class VKNewsDetailAdapter extends SimpleCursorAdapter {
     private LayoutInflater mInflater;
     private ImageLoader mImageLoader;
     private PaginationSource mSource;
+    private Context mContext;
 
     public VKNewsDetailAdapter(Context context, int layout, Cursor c, String[] from, int[] to, int flags) {
         super(context, layout, c, from, to, flags);
         mInflater = LayoutInflater.from(context);
         mImageLoader = ImageLoader.get(context);
+        mContext = context;
     }
 
     @Override
@@ -62,7 +65,9 @@ public class VKNewsDetailAdapter extends SimpleCursorAdapter {
             } else if (itemType == VKDetailItem.ItemType.COMMENT.ordinal()) {
                 convertView = getCommentView(convertView, cursor);
             } else if (itemType == VKDetailItem.ItemType.ATTACHMENT_PHOTO.ordinal()) {
-                convertView = getAttachmentView(convertView, cursor);
+                convertView = getAttachmentPhotoView(convertView, cursor);
+            } else if (itemType == VKDetailItem.ItemType.ATTACHMENT_VIDEO.ordinal()) {
+                convertView = getAttachmentVideoView(convertView, cursor);
             } else if (itemType == VKDetailItem.ItemType.DELIMITER.ordinal()) {
                 convertView = getDelimiterView(convertView);
             }
@@ -72,16 +77,16 @@ public class VKNewsDetailAdapter extends SimpleCursorAdapter {
 
     private View getContentView(View view, Cursor cursor) {
         PostViewHolder viewHolder;
-        if (view == null){
+        if (view == null) {
             view = mInflater.inflate(R.layout.item_vk_post, null);
             viewHolder = new PostViewHolder();
             viewHolder.tvAuthor = (TextView) view.findViewById(R.id.tvUserName);
             viewHolder.uPick = (ImageView) view.findViewById(R.id.userPick);
             viewHolder.tvDate = (TextView) view.findViewById(R.id.tvDate);
-            viewHolder.tvText = (TextView)view.findViewById(R.id.tvComment);
+            viewHolder.tvText = (TextView) view.findViewById(R.id.tvComment);
             view.setTag(viewHolder);
-        } else{
-            viewHolder = (PostViewHolder)view.getTag();
+        } else {
+            viewHolder = (PostViewHolder) view.getTag();
         }
         setImage(viewHolder.uPick, CursorHelper.getString(cursor, VKDetailDBHelper.AUTHOR_IMAGE));
         viewHolder.tvText.setText(CursorHelper.getString(cursor, VKDetailDBHelper.TEXT));
@@ -94,8 +99,26 @@ public class VKNewsDetailAdapter extends SimpleCursorAdapter {
         return getContentView(view, cursor);
     }
 
-    private View getAttachmentView(View view, Cursor cursor) {
-        if (view == null){
+    private View getAttachmentVideoView(View view, Cursor cursor) {
+        if (view == null) {
+            view = mInflater.inflate(R.layout.item_post_image, null);
+        }
+        ResizableImageView imageView = (ResizableImageView) view.findViewById(R.id.image);
+        setImage(imageView, CursorHelper.getString(cursor, VKDetailDBHelper.TEXT));
+        imageView.setTag(R.string.vk_video_id, CursorHelper.getString(cursor, VKDetailDBHelper.COMMENT_ID));
+        imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String videoId = (String) v.getTag(R.string.vk_video_id);
+                //todo show video
+                Toast.makeText(mContext, videoId, Toast.LENGTH_LONG).show();
+            }
+        });
+        return view;
+    }
+
+    private View getAttachmentPhotoView(View view, Cursor cursor) {
+        if (view == null) {
             view = mInflater.inflate(R.layout.item_post_image, null);
         }
         ResizableImageView imageView = (ResizableImageView) view.findViewById(R.id.image);
@@ -122,7 +145,7 @@ public class VKNewsDetailAdapter extends SimpleCursorAdapter {
         }
     }
 
-    private class PostViewHolder{
+    private class PostViewHolder {
         TextView tvAuthor;
         TextView tvDate;
         TextView tvText;

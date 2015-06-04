@@ -83,10 +83,6 @@ public class MainActivity extends ActionBarActivity {
                 fragment = PosterFeedFragment.getNewFragment(null);
                 break;
             }
-            case ADVERTS_ITEM: {
-
-                break;
-            }
         }
         if (fragment != null) {
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
