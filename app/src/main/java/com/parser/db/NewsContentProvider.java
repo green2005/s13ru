@@ -22,6 +22,8 @@ public class NewsContentProvider extends ContentProvider {
     private static final int NEWS_DETAIL_ID = 8;
     private static final int VK_DETAIL = 9;
     private static final int VK_DETAIL_ID = 10;
+    private static final int POSTER_DETAIL = 11;
+    private static final int POSTER_DETAIL_ID = 12;
 
 
     private static final String AUTHORITY = "com.parser";
@@ -61,6 +63,14 @@ public class NewsContentProvider extends ContentProvider {
                     + AUTHORITY + "/" + VKDetailDBHelper.TABLE_NAME + "/#"
     );
 
+    public static Uri POSTER_DETAIL_CONTENT_URI = Uri.parse( CONTENT_URI_PREFIX
+                    +AUTHORITY + "/" + PosterDetailDBHelper.TABLE_NAME
+    );
+
+    public static Uri POSTER_DETAIL_CONTENT_URI_ID = Uri.parse( CONTENT_URI_PREFIX
+                    +AUTHORITY + "/" + PosterDetailDBHelper.TABLE_NAME +"/#"
+    );
+
 //    public static final String CONTENT_TYPE_PREFIX = "vnd.android.cursor.dir/vnd.";
   //  public static final String CONTENT_ITEM_TYPE_PREFIX = "vnd.android.cursor.item/vnd.";
 
@@ -77,6 +87,8 @@ public class NewsContentProvider extends ContentProvider {
         sURIMatcher.addURI(AUTHORITY, NewsDetailDBHelper.TABLE_NAME + "/#", NEWS_DETAIL_ID);
         sURIMatcher.addURI(AUTHORITY, VKDetailDBHelper.TABLE_NAME, VK_DETAIL);
         sURIMatcher.addURI(AUTHORITY, VKDetailDBHelper.TABLE_NAME + "/#", VK_DETAIL_ID);
+        sURIMatcher.addURI(AUTHORITY, PosterDetailDBHelper.TABLE_NAME, POSTER_DETAIL);
+        sURIMatcher.addURI(AUTHORITY, PosterDetailDBHelper.TABLE_NAME + "/#", POSTER_DETAIL_ID);
     }
 
     @Override
@@ -94,7 +106,6 @@ public class NewsContentProvider extends ContentProvider {
         cr.setNotificationUri(getContext().getContentResolver(), contentUri);
         return cr;
     }
-
 
     @Override
     public String getType(Uri uri) {
@@ -173,6 +184,15 @@ public class NewsContentProvider extends ContentProvider {
                 contentUri = VK_DETAIL_CONTENT_URI_ID;
                 break;
             }
+            case (POSTER_DETAIL):{
+                contentUri = POSTER_DETAIL_CONTENT_URI;
+                break;
+            }
+
+            case (POSTER_DETAIL_ID):{
+                contentUri = POSTER_DETAIL_CONTENT_URI_ID;
+                break;
+            }
         }
         return contentUri;
     }
@@ -218,6 +238,14 @@ public class NewsContentProvider extends ContentProvider {
             }
             case (VK_DETAIL_ID): {
                 tableName = VKDetailDBHelper.TABLE_NAME;
+                break;
+            }
+            case (POSTER_DETAIL):{
+                tableName = PosterDetailDBHelper.TABLE_NAME;
+                break;
+            }
+            case (POSTER_DETAIL_ID):{
+                tableName = PosterDetailDBHelper.TABLE_NAME;
                 break;
             }
         }
