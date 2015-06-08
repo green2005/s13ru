@@ -1,15 +1,10 @@
 package com.parser.bo;
 
 public class PosterDetailItem {
-    /*
-      public static final String TEXT_COLUMN = "text";
-    public static final String DATE_COLUMN = "date";
-    public static final String PLACE_COLUMN = "place";
-    public static final String URL_COLUMN = "url";
-    public static final String CONTENT_TYPE_COLUMN = "content_type";
-     */
+
     private String mText;
     private String mDate;
+    private String mTime;
     private String mPlace;
     private String mUrl;
     private int mContentType;
@@ -32,6 +27,14 @@ public class PosterDetailItem {
 
     public String getItemDate() {
         return mDate;
+    }
+
+    public String getItemTime() {
+        return mTime;
+    }
+
+    public void setItemTime(String time) {
+        mTime = time;
     }
 
     public void setItemDate(String date) {

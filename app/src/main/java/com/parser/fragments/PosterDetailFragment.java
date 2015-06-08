@@ -60,7 +60,7 @@ public class PosterDetailFragment extends BaseDataFragment implements DetailFrag
     @Override
     protected Processor getProcessor() {
         if (mProcessor == null) {
-            mProcessor = new PosterDetailProcessor();
+            mProcessor = new PosterDetailProcessor(mContext);
         }
         return mProcessor;
     }
