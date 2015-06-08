@@ -17,7 +17,7 @@ public class PosterDetailDBHelper {
         DESCRIPTION,
         IMAGE_ATTACHMENT,
         VIDEO_ATTACHMENT,
-        TIME_RECORD
+        TIMEPLACE_RECORD
     }
 
     public static final String TABLE_NAME = "poster_detail";
