@@ -3,7 +3,10 @@ package com.parser.fragments;
 import android.app.Activity;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.view.View;
 import android.widget.CursorAdapter;
+import android.widget.ListView;
 
 import com.parser.R;
 import com.parser.adapters.PosterDetailAdapter;
@@ -26,6 +29,16 @@ public class PosterDetailFragment extends BaseDataFragment implements DetailFrag
         PosterDetailFragment fragment = new PosterDetailFragment();
         fragment.setArguments(params);
         return fragment;
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        ListView listView = getListView();
+        if (listView != null) {
+            listView.setDividerHeight(0);
+            listView.setDivider(null);
+        }
     }
 
     @Override
@@ -60,7 +73,10 @@ public class PosterDetailFragment extends BaseDataFragment implements DetailFrag
     @Override
     protected Processor getProcessor() {
         if (mProcessor == null) {
-            mProcessor = new PosterDetailProcessor(mContext);
+            Activity activity = getActivity();
+            if (activity != null) {
+                mProcessor = new PosterDetailProcessor(activity);
+            }
         }
         return mProcessor;
     }

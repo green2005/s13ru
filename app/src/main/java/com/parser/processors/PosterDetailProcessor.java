@@ -18,8 +18,8 @@ public class PosterDetailProcessor extends Processor {
     private PosterDetailDBHelper mDBHelper;
     private Context mContext;
 
-    private static final String TITLE_PREFIX = "<div class=\"afisha-hline\">\n";
-    private static final String TITLE_SUFFIX = "\n</div>";
+    private static final String TITLE_PREFIX = "<title>";
+    private static final String TITLE_SUFFIX = "</title>";
     private static final String INFONAME_PREF = "<div class=\"view-event-field_name\">";
     private static final String END_DIV = "</div>";
     private static final String INFOVALUE_PREF = "<div class=\"view-event-field_text\">";
@@ -53,7 +53,7 @@ public class PosterDetailProcessor extends Processor {
     }
 
     private List<PosterDetailItem> getPosterItems(InputStream stream) throws Exception {
-        String response = getStringFromStream(stream, UTF8_CHARSET);
+        String response = getStringFromStream(stream, WIN_CHARSET);
         List<PosterDetailItem> items = new ArrayList<>();
 
         Pattern pTitle = Pattern.compile(TITLE_PREFIX + ".*?" + TITLE_SUFFIX);
@@ -64,7 +64,7 @@ public class PosterDetailProcessor extends Processor {
 
         Pattern pDescription = Pattern.compile(DESCRIPTION_PREF + ".*?" + END_DIV);
 
-        Pattern pPoster = Pattern.compile("<div class=\"view-event-poster\">\n" +
+        Pattern pPoster = Pattern.compile("<div class=\"view-event-poster\">" +
                 ".*?" + "</div>");
         Pattern pPosterImage = Pattern.compile(IMG_PREFIX + ".*?" + IMG_POSTF);
 
@@ -108,7 +108,7 @@ public class PosterDetailProcessor extends Processor {
             if (!TextUtils.isEmpty(info)) {
                 PosterDetailItem item = new PosterDetailItem();
                 item.setContentType(PosterDetailDBHelper.POSTER_RECORD_TYPE.DESCRIPTION.ordinal());
-                item.setItemText(info + infoValue);
+                item.setItemText(info + " " + infoValue);
                 items.add(item);
             }
         }
@@ -120,7 +120,7 @@ public class PosterDetailProcessor extends Processor {
                 PosterDetailItem item = new PosterDetailItem();
                 item.setContentType(PosterDetailDBHelper.POSTER_RECORD_TYPE.IMAGE_ATTACHMENT.ordinal());
                 String img = mPoster.group().substring(IMG_PREFIX.length());
-                img = img.substring(0, IMG_POSTF.length());
+                img = img.substring(0, img.length() - IMG_POSTF.length());
                 item.setItemText(img);
                 items.add(item);
             }

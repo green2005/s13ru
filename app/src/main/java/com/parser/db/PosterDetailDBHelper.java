@@ -5,7 +5,6 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
-import com.parser.bo.NewsFeedItem;
 import com.parser.bo.PosterDetailItem;
 
 import java.util.List;
@@ -35,10 +34,10 @@ public class PosterDetailDBHelper {
                     ID_COLUMN + " Integer NOT NULL PRIMARY KEY AUTOINCREMENT, " +
                     TEXT_COLUMN + " text, " +
                     DATE_COLUMN + " text, " +
-                    TIME_COLUMN +" text, " +
+                    TIME_COLUMN + " text, " +
                     PLACE_COLUMN + " text , " +
                     URL_COLUMN + " text, " +
-                    CONTENT_TYPE_COLUMN + " Integer "+
+                    CONTENT_TYPE_COLUMN + " Integer " +
                     ")";
     private static final String DROP_TABLE = "drop table if exists " + TABLE_NAME;
 
@@ -78,6 +77,15 @@ public class PosterDetailDBHelper {
         db.execSQL(DROP_TABLE);
         onCreate(db);
     }
+    /*
+    public static final String ID_COLUMN = "_id";
+    public static final String TEXT_COLUMN = "item_text";
+    public static final String DATE_COLUMN = "date_text";
+    public static final String TIME_COLUMN = "time_text";
+    public static final String PLACE_COLUMN = "place";
+    public static final String URL_COLUMN = "url";
+    public static final String CONTENT_TYPE_COLUMN = "content_type";
+     */
 
     public static String[] getDataFields() {
         String[] dataFields = new String[7];
@@ -87,6 +95,7 @@ public class PosterDetailDBHelper {
         dataFields[3] = PLACE_COLUMN;
         dataFields[4] = URL_COLUMN;
         dataFields[5] = CONTENT_TYPE_COLUMN;
+        dataFields[6] = TEXT_COLUMN;
         return dataFields;
     }
 }

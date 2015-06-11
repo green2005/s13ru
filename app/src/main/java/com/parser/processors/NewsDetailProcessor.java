@@ -93,10 +93,10 @@ public class NewsDetailProcessor extends Processor {
         int textStart;
         if (mText.find()) {
             String text = mText.group().substring("class=\"itemtext\"".length()).replace("<script", "").substring(1);
-            Matcher mImage = pImage.matcher(text);
+            Matcher mImage = pImage2.matcher(mText.group());
             while (mImage.find()) {
-                Matcher mImage2 = pImage2.matcher(mImage.group());
-                if (mImage2.find()) {
+                 Matcher mImage2 = pImage2.matcher(mImage.group());
+                 if (mImage2.find()) {
                     int textEnd = mImage.start();
                     textStart = imageEnd;
                     imageEnd = mImage.end();
