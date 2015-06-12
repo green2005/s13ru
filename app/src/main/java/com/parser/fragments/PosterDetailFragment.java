@@ -1,6 +1,7 @@
 package com.parser.fragments;
 
 import android.app.Activity;
+import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -104,8 +105,11 @@ public class PosterDetailFragment extends BaseDataFragment implements DetailFrag
     }
 
     @Override
-    public String getTitle() {
-        return POSTER_TITLE;
+    public String getTitle(Context context) {
+        if (context != null) {
+            return context.getResources().getString(R.string.poster_fragment_title);
+        } else
+            return null;
     }
-
 }
+

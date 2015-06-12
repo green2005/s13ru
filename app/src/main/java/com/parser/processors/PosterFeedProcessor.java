@@ -2,6 +2,7 @@ package com.parser.processors;
 
 import android.content.Context;
 
+import com.parser.R;
 import com.parser.bo.PosterFeedItem;
 import com.parser.db.PosterFeedDBHelper;
 
@@ -14,6 +15,12 @@ import java.util.regex.Pattern;
 public class PosterFeedProcessor extends Processor {
     private Context mContext;
     private PosterFeedDBHelper mDbHelper;
+    private static final String KINO_URL_PART = "kino";
+    private static final String PARTY_URL_PART = "party";
+    private static final String CONCERTS_URL_PART = "concerts";
+    private static final String THEATRE_URL_PART = "theatre";
+    private static final String EXHIBITION_URL_PART = "exhibition";
+    private static final String EVENT_URL_PART = "event";
 
 
     public PosterFeedProcessor(Context context) {
@@ -62,21 +69,28 @@ public class PosterFeedProcessor extends Processor {
             if (mImage.find()) {
                 posterItem.setImageUrl(mImage.group().substring("<img src=\"".length()).replace("\"", ""));
             }
-            if (posterItem.getUrl().contains("kino")) {
-                posterItem.setCat("Кино");
-            } else if (posterItem.getUrl().contains("party")) {
-                posterItem.setCat("Вечеринки");
-            } else if (posterItem.getUrl().contains("concerts")) {
-                posterItem.setCat("Концерты");
-            } else if (posterItem.getUrl().contains("theatre")) {
-                posterItem.setCat("Спектакли");
-            } else if (posterItem.getUrl().contains("exhibition")) {
-                posterItem.setCat("Выставки");
-            } else if (posterItem.getUrl().contains("event")) {
-                posterItem.setCat("События");
-            }
+            String cat = mContext.getString(getPosterCatByUrlPart(posterItem.getUrl()));
+            posterItem.setCat(cat);
             items.add(posterItem);
         }
         return items;
     }
+
+    private int getPosterCatByUrlPart(String url) {
+        if (url.contains(KINO_URL_PART)) {
+            return R.string.poster_cinema;
+        } else if (url.contains(PARTY_URL_PART)) {
+            return R.string.poster_party;
+        } else if (url.contains(CONCERTS_URL_PART)) {
+            return R.string.poster_concerts;
+        } else if (url.contains(THEATRE_URL_PART)) {
+            return R.string.poster_theatre;
+        } else if (url.contains(EXHIBITION_URL_PART)) {
+            return R.string.poster_exhibition;
+        } else if (url.contains(EVENT_URL_PART)) {
+            return R.string.poster_event;
+        }
+        return  0;
+    }
+
 }

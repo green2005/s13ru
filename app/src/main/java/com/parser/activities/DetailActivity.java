@@ -34,7 +34,7 @@ public class DetailActivity extends ActionBarActivity {
                 detailFragment = PosterDetailFragment.getNewFragment(params);
             }
             if (detailFragment != null) {
-                String title = ((DetailFragment) detailFragment).getTitle();
+                String title = ((DetailFragment) detailFragment).getTitle(this);
                 if (!TextUtils.isEmpty(title)) {
                     getSupportActionBar().setTitle(title);
                 }

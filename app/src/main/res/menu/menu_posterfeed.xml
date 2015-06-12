@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    >
+    <item
+        android:id="@+id/item_cinema"
+        android:title="@string/poster_cinema" />
+    <item
+        android:id="@+id/item_party"
+        android:title="@string/poster_party"/>
+
+    <item
+        android:id="@+id/item_concerts"
+        android:title="@string/poster_concerts" />
+    <item
+        android:id="@+id/item_theatre"
+        android:title="@string/poster_theatre"
+        />
+    <item
+        android:id="@+id/item_exhibition"
+        android:title="@string/poster_exhibition"
+        />
+    <item
+        android:id="@+id/item_events"
+        android:title="@string/poster_event" />
+</menu>

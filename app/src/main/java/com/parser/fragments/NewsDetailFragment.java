@@ -1,6 +1,7 @@
 package com.parser.fragments;
 
 import android.app.Activity;
+import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -107,13 +108,10 @@ public class NewsDetailFragment extends BaseDataFragment implements DetailFragme
     }
 
     @Override
-    public String getTitle() {
-        Activity activity = getActivity();
-        if (activity != null) {
-            activity.getResources().getString(R.string.news_fragment_title);
-        } else {
-            return "";
-        }
-        return "";
+    public String getTitle(Context context) {
+        if (context != null) {
+            return context.getResources().getString(R.string.news_fragment_title);
+        } else
+            return null;
     }
 }

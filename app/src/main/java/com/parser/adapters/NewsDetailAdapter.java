@@ -4,7 +4,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.text.Html;
 import android.text.TextUtils;
-import android.text.method.LinkMovementMethod;
 import android.text.util.Linkify;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,12 +23,14 @@ public class NewsDetailAdapter extends SimpleCursorAdapter {
 
     private LayoutInflater mInflater;
     private ImageLoader mImageLoader;
+    private Context mContext;
 
 
     public NewsDetailAdapter(Context context, int layout, Cursor c, String[] from, int[] to, int flags) {
         super(context, layout, c, from, to, flags);
         mInflater = LayoutInflater.from(context);
         mImageLoader = ImageLoader.get(context);
+        mContext = context;
     }
 
     @Override
@@ -47,12 +48,16 @@ public class NewsDetailAdapter extends SimpleCursorAdapter {
         }
     }
 
-  //  @Override
- //   public boolean isEnabled(int position) {
- //       return false;
- //   }
-
-
+    @Override
+    public boolean isEnabled(int position) {
+        Cursor cursor = getCursor();
+        if (cursor == null){
+            return super.isEnabled(position);
+        }
+        cursor.moveToPosition(position);
+        int viewType = getItemViewType(position);
+        return viewType == NewsDetailDBHelper.NewsItemType.REPLY.ordinal();
+    }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {

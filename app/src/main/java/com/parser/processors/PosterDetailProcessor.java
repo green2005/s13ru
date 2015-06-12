@@ -28,10 +28,10 @@ public class PosterDetailProcessor extends Processor {
     private static final String IMG_POSTF = "\"";
 
     private static final String PLACE_PREF = "<div class=\"view-event-showtime-place\">";
-    private static final String DATE_PREF = "\"<div class=\"view-event-showtime-date\">";
+    private static final String DATE_PREF = "<div class=\"view-event-showtime-date\">";
     private static final String TIME_PREF = "<div class=\"view-event-showtime-cif\">";
 
-    private static final String PREVIEW_PREF = "\"src=\"";
+    private static final String PREVIEW_PREF = "src=\"";
     private static final String PREVIEW_POSTF = "\"";
 
 
@@ -68,7 +68,7 @@ public class PosterDetailProcessor extends Processor {
                 ".*?" + "</div>");
         Pattern pPosterImage = Pattern.compile(IMG_PREFIX + ".*?" + IMG_POSTF);
 
-        Pattern pPreview = Pattern.compile("<div class=\"view-event-trailer\">\n" +
+        Pattern pPreview = Pattern.compile("<div class=\"view-event-trailer\">" +
                 ".*?</div>");
         Pattern pPreviewSource = Pattern.compile(PREVIEW_PREF + ".*?" + PREVIEW_POSTF);
 
@@ -168,11 +168,19 @@ public class PosterDetailProcessor extends Processor {
             items.add(item);
         }
 
-        Matcher mTime = pTime.matcher(response);
         PosterDetailItem item = null;
-        if (mTime.find(startPos)) {
+
+        Matcher mPlace = pPlace.matcher(response);
+        if (mPlace.find()) {
             item = new PosterDetailItem();
             item.setContentType(PosterDetailDBHelper.POSTER_RECORD_TYPE.TIMEPLACE_RECORD.ordinal());
+            String place = mPlace.group().substring(PLACE_PREF.length());
+            place = place.substring(0, place.length() - END_DIV.length());
+            item.setPlace(place);
+        }
+
+        Matcher mTime = pTime.matcher(response);
+        if (mTime.find(startPos) && item != null) {
             String time = mTime.group().substring(TIME_PREF.length());
             time = time.substring(0, time.length() - END_DIV.length());
             item.setItemTime(time);
@@ -185,12 +193,6 @@ public class PosterDetailProcessor extends Processor {
             item.setItemDate(date);
         }
 
-        Matcher mPlace = pPlace.matcher(response);
-        if (mPlace.find() && item != null) {
-            String place = mPlace.group().substring(PLACE_PREF.length());
-            place = place.substring(0, place.length() - END_DIV.length());
-            item.setPlace(place);
-        }
         if (item != null) {
             items.add(item);
         }
@@ -201,7 +203,7 @@ public class PosterDetailProcessor extends Processor {
             if (mPreview.find()) {
                 PosterDetailItem posterItem = new PosterDetailItem();
                 String previewUrl = mPreview.group().substring(PREVIEW_PREF.length());
-                previewUrl = previewUrl.substring(previewUrl.length() - PREVIEW_POSTF.length());
+                previewUrl = previewUrl.substring(0, previewUrl.length() - PREVIEW_POSTF.length());
                 posterItem.setContentType(PosterDetailDBHelper.POSTER_RECORD_TYPE.VIDEO_ATTACHMENT.ordinal());
                 posterItem.setItemText(previewUrl);
                 items.add(posterItem);

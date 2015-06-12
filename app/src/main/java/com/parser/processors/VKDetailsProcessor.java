@@ -171,14 +171,18 @@ public class VKDetailsProcessor extends VKProcessor {
         VKDetailItem item = new VKDetailItem();
         item.setItemType(VKDetailItem.ItemType.CONTENT.ordinal());
         item.setPostId(postId);
-        item.setText(jWall.optString("text"));
         String date = jWall.optString("date");
         item.setDate(mDf.format(new java.util.Date(Long.parseLong(date) * 1000)));
         item.setAuthorId(jWall.optString("from_id"));
         item.setAuthorImage(profilesMap.get(item.getAuthorId()).getUserPick());
         item.setAuthorName(profilesMap.get(item.getAuthorId()).getName());
-        postItems.add(item);
 
+        JSONArray jHistory = jWall.optJSONArray("copy_history");
+        if (jHistory != null && jHistory.length()>0){
+            jWall = jHistory.optJSONObject(0);
+        }
+        item.setText(jWall.optString("text"));
+        postItems.add(item);
         JSONArray jAttachments = jWall.optJSONArray("attachments");
       //  postItems.add(item);
         processAttachments(jAttachments, postItems, postId, postId);

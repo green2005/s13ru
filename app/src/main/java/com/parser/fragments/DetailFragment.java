@@ -1,6 +1,8 @@
 package com.parser.fragments;
 
 
+import android.content.Context;
+
 public interface DetailFragment {
-    public String getTitle();
+    public String getTitle(Context context);
 }

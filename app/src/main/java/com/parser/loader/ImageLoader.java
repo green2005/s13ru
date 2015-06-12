@@ -147,6 +147,10 @@ public class ImageLoader {
         //mPausedImages.clear();
     }
 
+    public String getUrl(ImageView imageView) {
+        return (String)imageView.getTag();
+    }
+
     private class ImageLoadThread extends Thread {
         Handler mHandler;
         ImageView mImageView;

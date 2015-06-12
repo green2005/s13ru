@@ -19,12 +19,14 @@ import com.parser.loader.ImageLoader;
 public class PosterDetailAdapter extends SimpleCursorAdapter {
     private LayoutInflater mInflater;
     private ImageLoader mImageLoader;
+    private Context mContext;
 
 
     public PosterDetailAdapter(Context context, int layout, Cursor c, String[] from, int[] to, int flags) {
         super(context, layout, c, from, to, flags);
         mInflater = LayoutInflater.from(context);
         mImageLoader = ImageLoader.get(context);
+        mContext = context;
     }
 
     @Override
@@ -92,11 +94,15 @@ public class PosterDetailAdapter extends SimpleCursorAdapter {
     }
 
     private View getImageAttachmentView(View convertView, Cursor cursor) {
+        ResizableImageView imageView = null;
         if (convertView == null || convertView.getTag() != PosterDetailDBHelper.POSTER_RECORD_TYPE.IMAGE_ATTACHMENT.ordinal()) {
             convertView = mInflater.inflate(R.layout.item_post_image, null);
             convertView.setTag(PosterDetailDBHelper.POSTER_RECORD_TYPE.IMAGE_ATTACHMENT.ordinal());
+            imageView = (ResizableImageView) convertView.findViewById(R.id.image);
         }
-        ResizableImageView imageView = (ResizableImageView) convertView.findViewById(R.id.image);
+        if (imageView == null){
+            imageView = (ResizableImageView) convertView.findViewById(R.id.image);
+        }
         if (mImageLoader != null) {
             mImageLoader.loadImage(imageView, CursorHelper.getString(cursor, PosterDetailDBHelper.TEXT_COLUMN));
         }

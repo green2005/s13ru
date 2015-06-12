@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import com.parser.FragmentMenuItem;
 import com.parser.R;
+import com.parser.ResizableImageView;
 import com.parser.activities.DetailActivity;
 import com.parser.db.CursorHelper;
 import com.parser.db.PosterFeedDBHelper;
@@ -27,6 +28,8 @@ public class PosterFeedAdapter extends SimpleCursorAdapter implements ListView.O
     private ImageLoader mImageLoader;
     private Context mContext;
 
+    private static final int DEFAILT_IMAGE_WIDTH = 259;
+    private static final int DEFAULT_IMAGE_HEIGHT = 371;
 
     public PosterFeedAdapter(Context context, int layout, Cursor c, String[] from, int[] to, int flags) {
         super(context, layout, c, from, to, flags);
@@ -50,7 +53,7 @@ public class PosterFeedAdapter extends SimpleCursorAdapter implements ListView.O
             viewHolder.tvDate = (TextView) cnView.findViewById(R.id.tvDate);
             viewHolder.tvText = (TextView) cnView.findViewById(R.id.tvText);
             viewHolder.tvTitle = (TextView) cnView.findViewById(R.id.tvTitle);
-            viewHolder.imageView = (ImageView) cnView.findViewById(R.id.image);
+            viewHolder.imageView = (ResizableImageView) cnView.findViewById(R.id.image);
             cnView.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder) cnView.getTag();
@@ -62,10 +65,11 @@ public class PosterFeedAdapter extends SimpleCursorAdapter implements ListView.O
         return cnView;
     }
 
-    private void setImage(ImageView imageView, String imageUrl) {
+    private void setImage(ResizableImageView imageView, String imageUrl) {
         if (TextUtils.isEmpty(imageUrl)) {
             imageView.setVisibility(View.GONE);
         } else {
+            imageView.setOriginalImageSize(DEFAILT_IMAGE_WIDTH, DEFAULT_IMAGE_HEIGHT);
             imageView.setVisibility(View.VISIBLE);
             if (mImageLoader != null) {
                 mImageLoader.loadImage(imageView, imageUrl);
@@ -92,7 +96,7 @@ public class PosterFeedAdapter extends SimpleCursorAdapter implements ListView.O
         TextView tvTitle;
         TextView tvText;
         TextView tvDate;
-        ImageView imageView;
+        ResizableImageView imageView;
         //TextView tvAuthor;
     }
 }

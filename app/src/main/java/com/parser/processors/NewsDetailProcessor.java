@@ -12,6 +12,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class NewsDetailProcessor extends Processor {
+    private static final String IMG_PREF = "<img class=";
+    private static final String IMG_POSTF = "/>";
+    private static final String IMG_URL_PREF = "src=\"";
+    private static final String IMG_URL_POSTF = "\"";
+
+
     private NewsDetailDBHelper mDBHelper;
     private Context mContext;
     private String mUrl;
@@ -36,15 +42,15 @@ public class NewsDetailProcessor extends Processor {
 
     private void parseResponse(String response, List<NewsDetailItem> items) {
 
+
         //its awful without API
 
         Pattern pText = Pattern.compile("class=\"itemtext\".*?<script");
         Pattern pTitle = Pattern.compile(" dc:title=\".*?\"");
         Pattern pDate = Pattern.compile("class=\"metadata\">.*?</a>");
         Pattern pDate2 = Pattern.compile("</strong>.*?<");
-        Pattern pImage = Pattern.compile("<a href=\".*?" + "</a>");
-        Pattern pImage2 = Pattern.compile("<img class=.*?/>");
-        Pattern pImageUrl = Pattern.compile("src=\".*?\"");
+        Pattern pImage2 = Pattern.compile(IMG_PREF + ".*?" + IMG_POSTF);
+        Pattern pImageUrl = Pattern.compile(IMG_URL_PREF + ".*?" + IMG_URL_POSTF);
 
         Pattern pComment = Pattern.compile("li class=\" item\" id=\"comment.*?</li>");
         Pattern pAuthor = Pattern.compile("class=\"commentauthor\".*?</span>");
@@ -62,7 +68,7 @@ public class NewsDetailProcessor extends Processor {
         Pattern pThumb2 = Pattern.compile("\">.*?</span>");
 
         Pattern pCommentDate = Pattern.compile("<small>.*?</small>");
-        Pattern pWidth = Pattern.compile( "width=\".*?\"");
+        Pattern pWidth = Pattern.compile("width=\".*?\"");
         Pattern pHeight = Pattern.compile("height=\".*?\"");
 
         Matcher itemMatcher;
@@ -73,7 +79,7 @@ public class NewsDetailProcessor extends Processor {
             itemMatcher = pDate2.matcher(itemMatcher.group());
             if (itemMatcher.find()) {
                 date = itemMatcher.group().substring(10);
-                date = date.substring(0,date.length() - 2);
+                date = date.substring(0, date.length() - 2);
             }
         }
 
@@ -91,44 +97,42 @@ public class NewsDetailProcessor extends Processor {
         Matcher mText = pText.matcher(response);
         int imageEnd = 0;
         int textStart;
+
         if (mText.find()) {
             String text = mText.group().substring("class=\"itemtext\"".length()).replace("<script", "").substring(1);
-            Matcher mImage = pImage2.matcher(mText.group());
+            Matcher mImage = pImage2.matcher(text);
             while (mImage.find()) {
-                 Matcher mImage2 = pImage2.matcher(mImage.group());
-                 if (mImage2.find()) {
-                    int textEnd = mImage.start();
-                    textStart = imageEnd;
-                    imageEnd = mImage.end();
-                    String itemText = text.substring(textStart, textEnd);
-                    NewsDetailItem item = new NewsDetailItem();
-                    item.setText(itemText);
-                    item.setContentType(NewsDetailDBHelper.NewsItemType.TEXT.ordinal());
-                    item.setPostId(mUrl);
-                    items.add(item);
-                    //  text = text.substring(imageEnd);
-                    Matcher mImageUrl = pImageUrl.matcher(mImage2.group());
-                    Matcher mWidth = pWidth.matcher(mImage2.group());
-                    Matcher mHeight = pHeight.matcher(mImage2.group());
+                int textEnd = mImage.start();
+                textStart = imageEnd;
+                imageEnd = mImage.end();
+                String itemText = text.substring(textStart, textEnd);
+                NewsDetailItem item = new NewsDetailItem();
+                item.setText(itemText);
+                item.setContentType(NewsDetailDBHelper.NewsItemType.TEXT.ordinal());
+                item.setPostId(mUrl);
+                items.add(item);
+                Matcher mImageUrl = pImageUrl.matcher(mImage.group());
+                Matcher mWidth = pWidth.matcher(mImage.group());
+                Matcher mHeight = pHeight.matcher(mImage.group());
 
-                    if (mImageUrl.find()) {
-                        String imageUrl = mImageUrl.group().substring("src=\"".length()).replace("\"", "");
-                        NewsDetailItem imageItem = new NewsDetailItem();
-                        imageItem.setText(imageUrl);
-                        imageItem.setContentType(NewsDetailDBHelper.NewsItemType.IMAGE.ordinal());
-                        if (mWidth.find()){
-                            String width = mWidth.group().substring(7);
-                            width = width.substring(0, width.length() - 1);
-                            imageItem.setWidth(width);
-                        }
-                        if (mHeight.find()){
-                            String height = mHeight.group().substring(8);
-                            height = height.substring(0, height.length() - 1);
-                            imageItem.setHeight(height);
-                        }
-                        imageItem.setPostId(mUrl);
-                        items.add(imageItem);
+                if (mImageUrl.find()) {
+                    String imageUrl = mImageUrl.group().substring(IMG_URL_PREF.length());
+                    imageUrl = imageUrl.substring(0, imageUrl.length() - IMG_URL_POSTF.length());
+                    NewsDetailItem imageItem = new NewsDetailItem();
+                    imageItem.setText(imageUrl);
+                    imageItem.setContentType(NewsDetailDBHelper.NewsItemType.IMAGE.ordinal());
+                    if (mWidth.find()) {
+                        String width = mWidth.group().substring(7);
+                        width = width.substring(0, width.length() - 1);
+                        imageItem.setWidth(width);
                     }
+                    if (mHeight.find()) {
+                        String height = mHeight.group().substring(8);
+                        height = height.substring(0, height.length() - 1);
+                        imageItem.setHeight(height);
+                    }
+                    imageItem.setPostId(mUrl);
+                    items.add(imageItem);
                 }
             }
             NewsDetailItem item = new NewsDetailItem();
@@ -138,6 +142,7 @@ public class NewsDetailProcessor extends Processor {
             item.setPostId(mUrl);
             items.add(item);
         }
+
 
         NewsDetailItem item = new NewsDetailItem();
         item.setContentType(NewsDetailDBHelper.NewsItemType.REPLY_HEADER.ordinal());
@@ -174,8 +179,8 @@ public class NewsDetailProcessor extends Processor {
                     }
                 }
                 int authorLen = author.length();
-                if (authorLen > 7){
-                 author = author.substring(0,author.length()-7);
+                if (authorLen > 7) {
+                    author = author.substring(0, author.length() - 7);
                 }
                 item.setAuthor(author);
             }

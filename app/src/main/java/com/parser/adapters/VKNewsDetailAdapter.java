@@ -47,6 +47,8 @@ public class VKNewsDetailAdapter extends SimpleCursorAdapter {
         return super.getItemViewType(position);
     }
 
+
+
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         Cursor cursor = getCursor();

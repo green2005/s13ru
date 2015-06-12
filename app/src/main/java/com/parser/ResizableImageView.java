@@ -3,7 +3,10 @@ package com.parser;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
+import android.view.View;
 import android.widget.ImageView;
+
+import com.parser.adapters.ImageClickListener;
 
 public class ResizableImageView extends ImageView {
     /*
@@ -15,6 +18,7 @@ public class ResizableImageView extends ImageView {
 
     public ResizableImageView(Context context, AttributeSet attrs) {
         super(context, attrs);
+        setOnClickListener(new ImageClickListener(this, context));
     }
 
     public void setOriginalImageSize(int width, int height) {
