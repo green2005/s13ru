@@ -3,6 +3,8 @@
     package="com.parser">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
     <application
         android:allowBackup="true"
         android:icon="@drawable/logo"
@@ -18,15 +20,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".activities.ImageZoomActivity"
-            />
-
+        <activity android:name=".activities.ImageZoomActivity" />
+        <activity android:name=".activities.PreferencesActivity"/>
         <activity
             android:name=".activities.DetailActivity"
-            android:parentActivityName=".activities.MainActivity"
-            >
-            </activity>
+            android:parentActivityName=".activities.MainActivity"></activity>
 
         <provider
             android:name=".db.NewsContentProvider"

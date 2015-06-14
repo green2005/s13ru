@@ -34,5 +34,10 @@
     <string name="poster_theatre">Спектакли</string>
     <string name="poster_exhibition">Выставки</string>
     <string name="poster_event">События</string>
+    <string name="poster_sport">Спорт</string>
+
+    <string name="rate_key">rate</string>
+    <string name="feedBackMail">feedBack</string>
+    <string name="prefTitle">Настройки</string>
 
 </resources>

@@ -1,5 +1,6 @@
 package com.parser.activities;
 
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -82,6 +83,11 @@ public class MainActivity extends ActionBarActivity {
             case POSTER_ITEM: {
                 fragment = PosterFeedFragment.getNewFragment(null);
                 break;
+            }
+            case SETTINGS_ITEM:{
+                Intent intent = new Intent(this, PreferencesActivity.class);
+                startActivity(intent);
+                return;
             }
         }
         if (fragment != null) {

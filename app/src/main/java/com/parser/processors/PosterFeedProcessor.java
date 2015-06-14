@@ -21,6 +21,7 @@ public class PosterFeedProcessor extends Processor {
     private static final String THEATRE_URL_PART = "theatre";
     private static final String EXHIBITION_URL_PART = "exhibition";
     private static final String EVENT_URL_PART = "event";
+    private static final String SPORT_URL_PART = "sport";
 
 
     public PosterFeedProcessor(Context context) {
@@ -89,8 +90,12 @@ public class PosterFeedProcessor extends Processor {
             return R.string.poster_exhibition;
         } else if (url.contains(EVENT_URL_PART)) {
             return R.string.poster_event;
+        } else if (url.contains(SPORT_URL_PART)){
+            return R.string.poster_sport;
+        } else
+        {
+            return R.string.poster_event;
         }
-        return  0;
     }
 
 }
