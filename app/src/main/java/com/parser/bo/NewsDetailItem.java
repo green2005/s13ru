@@ -105,7 +105,7 @@ public class NewsDetailItem {
         return mKarma_up;
     }
 
-    public void setKarma_up(String ups){
+    public void setKarmaUp(String ups){
         mKarma_up = Integer.parseInt(ups);
     }
 
