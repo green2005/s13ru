@@ -17,6 +17,8 @@ import com.parser.R;
 import com.parser.ResizableImageView;
 import com.parser.db.NewsDetailDBHelper;
 import com.parser.loader.ImageLoader;
+import com.parser.quickaction.ActionItem;
+import com.parser.quickaction.QuickAction;
 
 public class NewsDetailAdapter extends SimpleCursorAdapter {
     private static final int VIEW_TYPE_COUNT = 5;
@@ -31,7 +33,9 @@ public class NewsDetailAdapter extends SimpleCursorAdapter {
         mInflater = LayoutInflater.from(context);
         mImageLoader = ImageLoader.get(context);
         mContext = context;
-    }
+     }
+
+
 
     @Override
     public int getViewTypeCount() {

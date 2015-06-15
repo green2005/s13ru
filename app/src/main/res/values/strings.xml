@@ -39,5 +39,7 @@
     <string name="rate_key">rate</string>
     <string name="feedBackMail">feedBack</string>
     <string name="prefTitle">Настройки</string>
-
+    <string name="dislike">Не нравится</string>
+    <string name="like">Нравится</string>
+    <string name="reply">Ответить</string>
 </resources>

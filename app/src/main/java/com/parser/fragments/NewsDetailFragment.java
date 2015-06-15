@@ -4,10 +4,10 @@ import android.app.Activity;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.CursorAdapter;
 import android.widget.ListView;
 
@@ -17,6 +17,8 @@ import com.parser.db.NewsContentProvider;
 import com.parser.db.NewsDetailDBHelper;
 import com.parser.processors.NewsDetailProcessor;
 import com.parser.processors.Processor;
+import com.parser.quickaction.ActionItem;
+import com.parser.quickaction.QuickAction;
 
 public class NewsDetailFragment extends BaseDataFragment implements DetailFragment {
     //todo move to resources
@@ -24,6 +26,10 @@ public class NewsDetailFragment extends BaseDataFragment implements DetailFragme
     private String mUrl;
     private NewsDetailAdapter mAdapter;
     private NewsDetailProcessor mProcessor;
+
+    private QuickAction mQuickAction;
+    private ActionItem mKarmaUpAction;
+    private ActionItem mKarmaDownAction;
 
 
     public static NewsDetailFragment getNewFragment(Bundle params) {
@@ -40,7 +46,7 @@ public class NewsDetailFragment extends BaseDataFragment implements DetailFragme
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,  Bundle savedInstanceState) {
         View view = super.onCreateView(inflater, container, savedInstanceState);
         initListView();
         return view;
@@ -53,6 +59,48 @@ public class NewsDetailFragment extends BaseDataFragment implements DetailFragme
             listView.setDividerHeight(0);
             //  listView.setEnabled(false);
         }
+        assert listView != null;
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                mQuickAction.refreshActionItem(mKarmaDownAction);
+                mQuickAction.refreshActionItem(mKarmaUpAction);
+                mQuickAction.setAnimStyle(QuickAction.ANIM_GROW_FROM_CENTER);
+                mQuickAction.show(parent);
+            }
+        });
+        prepareQuickAction();
+    }
+
+    private void prepareQuickAction(){
+        Activity activity = getActivity();
+        mKarmaDownAction = new ActionItem();
+        mKarmaDownAction.setTitle(activity.getString(R.string.dislike));
+        mKarmaDownAction.setIcon(activity.getResources().getDrawable(
+                com.parser.R.drawable.commentdownbig));
+
+        mKarmaUpAction = new ActionItem();
+        mKarmaUpAction.setTitle(activity.getString(R.string.like));
+        mKarmaUpAction.setIcon(activity.getResources().getDrawable(
+                com.parser.R.drawable.commentupbig));
+
+        ActionItem mReplyAction = new ActionItem();
+        mReplyAction.setTitle(activity.getString(R.string.reply));
+        mReplyAction.setIcon(activity.getResources().getDrawable(
+                com.parser.R.drawable.reply));
+
+        mQuickAction = new QuickAction(activity);
+        mQuickAction.addActionItem(mKarmaDownAction);
+        mQuickAction.addActionItem(mKarmaUpAction);
+        mQuickAction.addActionItem(mReplyAction);
+
+        mQuickAction.setOnActionItemClickListener(new QuickAction.OnActionItemClickListener() {
+            @Override
+            public void onItemClick(int pos) {
+                //
+
+            }
+        });
     }
 
     @Override
