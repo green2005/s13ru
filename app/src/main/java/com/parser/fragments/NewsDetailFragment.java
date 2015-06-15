@@ -2,6 +2,7 @@ package com.parser.fragments;
 
 import android.app.Activity;
 import android.content.Context;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -13,6 +14,7 @@ import android.widget.ListView;
 
 import com.parser.R;
 import com.parser.adapters.NewsDetailAdapter;
+import com.parser.db.CursorHelper;
 import com.parser.db.NewsContentProvider;
 import com.parser.db.NewsDetailDBHelper;
 import com.parser.processors.NewsDetailProcessor;
@@ -30,6 +32,7 @@ public class NewsDetailFragment extends BaseDataFragment implements DetailFragme
     private QuickAction mQuickAction;
     private ActionItem mKarmaUpAction;
     private ActionItem mKarmaDownAction;
+    private int mSelectedRecord;
 
 
     public static NewsDetailFragment getNewFragment(Bundle params) {
@@ -46,7 +49,7 @@ public class NewsDetailFragment extends BaseDataFragment implements DetailFragme
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,  Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = super.onCreateView(inflater, container, savedInstanceState);
         initListView();
         return view;
@@ -63,16 +66,17 @@ public class NewsDetailFragment extends BaseDataFragment implements DetailFragme
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                mQuickAction.refreshActionItem(mKarmaDownAction);
-                mQuickAction.refreshActionItem(mKarmaUpAction);
+                // mQuickAction.refreshActionItem(mKarmaDownAction);
+                // mQuickAction.refreshActionItem(mKarmaUpAction);
+                mSelectedRecord = position;
                 mQuickAction.setAnimStyle(QuickAction.ANIM_GROW_FROM_CENTER);
-                mQuickAction.show(parent);
+                mQuickAction.show(view);
             }
         });
         prepareQuickAction();
     }
 
-    private void prepareQuickAction(){
+    private void prepareQuickAction() {
         Activity activity = getActivity();
         mKarmaDownAction = new ActionItem();
         mKarmaDownAction.setTitle(activity.getString(R.string.dislike));
@@ -93,14 +97,37 @@ public class NewsDetailFragment extends BaseDataFragment implements DetailFragme
         mQuickAction.addActionItem(mKarmaDownAction);
         mQuickAction.addActionItem(mKarmaUpAction);
         mQuickAction.addActionItem(mReplyAction);
+        //mQuickAction.addActionItem(mReplyAction);
+
 
         mQuickAction.setOnActionItemClickListener(new QuickAction.OnActionItemClickListener() {
             @Override
             public void onItemClick(int pos) {
-                //
+                switch (pos) {
+                    case (0): {
+                        addKarma(false);
+                        break;
+                    }
+                    case (1): {
+                        addKarma(true);
+                        break;
+                    }
+                    case (2): {
 
+                        break;
+                    }
+                }
             }
         });
+    }
+
+    private void addKarma(boolean karmaUp){
+        Cursor cursor = mAdapter.getCursor();
+        if (cursor == null){return;}
+        cursor.moveToPosition(mSelectedRecord);
+        String commentId = CursorHelper.getString(cursor, NewsDetailDBHelper.COMMENT_ID_COLUMN);
+        
+        //mQuickAction.
     }
 
     @Override
