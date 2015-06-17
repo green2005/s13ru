@@ -26,7 +26,7 @@
             android:name=".activities.DetailActivity"
             android:parentActivityName=".activities.MainActivity"></activity>
 
-        <activity android:name=".activities.AuthDialog" />
+        <activity android:name=".authentication.AuthDialog" />
 
         <provider
             android:name=".db.NewsContentProvider"

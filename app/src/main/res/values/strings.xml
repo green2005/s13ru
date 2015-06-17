@@ -46,4 +46,5 @@
     <string name="reply">Ответить</string>
     <string name="userName">Имя пользователя</string>
     <string name = "pwd">Пароль</string>
+    <string name = "auth_dialog_title">Параметры аутентификации</string>
 </resources>

@@ -1,7 +1,6 @@
 package com.parser.fragments;
 
 import android.app.Activity;
-import android.app.Dialog;
 import android.app.Fragment;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
@@ -15,6 +14,9 @@ import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
 import com.parser.R;
+import com.parser.authentication.AUTH_RESULT;
+import com.parser.authentication.AuthDialog;
+import com.parser.authentication.AuthenticateListener;
 
 public class PrefFragment extends PreferenceFragment {
     private static final String MARKET_URL = "market://details?id=";
@@ -56,10 +58,16 @@ public class PrefFragment extends PreferenceFragment {
     }
 
     private void authenticate(){
-         Dialog d = new Dialog(getActivity(), R.string.settings);
-        startActivity(d);
+        Activity activity = getActivity();
+        if (activity == null){
+            return;
+        }
+        AuthDialog.editAuth(activity, new AuthenticateListener() {
+            @Override
+            public void onAuthResult(AUTH_RESULT result) {
 
-
+            }
+        });
     }
 
     private void rateMe() {

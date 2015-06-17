@@ -4,7 +4,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingTop="16dp"
-    android:paddingLeft="8dp">
+    android:paddingLeft="12dp"
+    android:paddingBottom="16dp"
+    android:paddingRight="12dp"
+
+    >
 
     <TextView
         android:layout_width="wrap_content"
@@ -12,7 +16,7 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
         android:id="@+id/tvUserName"
-        android:text="@string/userName"/>
+        android:text="@string/userName" />
 
     <EditText
         android:layout_height="wrap_content"
@@ -22,14 +26,15 @@
         android:id="@+id/userNameEdit"
         android:paddingTop="8dp"
         android:nextFocusRight="@+id/pwdEdit"
-        />
+        android:imeOptions="actionNext"
+        android:singleLine="true" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_below="@+id/userNameEdit"
-        android:paddingTop="8dp"
+        android:paddingTop="12dp"
         android:text="@string/pwd"
         android:id="@+id/tvPwd" />
 
@@ -39,8 +44,39 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:inputType="textPassword"
-        />
+        android:imeOptions="actionDone"
+        android:singleLine="true" />
 
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/pwdEdit"
+        >
+        <Space
+            android:id="@+id/spaceleft"
+            android:layout_weight="0.3"
+            android:layout_width="fill_parent"
+            android:layout_height="52dp"
+             android:layout_marginTop="24dp"
+            />
 
+        <Button
+            android:id="@+id/okbtn"
+            android:layout_weight="0.3"
+            android:layout_width="fill_parent"
+             android:layout_height="52dp"
+            android:layout_marginTop="24dp"
+            android:text="OK"
+            android:background="@drawable/backgrounditem"
+            />
+        <Space
+            android:id="@+id/spaceright"
+            android:layout_weight="0.3"
+            android:layout_width="fill_parent"
+             android:layout_height="52dp"
+            android:layout_marginTop="24dp"
+            />
+
+    </LinearLayout>
 
 </RelativeLayout>
