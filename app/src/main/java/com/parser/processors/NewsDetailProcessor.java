@@ -12,11 +12,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class NewsDetailProcessor extends Processor {
-    private static final String IMG_PREF = "<img class=";
+    private static final String IMG_PREF = "<img "; //"<img class=";
     private static final String IMG_POSTF = "/>";
     private static final String IMG_URL_PREF = "src=\"";
     private static final String IMG_URL_POSTF = "\"";
-    private static final String ITEM_TEXT_PREF = "class=\"itemtext\"";
+    private static final String ITEM_TEXT_PREF = "class=\"itemtext\">";
     private static final String ITEM_TEXT_POSTF = "<script";
     private static final String TITLE_PREF = " dc:title=\"";
     private static final String TITLE_POSTF = "\"";
@@ -28,7 +28,11 @@ public class NewsDetailProcessor extends Processor {
     private static final String THUMB_POSTF = "</span>";
     private static final String COMMENTDATE_PREF = "<small>";
     private static final String COMMENTDATE_POSTF = "</small>";
+    private static final String AUTHOR_IMAGE_PREF = "src='";
+    private static final String AUTHOR_IMAGE_POSTF = "'";
 
+    private static final String DEFAULT_IMAGE_HEIGHT = "270";
+    private static final String DEFAULT_IMAGE_WIDTH = "411";
 
     private NewsDetailDBHelper mDBHelper;
     private Context mContext;
@@ -69,7 +73,7 @@ public class NewsDetailProcessor extends Processor {
 
         Pattern pAuthorName1 = Pattern.compile("'>.*?</span>");
         Pattern pAuthorName2 = Pattern.compile("/>.*?</span>");
-        Pattern pAuthorImage = Pattern.compile("src='.*?'");
+        Pattern pAuthorImage = Pattern.compile(AUTHOR_IMAGE_PREF+".*?"+AUTHOR_IMAGE_POSTF);
 
         Pattern pCommentText = Pattern.compile("<span id=\"co_.*?</span>");
         Pattern pCommentId = Pattern.compile("id=\"co_.*?\"");
@@ -167,7 +171,7 @@ public class NewsDetailProcessor extends Processor {
                 item.setDate(commentDate);
             }
             item.setKarmaUp(getKarma(comment, pThumbsUp, pThumb2));
-            item.setkarmaDown(getKarma(comment, pThumbsUp, pThumb2));
+            item.setkarmaDown(getKarma(comment, pThumbsDown, pThumb2));
         }
     }
 
@@ -193,8 +197,8 @@ public class NewsDetailProcessor extends Processor {
     private String getAuthorImgage(String authorText, Pattern pAuthorImage){
         Matcher mImage = pAuthorImage.matcher(authorText);
         if (mImage.find()) {
-            String authorImage = mImage.group().substring(IMG_PREF.length()); //substring(("src='").length()).replace("'", "");
-            authorImage = authorImage.substring(0, authorImage.length() - IMG_POSTF.length());
+            String authorImage = mImage.group().substring(AUTHOR_IMAGE_PREF.length()); //substring(("src='").length()).replace("'", "");
+            authorImage = authorImage.substring(0, authorImage.length() - AUTHOR_IMAGE_POSTF.length());
             authorImage = authorImage.replace("#038;", "");
             return authorImage;
         }
@@ -229,11 +233,18 @@ public class NewsDetailProcessor extends Processor {
                 String width = mWidth.group().substring(WIDTH_PREF.length());
                 width = width.substring(0, width.length() - WIDTH_POSTF.length());
                 imageItem.setWidth(width);
+            } else
+            {
+                imageItem.setWidth(DEFAULT_IMAGE_WIDTH);
             }
+
             if (mHeight.find()) {
                 String height = mHeight.group().substring(HEIGHT_PREF.length());
                 height = height.substring(0, height.length() - HEIGHT_POSTF.length());
                 imageItem.setHeight(height);
+            } else
+            {
+                imageItem.setHeight(DEFAULT_IMAGE_HEIGHT);
             }
             imageItem.setPostId(mUrl);
             items.add(imageItem);

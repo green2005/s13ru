@@ -17,9 +17,11 @@
                 android:data="@string/feedBackMail" />
         </PreferenceScreen>
 
-
-
-
+        <PreferenceScreen
+            android:title="Аутентификация"
+            android:summary="Введите имя пользователя и пароль"
+            android:key="@string/authenticate_key">
+        </PreferenceScreen>
 
     </PreferenceCategory>
 </PreferenceScreen>

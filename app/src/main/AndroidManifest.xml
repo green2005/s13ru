@@ -26,6 +26,8 @@
             android:name=".activities.DetailActivity"
             android:parentActivityName=".activities.MainActivity"></activity>
 
+        <activity android:name=".activities.AuthDialog" />
+
         <provider
             android:name=".db.NewsContentProvider"
             android:authorities="com.parser"

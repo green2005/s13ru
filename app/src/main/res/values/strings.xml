@@ -37,9 +37,13 @@
     <string name="poster_sport">Спорт</string>
 
     <string name="rate_key">rate</string>
-    <string name="feedBackMail">feedBack</string>
+    <string name="authenticate_key">auth</string>
+
+    <string name="feedBackMail">mailto:greennn_2005@gmail.com</string>
     <string name="prefTitle">Настройки</string>
     <string name="dislike">Не нравится</string>
     <string name="like">Нравится</string>
     <string name="reply">Ответить</string>
+    <string name="userName">Имя пользователя</string>
+    <string name = "pwd">Пароль</string>
 </resources>

@@ -126,7 +126,7 @@ public class NewsDetailFragment extends BaseDataFragment implements DetailFragme
         if (cursor == null){return;}
         cursor.moveToPosition(mSelectedRecord);
         String commentId = CursorHelper.getString(cursor, NewsDetailDBHelper.COMMENT_ID_COLUMN);
-        
+
         //mQuickAction.
     }
 
