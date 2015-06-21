@@ -32,6 +32,7 @@ public class NewsDetailDBHelper {
     public static final String KARMA_DOWN_COLUMN = "karma_down";
     public static final String COMMENT_ID_COLUMN = "comment_id";
     public static final String POST_ID = "post_id";
+    public static final String AKISMET = "akismet";
 
     private static final String CREATE_TABLE = " create table " + TABLE_NAME + " ( " +
             ID_COLUMN + " integer primary key AUTOINCREMENT , " +
@@ -45,7 +46,8 @@ public class NewsDetailDBHelper {
             KARMA_UP_COLUMN + " integer, " +
             COMMENT_ID_COLUMN + " text, " +
             TEXT_COLUMN + " text, " +
-            POST_ID + " text " +
+            POST_ID + " text, " +
+            AKISMET + " text" +
             " ) ";
 
     private static final String DROP_TABLE = "drop table if exists " + TABLE_NAME;
@@ -95,14 +97,15 @@ public class NewsDetailDBHelper {
             contentValues.put(KARMA_DOWN_COLUMN, item.getKarmaDown());
             contentValues.put(KARMA_UP_COLUMN, item.getmKarma_up());
             contentValues.put(TEXT_COLUMN, item.getText());
-            contentValues.put(POST_ID, item.getPostId());
+            contentValues.put(POST_ID, item.getPostUrl());
+            contentValues.put(AKISMET, item.getAkismet());
             values[i++] = contentValues;
         }
         return values;
     }
 
     public static String[] getFields() {
-        String fields[] = new String[12];
+        String fields[] = new String[13];
         fields[0] = ID_COLUMN;
         fields[1] = RECORD_TYPE_COLUMN;
         fields[2] = AUTHOR_COLUMN;
@@ -115,6 +118,7 @@ public class NewsDetailDBHelper {
         fields[9] = KARMA_DOWN_COLUMN;
         fields[10] = COMMENT_ID_COLUMN;
         fields[11] = POST_ID;
+        fields[12] = AKISMET;
         return fields;
     }
 

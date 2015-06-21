@@ -1,4 +1,4 @@
-package com.parser.authentication;
+package com.parser.blogio;
 
 public enum AUTH_RESULT {
     AUTH_OK,

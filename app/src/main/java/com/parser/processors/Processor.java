@@ -7,8 +7,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 
 public abstract class Processor {
-    protected static final String WIN_CHARSET = "windows-1251";
-    protected static final String UTF8_CHARSET = "UTF-8";
+
 
     public abstract int process(InputStream stream, boolean isTopRequest, String url) throws Exception;
 

@@ -1,6 +1,4 @@
-package com.parser.authentication;
-
-
+package com.parser.blogio;
 
 public interface AuthenticateListener {
     public void onAuthResult(AUTH_RESULT result);

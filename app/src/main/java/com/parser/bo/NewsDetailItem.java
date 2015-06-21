@@ -1,22 +1,7 @@
 package com.parser.bo;
 
 public class NewsDetailItem {
-    /*
-     enum NewsItemType {
-        TITLE,
-        TEXT,
-        IMAGE,
-        REPLY_HEADER,
-        REPLY
-    }
 
-    public static final String TABLE_NAME = "newsdetail";
-    public static final String ID_COLUMN = "_id";
-    public static final String RECORD_TYPE_COLUMN = "record_type";
-    public static final String AUTHOR_COLUMN = "author";
-    public static final String DATE_COLUMN = "date";
-    public static final String TEXT_COLUMN = "text";
-     */
     private int mRecordType;
     private String mText;
     private String mAuthor;
@@ -28,8 +13,8 @@ public class NewsDetailItem {
     private int mKarma_up;
     private int mKarma_down;
     private String mAuthor_image;
-    private String mPost_id;
-
+    private String mPost_url;
+    private String mAkismet;
 
     public String getText() {
         return mText;
@@ -39,12 +24,20 @@ public class NewsDetailItem {
         mText = text;
     }
 
-    public String getPostId(){
-        return mPost_id;
+    public void setAkismet(String akismet){
+        mAkismet = akismet;
     }
 
-    public void setPostId(String postId){
-        mPost_id = postId;
+    public String getAkismet(){
+        return mAkismet;
+    }
+
+    public String getPostUrl(){
+        return mPost_url;
+    }
+
+    public void setPostUrl(String postUrl){
+        mPost_url = postUrl;
     }
 
     public void setContentType(int contentType) {

@@ -2,6 +2,7 @@ package com.parser;
 
 import android.os.Handler;
 
+import com.parser.blogio.BlogConnector;
 import com.parser.processors.Processor;
 
 import java.io.InputStream;
@@ -15,6 +16,9 @@ public class DataSource {
     private Callbacks mCallbacks;
     private Handler mHandler;
     private int mRecordsFetched = 0;
+
+    public static final String WIN_CHARSET = "windows-1251";
+    public static final String UTF8_CHARSET = "UTF-8";
 
 
     public interface Callbacks {
@@ -33,7 +37,14 @@ public class DataSource {
             @Override
             public void run() {
                 try {
-                    InputStream stream = getInputStream(url);
+                    InputStream stream = null;
+                    if (url.contains("s13.ru/archives")){
+                        BlogConnector blogConnector = BlogConnector.getBlogConnector();
+                        blogConnector.getInputStream(url, UTF8_CHARSET);
+                    } else
+                    {
+                        stream = getInputStream(url);
+                    }
                     try {
                          mRecordsFetched = mProcessor.process(stream, isTopRequest, url);
                     } finally {

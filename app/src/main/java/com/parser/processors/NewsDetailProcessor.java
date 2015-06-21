@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import com.parser.DataSource;
 
 public class NewsDetailProcessor extends Processor {
     private static final String IMG_PREF = "<img "; //"<img class=";
@@ -45,7 +46,7 @@ public class NewsDetailProcessor extends Processor {
 
     @Override
     public int process(InputStream stream, boolean isTopRequest, String url) throws Exception {
-        String response = getStringFromStream(stream, UTF8_CHARSET);
+        String response = getStringFromStream(stream, DataSource.UTF8_CHARSET);
         if (mDBHelper == null) {
             mDBHelper = new NewsDetailDBHelper();
         }
@@ -87,8 +88,34 @@ public class NewsDetailProcessor extends Processor {
         Pattern pWidth = Pattern.compile(WIDTH_PREF + ".*?" + WIDTH_POSTF);
         Pattern pHeight = Pattern.compile(HEIGHT_PREF + ".*?" + HEIGHT_POSTF);
 
-        Matcher itemMatcher;
+        Pattern pAkismet = Pattern
+                .compile("id=\"akismet_comment_nonce\".*?/>");
+        Pattern pValue = Pattern.compile("value=\".*?\"");
 
+        String akismet = "";
+        String postId = "";
+        Matcher makismet_comment = pAkismet.matcher(response);
+        if (makismet_comment.find()) {
+            Matcher mvalue = pValue.matcher(makismet_comment.group());
+            if (mvalue.find()) {
+                akismet = mvalue.group();
+                akismet = akismet.replace("\"", "");
+                akismet = akismet.replace("value=", "");
+            }
+        }
+
+        Pattern ppost_id = Pattern.compile("name=\"comment_post_ID\".*?/>");
+        Matcher mpost_id = ppost_id.matcher(response);
+        if (mpost_id.find()) {
+            Matcher mvalue = pValue.matcher(mpost_id.group());
+            if (mvalue.find()) {
+                postId = mvalue.group();
+                postId = postId.replace("\"", "");
+                postId = postId.replace("value=", "");
+            }
+        }
+
+        Matcher itemMatcher;
         itemMatcher = pDate.matcher(response);
         String date = "";
         if (itemMatcher.find()) {
@@ -107,7 +134,9 @@ public class NewsDetailProcessor extends Processor {
             item.setText(itemText);
             item.setDate(date);
             item.setContentType(NewsDetailDBHelper.NewsItemType.TITLE.ordinal());
-            item.setPostId(mUrl);
+            item.setPostUrl(mUrl);
+            item.setCommentId(postId);
+            item.setAkismet(akismet);
             items.add(item);
         }
 
@@ -134,14 +163,14 @@ public class NewsDetailProcessor extends Processor {
 
         NewsDetailItem item = new NewsDetailItem();
         item.setContentType(NewsDetailDBHelper.NewsItemType.REPLY_HEADER.ordinal());
-        item.setPostId(mUrl);
+        item.setPostUrl(mUrl);
         items.add(item);
 
         Matcher mComment = pComment.matcher(response);
         while (mComment.find()) {
             item = new NewsDetailItem();
             item.setContentType(NewsDetailDBHelper.NewsItemType.REPLY.ordinal());
-            item.setPostId(mUrl);
+            item.setPostUrl(mUrl);
             items.add(item);
 
             String comment = mComment.group();
@@ -246,7 +275,7 @@ public class NewsDetailProcessor extends Processor {
             {
                 imageItem.setHeight(DEFAULT_IMAGE_HEIGHT);
             }
-            imageItem.setPostId(mUrl);
+            imageItem.setPostUrl(mUrl);
             items.add(imageItem);
         }
     }
@@ -255,7 +284,7 @@ public class NewsDetailProcessor extends Processor {
         NewsDetailItem item = new NewsDetailItem();
         item.setText(text);
         item.setContentType(NewsDetailDBHelper.NewsItemType.TEXT.ordinal());
-        item.setPostId(mUrl);
+        item.setPostUrl(mUrl);
         items.add(item);
     }
 }

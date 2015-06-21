@@ -14,9 +14,9 @@ import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
 import com.parser.R;
-import com.parser.authentication.AUTH_RESULT;
-import com.parser.authentication.AuthDialog;
-import com.parser.authentication.AuthenticateListener;
+import com.parser.blogio.AUTH_RESULT;
+import com.parser.blogio.AuthDialog;
+import com.parser.blogio.AuthenticateListener;
 
 public class PrefFragment extends PreferenceFragment {
     private static final String MARKET_URL = "market://details?id=";
