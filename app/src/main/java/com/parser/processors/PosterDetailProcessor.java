@@ -3,6 +3,7 @@ package com.parser.processors;
 import android.content.Context;
 import android.text.TextUtils;
 
+import com.parser.DataSource;
 import com.parser.bo.PosterDetailItem;
 import com.parser.db.PosterDetailDBHelper;
 
@@ -53,25 +54,20 @@ public class PosterDetailProcessor extends Processor {
     }
 
     private List<PosterDetailItem> getPosterItems(InputStream stream) throws Exception {
-        String response = getStringFromStream(stream, WIN_CHARSET);
+        String response = getStringFromStream(stream, DataSource.WIN_CHARSET);
         List<PosterDetailItem> items = new ArrayList<>();
-
         Pattern pTitle = Pattern.compile(TITLE_PREFIX + ".*?" + TITLE_SUFFIX);
-
         Pattern pInfoName = Pattern.compile(INFONAME_PREF + ".*?" + END_DIV);
         Pattern pInfoValue = Pattern.compile(INFOVALUE_PREF + ".*?" + END_DIV);
-
 
         Pattern pDescription = Pattern.compile(DESCRIPTION_PREF + ".*?" + END_DIV);
 
         Pattern pPoster = Pattern.compile("<div class=\"view-event-poster\">" +
                 ".*?" + "</div>");
         Pattern pPosterImage = Pattern.compile(IMG_PREFIX + ".*?" + IMG_POSTF);
-
         Pattern pPreview = Pattern.compile("<div class=\"view-event-trailer\">" +
                 ".*?</div>");
         Pattern pPreviewSource = Pattern.compile(PREVIEW_PREF + ".*?" + PREVIEW_POSTF);
-
         Pattern pTimeAndPlace = Pattern.compile("<div class=\"view-event-showtime-item\">\n" +
                 ".*?" + "<div class=\"view-event-showtime-item\">\n");
 

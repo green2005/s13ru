@@ -47,4 +47,7 @@
     <string name="userName">Имя пользователя</string>
     <string name = "pwd">Пароль</string>
     <string name = "auth_dialog_title">Параметры аутентификации</string>
+    <string name = "auth_completed_ok">Успешно завершено</string>
+    <string name = "auth_error">Ошибка авторизации</string>
+    <string name = "please_wait">Пожалуйста подождите</string>
 </resources>

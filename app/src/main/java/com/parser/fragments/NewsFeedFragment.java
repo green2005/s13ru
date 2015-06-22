@@ -50,6 +50,7 @@ public class NewsFeedFragment extends BaseDataFragment {
 
     @Override
     protected void onEmptyDataFetched() {
+        setDataEof(false);
         loadMore();
     }
 

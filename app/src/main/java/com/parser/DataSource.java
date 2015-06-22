@@ -20,6 +20,8 @@ public class DataSource {
     public static final String WIN_CHARSET = "windows-1251";
     public static final String UTF8_CHARSET = "UTF-8";
 
+    private static final String S13_URL = "s13.ru/archives";
+
 
     public interface Callbacks {
         public void onError(String errorMessage);
@@ -38,9 +40,9 @@ public class DataSource {
             public void run() {
                 try {
                     InputStream stream = null;
-                    if (url.contains("s13.ru/archives")){
+                    if (url.contains(S13_URL)){
                         BlogConnector blogConnector = BlogConnector.getBlogConnector();
-                        blogConnector.getInputStream(url, UTF8_CHARSET);
+                        stream = blogConnector.getInputStream(url, UTF8_CHARSET);
                     } else
                     {
                         stream = getInputStream(url);

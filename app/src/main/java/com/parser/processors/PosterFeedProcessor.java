@@ -2,6 +2,7 @@ package com.parser.processors;
 
 import android.content.Context;
 
+import com.parser.DataSource;
 import com.parser.R;
 import com.parser.bo.PosterFeedItem;
 import com.parser.db.PosterFeedDBHelper;
@@ -42,7 +43,7 @@ public class PosterFeedProcessor extends Processor {
 
     private List<PosterFeedItem> getPosters(InputStream stream) throws Exception {
         List<PosterFeedItem> items = new ArrayList<>();
-        String response = getStringFromStream(stream, WIN_CHARSET);
+        String response = getStringFromStream(stream, DataSource.WIN_CHARSET);
         Pattern pItem = Pattern.compile("class=\"home-events-item-poster\">.*?</a></div>");
         Pattern pLink = Pattern.compile("<a href=\".*?\"");
         Pattern pDate = Pattern.compile("\"home-events-item-date\">.*?</div>");

@@ -1,6 +1,7 @@
 package com.parser.fragments;
 
 import android.app.Activity;
+import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -19,6 +20,7 @@ import android.widget.CursorAdapter;
 import android.widget.ListView;
 
 import com.parser.DataSource;
+import com.parser.ErrorHelper;
 import com.parser.R;
 import com.parser.loader.ImageLoader;
 import com.parser.processors.Processor;
@@ -68,6 +70,10 @@ public abstract class BaseDataFragment extends Fragment implements PaginationSou
         return view;
     }
 
+    public void setDataEof(boolean eof) {
+        mEofData = eof;
+    }
+
     protected ListView getListView() {
         return mListView;
     }
@@ -81,6 +87,7 @@ public abstract class BaseDataFragment extends Fragment implements PaginationSou
         mSwipe.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
+                setDataEof(false);
                 loadData(0);
             }
         });
@@ -140,10 +147,15 @@ public abstract class BaseDataFragment extends Fragment implements PaginationSou
             mDataSource = new DataSource(processor, new DataSource.Callbacks() {
                 @Override
                 public void onError(String errorMessage) {
+
                     mState = LoadState.ERROR;
                     mFooterView.setVisibility(View.GONE);
                     if ((mSwipe != null) && (mSwipe.isRefreshing())) {
                         mSwipe.setRefreshing(false);
+                    }
+                    Context context = getActivity();
+                    if (context != null) {
+                        ErrorHelper.showError(context, errorMessage);
                     }
                 }
 
@@ -155,8 +167,8 @@ public abstract class BaseDataFragment extends Fragment implements PaginationSou
                         mSwipe.setRefreshing(false);
                     }
                     if (recordsFetched == 0) {
-                        onEmptyDataFetched();
                         mEofData = true;
+                        onEmptyDataFetched();
                     } else {
                         mEofData = false;
                         mIsTopRequest = false;
