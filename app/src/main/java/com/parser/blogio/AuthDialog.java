@@ -17,14 +17,13 @@ import com.parser.ErrorHelper;
 import com.parser.R;
 
 public class AuthDialog extends Dialog {
-    private AuthenticateListener mListener;
     private static final String PWD_KEY = "pwd";
     private static final String USER_KEY = "user";
     private EditText mPwd;
     private EditText mUserName;
 
-    public static void editAuth(Context context, AuthenticateListener listener) {
-        AuthDialog dialog = new AuthDialog(context, listener);
+    public static void editAuth(Context context ) {
+        AuthDialog dialog = new AuthDialog(context );
         dialog.show();
     }
 
@@ -55,10 +54,9 @@ public class AuthDialog extends Dialog {
     }
 
 
-    public AuthDialog(Context context, AuthenticateListener listener) {
+    public AuthDialog(Context context) {
         super(context);
         setTitle(context.getString(R.string.auth_dialog_title));
-        mListener = listener;
         setContentView(R.layout.dialog_authenticate);
         mPwd = (EditText) findViewById(R.id.pwdEdit);
         mUserName = (EditText) findViewById(R.id.userNameEdit);

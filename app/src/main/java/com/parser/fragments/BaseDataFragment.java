@@ -63,11 +63,15 @@ public abstract class BaseDataFragment extends Fragment implements PaginationSou
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_main, null);
+        View view = inflater.inflate(getFragmentResourceId(), null);
         mImageLoader = ImageLoader.get(getActivity());
         loadData(0);
         initView(view);
         return view;
+    }
+
+    protected int getFragmentResourceId(){
+        return R.layout.fragment_main;
     }
 
     public void setDataEof(boolean eof) {

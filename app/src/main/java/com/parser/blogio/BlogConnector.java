@@ -1,6 +1,5 @@
 package com.parser.blogio;
 
-import android.content.Context;
 import android.os.Handler;
 
 import org.apache.http.HttpResponse;
@@ -42,9 +41,6 @@ public class BlogConnector {
         ERROR
     }
 
-    interface RequestListener {
-        public void onRequestDone(QUERY_RESULT result, String errorMessage);
-    }
 
     public static BlogConnector getBlogConnector() {
         if (sBlogConnector == null) {
@@ -149,7 +145,6 @@ public class BlogConnector {
         if (!mIsLoggedIn.get()) {
             return false;
         }
-
         String url = THUMB_UP_URL;
         url = url.replace("!id", idMessage);
         HttpGet rq = new HttpGet(url);
@@ -159,18 +154,11 @@ public class BlogConnector {
         HttpResponse response = mHttpClient.execute(rq);
         BufferedReader in = new BufferedReader(new InputStreamReader(
                 response.getEntity().getContent()));
-//        StringBuilder sb = new StringBuilder();
-//        String line ;
-//        String NL = System.getProperty("line.separator");
-//        while ((line = in.readLine()) != null) {
-//            sb.append(line + NL);
-//        }
-//
         in.close();
         return true;
     }
 
-    private boolean doThumbDown(String idMessage) throws Exception{
+    private boolean doThumbDown(String idMessage) throws Exception {
         String url = THUMB_DOWN_URL;
         url = url.replace("!id", idMessage);
         HttpGet rq = new HttpGet(url);
@@ -208,13 +196,12 @@ public class BlogConnector {
         }
     }
 
-    private void addHeaders(HttpRequestBase request){
+    private void addHeaders(HttpRequestBase request) {
         request.addHeader("Host", "s13.ru");
         request.addHeader("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:14.0) Gecko/20100101 Firefox/14.0.1");
         request.addHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
         request.addHeader("Accept-Language", "ru,en-us;q=0.7,en;q=0.3");
         request.addHeader("Connection", "keep-alive");
-
 //        httppost.addHeader("Host", "s13.ru");
 //        httppost.addHeader("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:14.0) Gecko/20100101 Firefox/14.0.1");
 //        httppost.addHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");

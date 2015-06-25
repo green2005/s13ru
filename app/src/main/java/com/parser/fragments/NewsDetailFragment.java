@@ -3,17 +3,26 @@ package com.parser.fragments;
 import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
+import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.CursorAdapter;
+import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.parser.R;
 import com.parser.adapters.NewsDetailAdapter;
+import com.parser.blogio.AuthDialog;
+import com.parser.blogio.BlogConnector;
+import com.parser.blogio.RequestListener;
 import com.parser.db.CursorHelper;
 import com.parser.db.NewsContentProvider;
 import com.parser.db.NewsDetailDBHelper;
@@ -33,6 +42,8 @@ public class NewsDetailFragment extends BaseDataFragment implements DetailFragme
     private ActionItem mKarmaUpAction;
     private ActionItem mKarmaDownAction;
     private int mSelectedRecord;
+    private EditText mCommentEdit;
+    private ImageButton mSendBtn;
 
 
     public static NewsDetailFragment getNewFragment(Bundle params) {
@@ -52,7 +63,64 @@ public class NewsDetailFragment extends BaseDataFragment implements DetailFragme
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = super.onCreateView(inflater, container, savedInstanceState);
         initListView();
+        initEditLayout(view);
         return view;
+    }
+
+    private void initEditLayout(View view){
+        RelativeLayout editLayout =( RelativeLayout)(view.findViewById(R.id.editing_layout));
+        mSendBtn = (ImageButton)editLayout.findViewById(R.id.sendBtn);
+        mCommentEdit = (EditText) editLayout.findViewById(R.id.commentEdit);
+        Context context = getActivity();
+        if (context!= null) {
+            String userName = AuthDialog.getUserName(context);
+            String pwd =AuthDialog.getPwd(context);
+            if (!TextUtils.isEmpty(userName) && !TextUtils.isEmpty(pwd)){
+                editLayout.setVisibility(View.VISIBLE);
+            } else
+            {
+                editLayout.setVisibility(View.GONE);
+            }
+        }
+        mSendBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendComment(mCommentEdit.getText().toString());
+            }
+        });
+    }
+
+    private void sendComment(String comment){
+        Cursor cursor = getAdapter().getCursor();
+        if ((cursor == null)||(cursor.isClosed())){
+            return;
+        }
+        cursor.moveToFirst();
+        String postId  = CursorHelper.getString(cursor, NewsDetailDBHelper.COMMENT_ID_COLUMN);
+        BlogConnector connector = BlogConnector.getBlogConnector();
+        if (!connector.loggedIn()){
+            Context context = getActivity();
+            if (context!=null) {
+              //  Toast.makeText()
+
+            }
+            return ;
+        } else
+        {
+            connector.
+
+
+        }
+
+
+
+
+
+    }
+
+    @Override
+    protected int getFragmentResourceId() {
+        return R.layout.fragment_new_detail;
     }
 
     private void initListView() {
@@ -60,14 +128,11 @@ public class NewsDetailFragment extends BaseDataFragment implements DetailFragme
         if (listView != null) {
             listView.setDivider(null);
             listView.setDividerHeight(0);
-            //  listView.setEnabled(false);
         }
         assert listView != null;
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                // mQuickAction.refreshActionItem(mKarmaDownAction);
-                // mQuickAction.refreshActionItem(mKarmaUpAction);
                 mSelectedRecord = position;
                 mQuickAction.setAnimStyle(QuickAction.ANIM_GROW_FROM_CENTER);
                 mQuickAction.show(view);
@@ -121,9 +186,11 @@ public class NewsDetailFragment extends BaseDataFragment implements DetailFragme
         });
     }
 
-    private void addKarma(boolean karmaUp){
+    private void addKarma(boolean karmaUp) {
         Cursor cursor = mAdapter.getCursor();
-        if (cursor == null){return;}
+        if (cursor == null) {
+            return;
+        }
         cursor.moveToPosition(mSelectedRecord);
         String commentId = CursorHelper.getString(cursor, NewsDetailDBHelper.COMMENT_ID_COLUMN);
 
@@ -137,6 +204,35 @@ public class NewsDetailFragment extends BaseDataFragment implements DetailFragme
             mAdapter = new NewsDetailAdapter(activity, R.layout.item_news_feed_image, null, NewsDetailDBHelper.getFields(), null, 0);
         }
         return mAdapter;
+    }
+
+    @Override
+    protected void loadData(final int offset) {
+        Context context = getActivity();
+        if (context == null) {
+            return;
+        }
+        BlogConnector connector = BlogConnector.getBlogConnector();
+        if (connector.loggedIn()) {
+            super.loadData(offset);
+            return;
+        }
+        String userName = AuthDialog.getUserName(context);
+        String pwd = AuthDialog.getPwd(context);
+        if (!TextUtils.isEmpty(userName) && !TextUtils.isEmpty(pwd)) {
+            connector.login(userName, pwd, new RequestListener() {
+                @Override
+                public void onRequestDone(BlogConnector.QUERY_RESULT result, String errorMessage) {
+                    doLoadData(offset);
+                }
+            });
+        } else {
+            super.loadData(offset);
+        }
+    }
+
+    private void doLoadData(int offset){
+        super.loadData(offset);
     }
 
     @Override

@@ -14,9 +14,7 @@ import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
 import com.parser.R;
-import com.parser.blogio.AUTH_RESULT;
 import com.parser.blogio.AuthDialog;
-import com.parser.blogio.AuthenticateListener;
 
 public class PrefFragment extends PreferenceFragment {
     private static final String MARKET_URL = "market://details?id=";
@@ -62,12 +60,7 @@ public class PrefFragment extends PreferenceFragment {
         if (activity == null){
             return;
         }
-        AuthDialog.editAuth(activity, new AuthenticateListener() {
-            @Override
-            public void onAuthResult(AUTH_RESULT result) {
-
-            }
-        });
+        AuthDialog.editAuth(activity);
     }
 
     private void rateMe() {
