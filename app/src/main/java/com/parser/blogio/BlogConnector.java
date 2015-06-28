@@ -69,6 +69,26 @@ public class BlogConnector {
         return response.getEntity().getContent();
     }
 
+    public void addComment(final String commentText, final String akismet, final String postId, final RequestListener listener) {
+        final Handler handler = new Handler();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    doAddComment(commentText, akismet, postId);
+                    listener.onRequestDone(QUERY_RESULT.OK, "");
+                } catch (final Exception e) {
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            listener.onRequestDone(QUERY_RESULT.ERROR, e.getMessage());
+                        }
+                    });
+                }
+            }
+        }).start();
+    }
+
     public void login(final String login, final String pwd, final RequestListener listener) {
         final Handler handler = new Handler();
         new Thread(new Runnable() {

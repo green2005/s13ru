@@ -39,7 +39,7 @@ public class DataSource {
             @Override
             public void run() {
                 try {
-                    InputStream stream = null;
+                    InputStream stream ;
                     if (url.contains(S13_URL)){
                         BlogConnector blogConnector = BlogConnector.getBlogConnector();
                         stream = blogConnector.getInputStream(url, UTF8_CHARSET);

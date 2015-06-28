@@ -1,9 +1,9 @@
 package com.parser.fragments;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.database.Cursor;
-import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -16,8 +16,8 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
 
+import com.parser.ErrorHelper;
 import com.parser.R;
 import com.parser.adapters.NewsDetailAdapter;
 import com.parser.blogio.AuthDialog;
@@ -39,11 +39,8 @@ public class NewsDetailFragment extends BaseDataFragment implements DetailFragme
     private NewsDetailProcessor mProcessor;
 
     private QuickAction mQuickAction;
-    private ActionItem mKarmaUpAction;
-    private ActionItem mKarmaDownAction;
     private int mSelectedRecord;
     private EditText mCommentEdit;
-    private ImageButton mSendBtn;
 
 
     public static NewsDetailFragment getNewFragment(Bundle params) {
@@ -67,22 +64,21 @@ public class NewsDetailFragment extends BaseDataFragment implements DetailFragme
         return view;
     }
 
-    private void initEditLayout(View view){
-        RelativeLayout editLayout =( RelativeLayout)(view.findViewById(R.id.editing_layout));
-        mSendBtn = (ImageButton)editLayout.findViewById(R.id.sendBtn);
+    private void initEditLayout(View view) {
+        RelativeLayout editLayout = (RelativeLayout) (view.findViewById(R.id.editing_layout));
+        ImageButton sendBtn = (ImageButton) editLayout.findViewById(R.id.sendBtn);
         mCommentEdit = (EditText) editLayout.findViewById(R.id.commentEdit);
         Context context = getActivity();
-        if (context!= null) {
+        if (context != null) {
             String userName = AuthDialog.getUserName(context);
-            String pwd =AuthDialog.getPwd(context);
-            if (!TextUtils.isEmpty(userName) && !TextUtils.isEmpty(pwd)){
+            String pwd = AuthDialog.getPwd(context);
+            if (!TextUtils.isEmpty(userName) && !TextUtils.isEmpty(pwd)) {
                 editLayout.setVisibility(View.VISIBLE);
-            } else
-            {
+            } else {
                 editLayout.setVisibility(View.GONE);
             }
         }
-        mSendBtn.setOnClickListener(new View.OnClickListener() {
+        sendBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 sendComment(mCommentEdit.getText().toString());
@@ -90,32 +86,41 @@ public class NewsDetailFragment extends BaseDataFragment implements DetailFragme
         });
     }
 
-    private void sendComment(String comment){
+    private void sendComment(String comment) {
         Cursor cursor = getAdapter().getCursor();
-        if ((cursor == null)||(cursor.isClosed())){
+        if ((cursor == null) || (cursor.isClosed())) {
+            return;
+        }
+        Context context = getActivity();
+        if (context == null) {
             return;
         }
         cursor.moveToFirst();
-        String postId  = CursorHelper.getString(cursor, NewsDetailDBHelper.COMMENT_ID_COLUMN);
-        BlogConnector connector = BlogConnector.getBlogConnector();
-        if (!connector.loggedIn()){
-            Context context = getActivity();
-            if (context!=null) {
-              //  Toast.makeText()
-
-            }
-            return ;
-        } else
-        {
-            connector.
-
-
+        String postId = CursorHelper.getString(cursor, NewsDetailDBHelper.COMMENT_ID_COLUMN);
+        final BlogConnector connector = BlogConnector.getBlogConnector();
+        if (connector.loggedIn()) {
+            String akismet = CursorHelper.getString(cursor, NewsDetailDBHelper.AKISMET);
+            final ProgressDialog pg = new ProgressDialog(context);
+            pg.setTitle(context.getString(R.string.please_wait));
+            pg.show();
+            connector.addComment(comment, akismet, postId, new RequestListener() {
+                @Override
+                public void onRequestDone(BlogConnector.QUERY_RESULT result, String errorMessage) {
+                    if (pg != null && pg.isShowing()) {
+                        pg.dismiss();
+                    }
+                    if (result == BlogConnector.QUERY_RESULT.ERROR) {
+                        Context context = getActivity();
+                        if (context == null) {
+                            return;
+                        }
+                        ErrorHelper.showError(context, errorMessage);
+                    } else {
+                        loadData(0);
+                    }
+                }
+            });
         }
-
-
-
-
-
     }
 
     @Override
@@ -143,25 +148,25 @@ public class NewsDetailFragment extends BaseDataFragment implements DetailFragme
 
     private void prepareQuickAction() {
         Activity activity = getActivity();
-        mKarmaDownAction = new ActionItem();
-        mKarmaDownAction.setTitle(activity.getString(R.string.dislike));
-        mKarmaDownAction.setIcon(activity.getResources().getDrawable(
+        ActionItem karmaDownAction = new ActionItem();
+        karmaDownAction.setTitle(activity.getString(R.string.dislike));
+        karmaDownAction.setIcon(activity.getResources().getDrawable(
                 com.parser.R.drawable.commentdownbig));
 
-        mKarmaUpAction = new ActionItem();
+        ActionItem mKarmaUpAction = new ActionItem();
         mKarmaUpAction.setTitle(activity.getString(R.string.like));
         mKarmaUpAction.setIcon(activity.getResources().getDrawable(
                 com.parser.R.drawable.commentupbig));
 
-        ActionItem mReplyAction = new ActionItem();
-        mReplyAction.setTitle(activity.getString(R.string.reply));
-        mReplyAction.setIcon(activity.getResources().getDrawable(
+        ActionItem replyAction = new ActionItem();
+        replyAction.setTitle(activity.getString(R.string.reply));
+        replyAction.setIcon(activity.getResources().getDrawable(
                 com.parser.R.drawable.reply));
 
         mQuickAction = new QuickAction(activity);
-        mQuickAction.addActionItem(mKarmaDownAction);
+        mQuickAction.addActionItem(karmaDownAction);
         mQuickAction.addActionItem(mKarmaUpAction);
-        mQuickAction.addActionItem(mReplyAction);
+        mQuickAction.addActionItem(replyAction);
         //mQuickAction.addActionItem(mReplyAction);
 
 
@@ -231,7 +236,7 @@ public class NewsDetailFragment extends BaseDataFragment implements DetailFragme
         }
     }
 
-    private void doLoadData(int offset){
+    private void doLoadData(int offset) {
         super.loadData(offset);
     }
 
