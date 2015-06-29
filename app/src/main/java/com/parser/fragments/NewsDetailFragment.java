@@ -2,6 +2,8 @@ package com.parser.fragments;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
@@ -16,6 +18,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.parser.ErrorHelper;
 import com.parser.R;
@@ -86,7 +89,7 @@ public class NewsDetailFragment extends BaseDataFragment implements DetailFragme
         });
     }
 
-    private void sendComment(String comment) {
+    private void sendComment(final String comment) {
         Cursor cursor = getAdapter().getCursor();
         if ((cursor == null) || (cursor.isClosed())) {
             return;
@@ -97,16 +100,18 @@ public class NewsDetailFragment extends BaseDataFragment implements DetailFragme
         }
         cursor.moveToFirst();
         String postId = CursorHelper.getString(cursor, NewsDetailDBHelper.COMMENT_ID_COLUMN);
+        final String postUrl = CursorHelper.getString(cursor, NewsDetailDBHelper.POST_ID);
         final BlogConnector connector = BlogConnector.getBlogConnector();
         if (connector.loggedIn()) {
             String akismet = CursorHelper.getString(cursor, NewsDetailDBHelper.AKISMET);
+            String ak_js = CursorHelper.getString(cursor, NewsDetailDBHelper.AK_JS);
             final ProgressDialog pg = new ProgressDialog(context);
             pg.setTitle(context.getString(R.string.please_wait));
             pg.show();
-            connector.addComment(comment, akismet, postId, new RequestListener() {
+            connector.addComment(comment, akismet, ak_js, postId, new RequestListener() {
                 @Override
                 public void onRequestDone(BlogConnector.QUERY_RESULT result, String errorMessage) {
-                    if (pg != null && pg.isShowing()) {
+                    if (pg.isShowing()) {
                         pg.dismiss();
                     }
                     if (result == BlogConnector.QUERY_RESULT.ERROR) {
@@ -116,7 +121,25 @@ public class NewsDetailFragment extends BaseDataFragment implements DetailFragme
                         }
                         ErrorHelper.showError(context, errorMessage);
                     } else {
-                        loadData(0);
+                        Context context = getActivity();
+                        if (context == null) {
+                            return;
+                        }
+                        if (mCommentEdit != null) {
+                            mCommentEdit.setText("");
+                        }
+                        ContentResolver resolver = context.getContentResolver();
+                        ContentValues values = new ContentValues();
+                        values.put(NewsDetailDBHelper.AUTHOR_COLUMN, AuthDialog.getUserName(context));
+                        values.put(NewsDetailDBHelper.RECORD_TYPE_COLUMN, NewsDetailDBHelper.NewsItemType.REPLY.ordinal());
+                        values.put(NewsDetailDBHelper.TEXT_COLUMN, comment);
+                        values.put(NewsDetailDBHelper.KARMA_DOWN_COLUMN, 0);
+                        values.put(NewsDetailDBHelper.KARMA_UP_COLUMN, 0);
+                        values.put(NewsDetailDBHelper.POST_ID, postUrl);
+                        
+                        resolver.insert(NewsContentProvider.NEWSFEED_CONTENT_URI, values);
+                        resolver.notifyChange(NewsContentProvider.NEWS_DETAIL_URI, null);
+                        //loadData(0);
                     }
                 }
             });
@@ -191,15 +214,66 @@ public class NewsDetailFragment extends BaseDataFragment implements DetailFragme
         });
     }
 
-    private void addKarma(boolean karmaUp) {
+    private void addKarma(final boolean karmaUp) {
         Cursor cursor = mAdapter.getCursor();
         if (cursor == null) {
             return;
         }
         cursor.moveToPosition(mSelectedRecord);
         String commentId = CursorHelper.getString(cursor, NewsDetailDBHelper.COMMENT_ID_COLUMN);
+        final String postId = CursorHelper.getString(cursor, NewsDetailDBHelper.COMMENT_ID_COLUMN);
+        final int ups = CursorHelper.getInt(cursor, NewsDetailDBHelper.KARMA_UP_COLUMN);
+        final int downs = CursorHelper.getInt(cursor, NewsDetailDBHelper.KARMA_UP_COLUMN);
+        final BlogConnector connector = BlogConnector.getBlogConnector();
+        Context context = getActivity();
+        if (context == null) {
+            return;
+        }
+        if (connector.loggedIn()) {
+            final ProgressDialog pg = new ProgressDialog(context);
+            pg.setTitle(context.getString(R.string.please_wait));
+            pg.show();
+            connector.changeKarma(commentId, karmaUp, new RequestListener() {
+                @Override
+                public void onRequestDone(BlogConnector.QUERY_RESULT result, String errorMessage) {
+                    Context context = getActivity();
+                    if (context == null) {
+                        return;
+                    }
+                    if (result == BlogConnector.QUERY_RESULT.ERROR) {
+                        ErrorHelper.showError(context, errorMessage);
+                    } else {
+                        ContentResolver resolver = context.getContentResolver();
+                        ContentValues values = new ContentValues();
+                        String[] args = new String[1];
+                        args[0] = postId;
+                        if (karmaUp) {
+                            values.put(NewsDetailDBHelper.KARMA_UP_COLUMN, ups + 1);
+                        } else {
+                            values.put(NewsDetailDBHelper.KARMA_DOWN_COLUMN, downs + 1);
+                        }
+                        resolver.update(NewsContentProvider.NEWS_DETAIL_URI, values, NewsDetailDBHelper.ID_COLUMN + " = ?", args);
+                        resolver.notifyChange(NewsContentProvider.NEWS_DETAIL_URI, null);
+                    }
+                }
+            });
+        } else {
+            Toast.makeText(context, R.string.not_authenticated, Toast.LENGTH_SHORT).show();
+        }
+           /*
+                        ContentResolver resolver = context.getContentResolver();
+                        ContentValues values = new ContentValues();
+                        values.put(NewsDetailDBHelper.AUTHOR_COLUMN, AuthDialog.getUserName(context));
+                        values.put(NewsDetailDBHelper.RECORD_TYPE_COLUMN, NewsDetailDBHelper.NewsItemType.REPLY.ordinal());
+                        values.put(NewsDetailDBHelper.TEXT_COLUMN, comment);
+                        values.put(NewsDetailDBHelper.KARMA_DOWN_COLUMN , 0);
+                        values.put(NewsDetailDBHelper.KARMA_UP_COLUMN , 0);
+                        values.put(NewsDetailDBHelper.POST_ID, postUrl);
 
-        //mQuickAction.
+                        resolver.insert(NewsContentProvider.NEWSFEED_CONTENT_URI, values);
+                        resolver.notifyChange(NewsContentProvider.NEWS_DETAIL_URI, null);
+                        //loadData(0);
+           */
     }
 
     @Override

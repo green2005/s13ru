@@ -15,6 +15,7 @@ public class NewsDetailItem {
     private String mAuthor_image;
     private String mPost_url;
     private String mAkismet;
+    private String mAk_js;
 
     public String getText() {
         return mText;
@@ -30,6 +31,14 @@ public class NewsDetailItem {
 
     public String getAkismet(){
         return mAkismet;
+    }
+
+    public String getAk_js(){
+        return mAk_js;
+    }
+
+    public void setAk_js(String ak_js){
+        mAk_js = ak_js;
     }
 
     public String getPostUrl(){

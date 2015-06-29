@@ -49,6 +49,7 @@
     <string name = "auth_dialog_title">Параметры аутентификации</string>
     <string name = "auth_completed_ok">Успешно завершено</string>
     <string name = "auth_error">Ошибка авторизации</string>
+    <string name = "not_authenticated">Необходима аутентификация</string>
     <string name = "please_wait">Пожалуйста подождите</string>
     <string name = "your_comment">Ваш комментарий</string>
 </resources>

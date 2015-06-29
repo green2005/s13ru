@@ -4,7 +4,6 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -22,8 +21,8 @@ public class AuthDialog extends Dialog {
     private EditText mPwd;
     private EditText mUserName;
 
-    public static void editAuth(Context context ) {
-        AuthDialog dialog = new AuthDialog(context );
+    public static void editAuth(Context context) {
+        AuthDialog dialog = new AuthDialog(context);
         dialog.show();
     }
 
@@ -85,39 +84,31 @@ public class AuthDialog extends Dialog {
     private void tryToLogin() {
         BlogConnector blogConnector = new BlogConnector();
         Context context = getContext();
-        if (context == null) {
-            return; //wtf?
-        }
+
         final ProgressDialog pg = new ProgressDialog(context);
         pg.setMessage(context.getString(R.string.please_wait));
         pg.show();
         blogConnector.login(mUserName.getText().toString(), mPwd.getText().toString(),
-                new BlogConnector.RequestListener() {
+                new RequestListener() {
                     @Override
                     public void onRequestDone(BlogConnector.QUERY_RESULT result, String errorMessage) {
-                        if (pg != null && pg.isShowing()) {
+                        if (pg.isShowing()) {
                             pg.dismiss();
                         }
                         Context context = getContext();
                         switch (result) {
                             case OK: {
-                                if (context != null) {
-                                    Toast.makeText(context, context.getString(R.string.auth_completed_ok), Toast.LENGTH_SHORT).show();
-                                    setAuthSettings(mUserName.getText().toString(), mPwd.getText().toString(), context);
-                                    dismiss();
-                                }
+                                Toast.makeText(context, context.getString(R.string.auth_completed_ok), Toast.LENGTH_SHORT).show();
+                                setAuthSettings(mUserName.getText().toString(), mPwd.getText().toString(), context);
+                                dismiss();
                                 break;
                             }
                             case ACCESS_DENIED: {
-                                if (context != null) {
-                                    Toast.makeText(context, context.getString(R.string.auth_error), Toast.LENGTH_SHORT).show();
-                                }
+                                Toast.makeText(context, context.getString(R.string.auth_error), Toast.LENGTH_SHORT).show();
                                 break;
                             }
                             case ERROR: {
-                                if (context != null) {
-                                    ErrorHelper.showError(context, errorMessage);
-                                }
+                                ErrorHelper.showError(context, errorMessage);
                                 break;
                             }
                         }

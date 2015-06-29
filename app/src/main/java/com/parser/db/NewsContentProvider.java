@@ -254,6 +254,17 @@ public class NewsContentProvider extends ContentProvider {
 
     @Override
     public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
-        return 0;
+        int updated = 0;
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+        int uriType = sURIMatcher.match(uri);
+        String tableName = getTableNameByUriType(uriType);
+        db.beginTransaction();
+        try {
+            updated = db.update(tableName, values, selection, selectionArgs);
+            db.setTransactionSuccessful();
+        } finally {
+            db.endTransaction();
+        }
+        return updated;
     }
 }

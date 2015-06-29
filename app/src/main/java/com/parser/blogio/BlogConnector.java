@@ -2,6 +2,8 @@ package com.parser.blogio;
 
 import android.os.Handler;
 
+import com.parser.DataSource;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -18,6 +20,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -69,13 +72,38 @@ public class BlogConnector {
         return response.getEntity().getContent();
     }
 
-    public void addComment(final String commentText, final String akismet, final String postId, final RequestListener listener) {
+    public void changeKarma(final String idMessage, final boolean karmaUp, final RequestListener listener) {
         final Handler handler = new Handler();
         new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
-                    doAddComment(commentText, akismet, postId);
+                    doChangeKarma(idMessage, karmaUp);
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            listener.onRequestDone(QUERY_RESULT.OK, "");
+                        }
+                    });
+                } catch (final Exception e) {
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            listener.onRequestDone(QUERY_RESULT.ERROR, e.getMessage());
+                        }
+                    });
+                }
+            }
+        }).start();
+    }
+
+    public void addComment(final String commentText, final String akismet, final String ak_js, final String postId, final RequestListener listener) {
+        final Handler handler = new Handler();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    doAddComment(commentText, akismet, ak_js, postId);
                     listener.onRequestDone(QUERY_RESULT.OK, "");
                 } catch (final Exception e) {
                     handler.post(new Runnable() {
@@ -161,34 +189,41 @@ public class BlogConnector {
         return page.toLowerCase().contains("logout");
     }
 
-    private boolean doThumbUp(String idMessage) throws Exception {
-        if (!mIsLoggedIn.get()) {
-            return false;
+    /*
+        private boolean doThumbUp(String idMessage) throws Exception {
+            if (!mIsLoggedIn.get()) {
+                return false;
+            }
+            String url = THUMB_UP_URL;
+            url = url.replace("!id", idMessage);
+            HttpGet rq = new HttpGet(url);
+
+            addHeaders(rq);
+
+            HttpResponse response = mHttpClient.execute(rq);
+            BufferedReader in = new BufferedReader(new InputStreamReader(
+                    response.getEntity().getContent()));
+            in.close();
+            return true;
         }
-        String url = THUMB_UP_URL;
-        url = url.replace("!id", idMessage);
-        HttpGet rq = new HttpGet(url);
-
-        addHeaders(rq);
-
-        HttpResponse response = mHttpClient.execute(rq);
-        BufferedReader in = new BufferedReader(new InputStreamReader(
-                response.getEntity().getContent()));
-        in.close();
-        return true;
-    }
-
-    private boolean doThumbDown(String idMessage) throws Exception {
-        String url = THUMB_DOWN_URL;
+    */
+    private boolean doChangeKarma(String idMessage, boolean karmaUp) throws Exception {
+        String url;
+        if (karmaUp) {
+            url = THUMB_UP_URL;
+        } else {
+            url = THUMB_DOWN_URL;
+        }
         url = url.replace("!id", idMessage);
         HttpGet rq = new HttpGet(url);
         addHeaders(rq);
-        HttpResponse response = mHttpClient.execute(rq);
+        //HttpResponse response =
+        mHttpClient.execute(rq);
         return true;
     }
 
 
-    private boolean doAddComment(String commentText, String akismet, String postId) throws Exception {
+    private boolean doAddComment(String commentText, String akismet, String ak_js, String postId) throws Exception {
         HttpPost httppost = new HttpPost(COMMENT_POST_URL);
         addHeaders(httppost);
         HttpParams params = new BasicHttpParams();
@@ -198,7 +233,8 @@ public class BlogConnector {
         mHttpClient.getParams().setParameter("http.protocol.content-charset", "UTF-8");
         List<BasicNameValuePair> nameValuePairs = new ArrayList<>();
         nameValuePairs.add(new BasicNameValuePair("comment",
-                commentText));
+                //URLEncoder.encode(
+                        commentText));//, DataSource.UTF8_CHARSET)));
         nameValuePairs
                 .add(new BasicNameValuePair("submit",
                         "%D0%9E%D1%82%D0%BF%D1%80%D0%B0%D0%B2%D0%B8%D1%82%D1%8C"));
@@ -206,6 +242,8 @@ public class BlogConnector {
                 postId));
         nameValuePairs.add(new BasicNameValuePair(
                 "akismet_comment_nonce", akismet));
+        nameValuePairs.add(new BasicNameValuePair("ak_js", ak_js));
+
         httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs, "UTF8"));
         HttpResponse response = mHttpClient.execute(httppost);
         String rsp = response.getStatusLine().toString();

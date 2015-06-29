@@ -92,7 +92,12 @@ public class NewsDetailProcessor extends Processor {
                 .compile("id=\"akismet_comment_nonce\".*?/>");
         Pattern pValue = Pattern.compile("value=\".*?\"");
 
+        Pattern pAk_js = Pattern
+                .compile("id=\"ak_js\".*?/>");
+
+
         String akismet = "";
+        String ak_js = "";
         String postId = "";
         Matcher makismet_comment = pAkismet.matcher(response);
         if (makismet_comment.find()) {
@@ -103,6 +108,17 @@ public class NewsDetailProcessor extends Processor {
                 akismet = akismet.replace("value=", "");
             }
         }
+
+        Matcher mak_js = pAk_js.matcher(response);
+        if (mak_js.find()) {
+            Matcher mvalue = pValue.matcher(mak_js.group());
+            if (mvalue.find()) {
+                ak_js = mvalue.group();
+                ak_js = ak_js.replace("\"", "");
+                ak_js = ak_js.replace("value=", "");
+            }
+        }
+
 
         Pattern ppost_id = Pattern.compile("name=\"comment_post_ID\".*?/>");
         Matcher mpost_id = ppost_id.matcher(response);
@@ -137,6 +153,7 @@ public class NewsDetailProcessor extends Processor {
             item.setPostUrl(mUrl);
             item.setCommentId(postId);
             item.setAkismet(akismet);
+            item.setAk_js(ak_js);
             items.add(item);
         }
 

@@ -33,6 +33,7 @@ public class NewsDetailDBHelper {
     public static final String COMMENT_ID_COLUMN = "comment_id";
     public static final String POST_ID = "post_id";
     public static final String AKISMET = "akismet";
+    public static final String AK_JS = "ak_js";
 
     private static final String CREATE_TABLE = " create table " + TABLE_NAME + " ( " +
             ID_COLUMN + " integer primary key AUTOINCREMENT , " +
@@ -47,7 +48,8 @@ public class NewsDetailDBHelper {
             COMMENT_ID_COLUMN + " text, " +
             TEXT_COLUMN + " text, " +
             POST_ID + " text, " +
-            AKISMET + " text" +
+            AKISMET + " text, " +
+            AK_JS + " text "+
             " ) ";
 
     private static final String DROP_TABLE = "drop table if exists " + TABLE_NAME;
@@ -99,6 +101,7 @@ public class NewsDetailDBHelper {
             contentValues.put(TEXT_COLUMN, item.getText());
             contentValues.put(POST_ID, item.getPostUrl());
             contentValues.put(AKISMET, item.getAkismet());
+            contentValues.put(AK_JS, item.getAk_js());
             values[i++] = contentValues;
         }
         return values;
