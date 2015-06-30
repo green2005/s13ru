@@ -32,6 +32,11 @@ public class NewsDetailProcessor extends Processor {
     private static final String AUTHOR_IMAGE_PREF = "src='";
     private static final String AUTHOR_IMAGE_POSTF = "'";
 
+    private static final String COMMENT_ID_PREFIX = "id=\"co_";
+    private static final String COMMENT_ID_POSTFIX = "\"";
+
+    private static final String CAN_CHANGE_KARMA_PREFIX = "ckratingKarma";
+
     private static final String DEFAULT_IMAGE_HEIGHT = "270";
     private static final String DEFAULT_IMAGE_WIDTH = "411";
 
@@ -77,7 +82,8 @@ public class NewsDetailProcessor extends Processor {
         Pattern pAuthorImage = Pattern.compile(AUTHOR_IMAGE_PREF+".*?"+AUTHOR_IMAGE_POSTF);
 
         Pattern pCommentText = Pattern.compile("<span id=\"co_.*?</span>");
-        Pattern pCommentId = Pattern.compile("id=\"co_.*?\"");
+        Pattern pCommentId = Pattern.compile(COMMENT_ID_PREFIX + ".*?"+COMMENT_ID_POSTFIX);
+
         Pattern pCommentTex2t = Pattern.compile(">.*?</span>");
 
         Pattern pThumbsDown = Pattern.compile("alt=\"Thumb down\".*?</span>");
@@ -192,12 +198,18 @@ public class NewsDetailProcessor extends Processor {
 
             String comment = mComment.group();
 
+            if (comment.contains(CAN_CHANGE_KARMA_PREFIX)) {
+                item.setCanChangeKarma(1);
+            } else
+            {
+                item.setCanChangeKarma(0);
+            }
+
             Matcher mAuthor = pAuthor.matcher(comment);
             if (mAuthor.find()) {
                 String authorText = mAuthor.group();
                 item.setAuthorImage(getAuthorImgage(authorText, pAuthorImage));
                 item.setAuthor(getAuthorName(authorText, pAuthorName1, pAuthorName2));
-                //item.setAuthor(authorText);
             }
             Matcher mCommentText = pCommentText.matcher(comment);
             if (mCommentText.find()) {
@@ -208,7 +220,9 @@ public class NewsDetailProcessor extends Processor {
             }
             Matcher mCommentId = pCommentId.matcher(comment);
             if (mCommentId.find()) {
-                item.setCommentId(mCommentId.group());
+                String commentId = mCommentId.group().substring(COMMENTDATE_PREF.length());
+                commentId = commentId.substring(0, commentId.length() - COMMENT_ID_POSTFIX.length());
+                item.setCommentId(commentId);
             }
             Matcher mCommentDate = pCommentDate.matcher(comment);
             if (mCommentDate.find()) {

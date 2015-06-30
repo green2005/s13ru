@@ -34,6 +34,7 @@ public class NewsDetailDBHelper {
     public static final String POST_ID = "post_id";
     public static final String AKISMET = "akismet";
     public static final String AK_JS = "ak_js";
+    public static final String CAN_CHANGE_KARMA = "can_change_karma";
 
     private static final String CREATE_TABLE = " create table " + TABLE_NAME + " ( " +
             ID_COLUMN + " integer primary key AUTOINCREMENT , " +
@@ -49,7 +50,8 @@ public class NewsDetailDBHelper {
             TEXT_COLUMN + " text, " +
             POST_ID + " text, " +
             AKISMET + " text, " +
-            AK_JS + " text "+
+            AK_JS + " text ," +
+            CAN_CHANGE_KARMA + " integer " +
             " ) ";
 
     private static final String DROP_TABLE = "drop table if exists " + TABLE_NAME;
@@ -83,11 +85,6 @@ public class NewsDetailDBHelper {
         ContentValues[] values = new ContentValues[items.size()];
         int i = 0;
         for (NewsDetailItem item : items) {
-            /*
-            KARMA_DOWN_COLUMN + " integer, " +
-            KARMA_UP_COLUMN + " integer, " +
-            COMMENT_ID_COLUMN + " text, " +
-             */
             ContentValues contentValues = new ContentValues();
             contentValues.put(AUTHOR_COLUMN, item.getAuthor());
             contentValues.put(DATE_COLUMN, item.getDate());
@@ -102,13 +99,14 @@ public class NewsDetailDBHelper {
             contentValues.put(POST_ID, item.getPostUrl());
             contentValues.put(AKISMET, item.getAkismet());
             contentValues.put(AK_JS, item.getAk_js());
+            contentValues.put(CAN_CHANGE_KARMA, item.getCanChangeKarma());
             values[i++] = contentValues;
         }
         return values;
     }
 
     public static String[] getFields() {
-        String fields[] = new String[13];
+        String fields[] = new String[14];
         fields[0] = ID_COLUMN;
         fields[1] = RECORD_TYPE_COLUMN;
         fields[2] = AUTHOR_COLUMN;
@@ -122,6 +120,7 @@ public class NewsDetailDBHelper {
         fields[10] = COMMENT_ID_COLUMN;
         fields[11] = POST_ID;
         fields[12] = AKISMET;
+        fields[13] = CAN_CHANGE_KARMA;
         return fields;
     }
 

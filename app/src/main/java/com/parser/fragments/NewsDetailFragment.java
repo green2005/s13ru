@@ -8,6 +8,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.content.Loader;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -44,7 +45,9 @@ public class NewsDetailFragment extends BaseDataFragment implements DetailFragme
     private QuickAction mQuickAction;
     private int mSelectedRecord;
     private EditText mCommentEdit;
-
+    private ActionItem mKarmaUpAction;
+    private ActionItem mKarmaDownAction;
+    private RelativeLayout mEditLayout;
 
     public static NewsDetailFragment getNewFragment(Bundle params) {
         NewsDetailFragment fragment = new NewsDetailFragment();
@@ -68,25 +71,31 @@ public class NewsDetailFragment extends BaseDataFragment implements DetailFragme
     }
 
     private void initEditLayout(View view) {
-        RelativeLayout editLayout = (RelativeLayout) (view.findViewById(R.id.editing_layout));
-        ImageButton sendBtn = (ImageButton) editLayout.findViewById(R.id.sendBtn);
-        mCommentEdit = (EditText) editLayout.findViewById(R.id.commentEdit);
-        Context context = getActivity();
-        if (context != null) {
-            String userName = AuthDialog.getUserName(context);
-            String pwd = AuthDialog.getPwd(context);
-            if (!TextUtils.isEmpty(userName) && !TextUtils.isEmpty(pwd)) {
-                editLayout.setVisibility(View.VISIBLE);
-            } else {
-                editLayout.setVisibility(View.GONE);
-            }
-        }
+        mEditLayout = (RelativeLayout) (view.findViewById(R.id.editing_layout));
+        mEditLayout.setVisibility(View.GONE);
+        ImageButton sendBtn = (ImageButton) mEditLayout.findViewById(R.id.sendBtn);
+        mCommentEdit = (EditText) mEditLayout.findViewById(R.id.commentEdit);
         sendBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 sendComment(mCommentEdit.getText().toString());
             }
         });
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+        super.onLoadFinished(loader, cursor);
+        Context context = getActivity();
+        if (context != null && cursor != null && cursor.getCount() > 0) {
+            String userName = AuthDialog.getUserName(context);
+            String pwd = AuthDialog.getPwd(context);
+            if (!TextUtils.isEmpty(userName) && !TextUtils.isEmpty(pwd)) {
+                mEditLayout.setVisibility(View.VISIBLE);
+            } else {
+                mEditLayout.setVisibility(View.GONE);
+            }
+        }
     }
 
     private void sendComment(final String comment) {
@@ -129,6 +138,7 @@ public class NewsDetailFragment extends BaseDataFragment implements DetailFragme
                             mCommentEdit.setText("");
                         }
                         ContentResolver resolver = context.getContentResolver();
+                        ContentValues[] valueses = new ContentValues[1];
                         ContentValues values = new ContentValues();
                         values.put(NewsDetailDBHelper.AUTHOR_COLUMN, AuthDialog.getUserName(context));
                         values.put(NewsDetailDBHelper.RECORD_TYPE_COLUMN, NewsDetailDBHelper.NewsItemType.REPLY.ordinal());
@@ -136,8 +146,9 @@ public class NewsDetailFragment extends BaseDataFragment implements DetailFragme
                         values.put(NewsDetailDBHelper.KARMA_DOWN_COLUMN, 0);
                         values.put(NewsDetailDBHelper.KARMA_UP_COLUMN, 0);
                         values.put(NewsDetailDBHelper.POST_ID, postUrl);
-                        
-                        resolver.insert(NewsContentProvider.NEWSFEED_CONTENT_URI, values);
+                        valueses[0] = values;
+
+                        resolver.bulkInsert(NewsContentProvider.NEWS_DETAIL_URI, valueses);
                         resolver.notifyChange(NewsContentProvider.NEWS_DETAIL_URI, null);
                         //loadData(0);
                     }
@@ -162,6 +173,7 @@ public class NewsDetailFragment extends BaseDataFragment implements DetailFragme
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 mSelectedRecord = position;
+                updateQuickActions(position);
                 mQuickAction.setAnimStyle(QuickAction.ANIM_GROW_FROM_CENTER);
                 mQuickAction.show(view);
             }
@@ -169,14 +181,48 @@ public class NewsDetailFragment extends BaseDataFragment implements DetailFragme
         prepareQuickAction();
     }
 
+    private void updateQuickActions(int position) {
+        Context context = getActivity();
+        if (context == null) {
+            return;
+        }
+        if (mAdapter == null) {
+            return;
+        }
+        Cursor cursor = mAdapter.getCursor();
+        if (cursor == null) {
+            return;
+        }
+        if (cursor.moveToPosition(position)) {
+            int canChangeKarma = CursorHelper.getInt(cursor, NewsDetailDBHelper.CAN_CHANGE_KARMA);
+            if (canChangeKarma == 1) {
+                mKarmaUpAction.setEnabled(true);
+                mKarmaDownAction.setEnabled(true);
+                mKarmaDownAction.setIcon(context.getResources().getDrawable(
+                        com.parser.R.drawable.commentdownbig));
+                mKarmaUpAction.setIcon(context.getResources().getDrawable(
+                        com.parser.R.drawable.commentupbig));
+            } else {
+                mKarmaUpAction.setEnabled(false);
+                mKarmaDownAction.setEnabled(false);
+                mKarmaDownAction.setIcon(context.getResources().getDrawable(
+                        R.drawable.commentdownbiggrey));
+                mKarmaUpAction.setIcon(context.getResources().getDrawable(
+                        R.drawable.commentupbiggrey));
+            }
+        }
+        mQuickAction.refreshActionItem(mKarmaDownAction);
+        mQuickAction.refreshActionItem(mKarmaUpAction);
+    }
+
     private void prepareQuickAction() {
         Activity activity = getActivity();
-        ActionItem karmaDownAction = new ActionItem();
-        karmaDownAction.setTitle(activity.getString(R.string.dislike));
-        karmaDownAction.setIcon(activity.getResources().getDrawable(
+        mKarmaDownAction = new ActionItem();
+        mKarmaDownAction.setTitle(activity.getString(R.string.dislike));
+        mKarmaDownAction.setIcon(activity.getResources().getDrawable(
                 com.parser.R.drawable.commentdownbig));
 
-        ActionItem mKarmaUpAction = new ActionItem();
+        mKarmaUpAction = new ActionItem();
         mKarmaUpAction.setTitle(activity.getString(R.string.like));
         mKarmaUpAction.setIcon(activity.getResources().getDrawable(
                 com.parser.R.drawable.commentupbig));
@@ -185,24 +231,24 @@ public class NewsDetailFragment extends BaseDataFragment implements DetailFragme
         replyAction.setTitle(activity.getString(R.string.reply));
         replyAction.setIcon(activity.getResources().getDrawable(
                 com.parser.R.drawable.reply));
-
         mQuickAction = new QuickAction(activity);
-        mQuickAction.addActionItem(karmaDownAction);
+        mQuickAction.addActionItem(mKarmaDownAction);
         mQuickAction.addActionItem(mKarmaUpAction);
         mQuickAction.addActionItem(replyAction);
-        //mQuickAction.addActionItem(mReplyAction);
-
-
         mQuickAction.setOnActionItemClickListener(new QuickAction.OnActionItemClickListener() {
             @Override
             public void onItemClick(int pos) {
                 switch (pos) {
                     case (0): {
-                        addKarma(false);
+                        if (mKarmaDownAction.getEnabled()) {
+                            addKarma(false);
+                        }
                         break;
                     }
                     case (1): {
-                        addKarma(true);
+                        if (mKarmaUpAction.getEnabled()) {
+                            addKarma(true);
+                        }
                         break;
                     }
                     case (2): {
@@ -220,19 +266,16 @@ public class NewsDetailFragment extends BaseDataFragment implements DetailFragme
             return;
         }
         cursor.moveToPosition(mSelectedRecord);
-        String commentId = CursorHelper.getString(cursor, NewsDetailDBHelper.COMMENT_ID_COLUMN);
-        final String postId = CursorHelper.getString(cursor, NewsDetailDBHelper.COMMENT_ID_COLUMN);
+        final String commentId = CursorHelper.getString(cursor, NewsDetailDBHelper.COMMENT_ID_COLUMN);
+        //final String postId = CursorHelper.getString(cursor, NewsDetailDBHelper.COMMENT_ID_COLUMN);
         final int ups = CursorHelper.getInt(cursor, NewsDetailDBHelper.KARMA_UP_COLUMN);
-        final int downs = CursorHelper.getInt(cursor, NewsDetailDBHelper.KARMA_UP_COLUMN);
+        final int downs = CursorHelper.getInt(cursor, NewsDetailDBHelper.KARMA_DOWN_COLUMN);
         final BlogConnector connector = BlogConnector.getBlogConnector();
         Context context = getActivity();
         if (context == null) {
             return;
         }
         if (connector.loggedIn()) {
-            final ProgressDialog pg = new ProgressDialog(context);
-            pg.setTitle(context.getString(R.string.please_wait));
-            pg.show();
             connector.changeKarma(commentId, karmaUp, new RequestListener() {
                 @Override
                 public void onRequestDone(BlogConnector.QUERY_RESULT result, String errorMessage) {
@@ -246,13 +289,14 @@ public class NewsDetailFragment extends BaseDataFragment implements DetailFragme
                         ContentResolver resolver = context.getContentResolver();
                         ContentValues values = new ContentValues();
                         String[] args = new String[1];
-                        args[0] = postId;
+                        args[0] = commentId;
                         if (karmaUp) {
                             values.put(NewsDetailDBHelper.KARMA_UP_COLUMN, ups + 1);
                         } else {
                             values.put(NewsDetailDBHelper.KARMA_DOWN_COLUMN, downs + 1);
                         }
-                        resolver.update(NewsContentProvider.NEWS_DETAIL_URI, values, NewsDetailDBHelper.ID_COLUMN + " = ?", args);
+                        values.put(NewsDetailDBHelper.CAN_CHANGE_KARMA, 0);
+                        resolver.update(NewsContentProvider.NEWS_DETAIL_URI, values, NewsDetailDBHelper.COMMENT_ID_COLUMN + " = ?", args);
                         resolver.notifyChange(NewsContentProvider.NEWS_DETAIL_URI, null);
                     }
                 }
@@ -260,20 +304,6 @@ public class NewsDetailFragment extends BaseDataFragment implements DetailFragme
         } else {
             Toast.makeText(context, R.string.not_authenticated, Toast.LENGTH_SHORT).show();
         }
-           /*
-                        ContentResolver resolver = context.getContentResolver();
-                        ContentValues values = new ContentValues();
-                        values.put(NewsDetailDBHelper.AUTHOR_COLUMN, AuthDialog.getUserName(context));
-                        values.put(NewsDetailDBHelper.RECORD_TYPE_COLUMN, NewsDetailDBHelper.NewsItemType.REPLY.ordinal());
-                        values.put(NewsDetailDBHelper.TEXT_COLUMN, comment);
-                        values.put(NewsDetailDBHelper.KARMA_DOWN_COLUMN , 0);
-                        values.put(NewsDetailDBHelper.KARMA_UP_COLUMN , 0);
-                        values.put(NewsDetailDBHelper.POST_ID, postUrl);
-
-                        resolver.insert(NewsContentProvider.NEWSFEED_CONTENT_URI, values);
-                        resolver.notifyChange(NewsContentProvider.NEWS_DETAIL_URI, null);
-                        //loadData(0);
-           */
     }
 
     @Override

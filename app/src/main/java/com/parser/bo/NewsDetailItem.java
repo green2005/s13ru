@@ -16,6 +16,15 @@ public class NewsDetailItem {
     private String mPost_url;
     private String mAkismet;
     private String mAk_js;
+    private int mCanChangeKarma;
+
+    public void setCanChangeKarma(int canChangeKarma){
+        mCanChangeKarma = canChangeKarma;
+    }
+
+    public int getCanChangeKarma(){
+        return mCanChangeKarma;
+    }
 
     public String getText() {
         return mText;

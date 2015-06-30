@@ -104,7 +104,12 @@ public class BlogConnector {
             public void run() {
                 try {
                     doAddComment(commentText, akismet, ak_js, postId);
-                    listener.onRequestDone(QUERY_RESULT.OK, "");
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            listener.onRequestDone(QUERY_RESULT.OK, "");
+                        }
+                    });
                 } catch (final Exception e) {
                     handler.post(new Runnable() {
                         @Override
@@ -189,35 +194,17 @@ public class BlogConnector {
         return page.toLowerCase().contains("logout");
     }
 
-    /*
-        private boolean doThumbUp(String idMessage) throws Exception {
-            if (!mIsLoggedIn.get()) {
-                return false;
-            }
-            String url = THUMB_UP_URL;
-            url = url.replace("!id", idMessage);
-            HttpGet rq = new HttpGet(url);
-
-            addHeaders(rq);
-
-            HttpResponse response = mHttpClient.execute(rq);
-            BufferedReader in = new BufferedReader(new InputStreamReader(
-                    response.getEntity().getContent()));
-            in.close();
-            return true;
-        }
-    */
     private boolean doChangeKarma(String idMessage, boolean karmaUp) throws Exception {
         String url;
         if (karmaUp) {
             url = THUMB_UP_URL;
         } else {
             url = THUMB_DOWN_URL;
+
         }
         url = url.replace("!id", idMessage);
         HttpGet rq = new HttpGet(url);
         addHeaders(rq);
-        //HttpResponse response =
         mHttpClient.execute(rq);
         return true;
     }
@@ -233,8 +220,7 @@ public class BlogConnector {
         mHttpClient.getParams().setParameter("http.protocol.content-charset", "UTF-8");
         List<BasicNameValuePair> nameValuePairs = new ArrayList<>();
         nameValuePairs.add(new BasicNameValuePair("comment",
-                //URLEncoder.encode(
-                        commentText));//, DataSource.UTF8_CHARSET)));
+                        commentText));
         nameValuePairs
                 .add(new BasicNameValuePair("submit",
                         "%D0%9E%D1%82%D0%BF%D1%80%D0%B0%D0%B2%D0%B8%D1%82%D1%8C"));
