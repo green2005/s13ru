@@ -63,16 +63,16 @@ public class NewsContentProvider extends ContentProvider {
                     + AUTHORITY + "/" + VKDetailDBHelper.TABLE_NAME + "/#"
     );
 
-    public static Uri POSTER_DETAIL_CONTENT_URI = Uri.parse( CONTENT_URI_PREFIX
-                    +AUTHORITY + "/" + PosterDetailDBHelper.TABLE_NAME
+    public static Uri POSTER_DETAIL_CONTENT_URI = Uri.parse(CONTENT_URI_PREFIX
+                    + AUTHORITY + "/" + PosterDetailDBHelper.TABLE_NAME
     );
 
-    public static Uri POSTER_DETAIL_CONTENT_URI_ID = Uri.parse( CONTENT_URI_PREFIX
-                    +AUTHORITY + "/" + PosterDetailDBHelper.TABLE_NAME +"/#"
+    public static Uri POSTER_DETAIL_CONTENT_URI_ID = Uri.parse(CONTENT_URI_PREFIX
+                    + AUTHORITY + "/" + PosterDetailDBHelper.TABLE_NAME + "/#"
     );
 
 //    public static final String CONTENT_TYPE_PREFIX = "vnd.android.cursor.dir/vnd.";
-  //  public static final String CONTENT_ITEM_TYPE_PREFIX = "vnd.android.cursor.item/vnd.";
+    //  public static final String CONTENT_ITEM_TYPE_PREFIX = "vnd.android.cursor.item/vnd.";
 
     private DBHelper mDbHelper;
 
@@ -114,7 +114,7 @@ public class NewsContentProvider extends ContentProvider {
 
     @Override
     public Uri insert(Uri uri, ContentValues values) {
-        return null;
+          return null;
     }
 
     @Override
@@ -184,12 +184,12 @@ public class NewsContentProvider extends ContentProvider {
                 contentUri = VK_DETAIL_CONTENT_URI_ID;
                 break;
             }
-            case (POSTER_DETAIL):{
+            case (POSTER_DETAIL): {
                 contentUri = POSTER_DETAIL_CONTENT_URI;
                 break;
             }
 
-            case (POSTER_DETAIL_ID):{
+            case (POSTER_DETAIL_ID): {
                 contentUri = POSTER_DETAIL_CONTENT_URI_ID;
                 break;
             }
@@ -240,11 +240,11 @@ public class NewsContentProvider extends ContentProvider {
                 tableName = VKDetailDBHelper.TABLE_NAME;
                 break;
             }
-            case (POSTER_DETAIL):{
+            case (POSTER_DETAIL): {
                 tableName = PosterDetailDBHelper.TABLE_NAME;
                 break;
             }
-            case (POSTER_DETAIL_ID):{
+            case (POSTER_DETAIL_ID): {
                 tableName = PosterDetailDBHelper.TABLE_NAME;
                 break;
             }

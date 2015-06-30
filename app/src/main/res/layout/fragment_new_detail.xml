@@ -8,6 +8,13 @@
     android:paddingBottom="@dimen/activity_vertical_margin"
     tools:context=".MainActivity$PlaceholderFragment">
 
+    <ProgressBar
+        android:id="@+id/progress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:indeterminate="true" />
+
     <android.support.v4.widget.SwipeRefreshLayout
         android:layout_height="fill_parent"
         android:layout_width="fill_parent"
@@ -43,13 +50,21 @@
             android:layout_toLeftOf="@+id/sendBtn"
              android:hint="@string/your_comment" />
 
+        <!--
+        android:background="@android:drawable/ic_menu_send"
+        -->
+
         <ImageButton
+            android:layout_alignParentTop="true"
+            android:layout_alignTop="@+id/commentEdit"
+            android:layout_alignBottom="@+id/commentEdit"
+            android:layout_alignParentRight="true"
             android:layout_height="wrap_content"
             android:layout_width="48dp"
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
-            android:background="@drawable/ic_send"
-             android:id="@+id/sendBtn"
+            android:src="@drawable/ic_send"
+            android:id="@+id/sendBtn"
             android:layout_alignParentEnd="true" />
 
 

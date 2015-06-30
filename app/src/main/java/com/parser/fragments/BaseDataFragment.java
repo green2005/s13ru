@@ -18,6 +18,7 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.CursorAdapter;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 
 import com.parser.DataSource;
 import com.parser.ErrorHelper;
@@ -36,6 +37,7 @@ public abstract class BaseDataFragment extends Fragment implements PaginationSou
     private ImageLoader mImageLoader;
     private ListView mListView;
     private boolean mEofData = false;
+    private ProgressBar mProgress;
 
     private enum LoadState {
         LOADING,
@@ -64,13 +66,15 @@ public abstract class BaseDataFragment extends Fragment implements PaginationSou
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(getFragmentResourceId(), null);
+        mProgress = (ProgressBar) view.findViewById(R.id.progress);
+        mProgress.setVisibility(View.VISIBLE);
         mImageLoader = ImageLoader.get(getActivity());
         loadData(0);
         initView(view);
         return view;
     }
 
-    protected int getFragmentResourceId(){
+    protected int getFragmentResourceId() {
         return R.layout.fragment_main;
     }
 
@@ -195,6 +199,9 @@ public abstract class BaseDataFragment extends Fragment implements PaginationSou
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+        if (cursor != null && cursor.getCount() > 0) {
+            mProgress.setVisibility(View.GONE);
+        }
         getAdapter().swapCursor(cursor);
     }
 
@@ -206,7 +213,8 @@ public abstract class BaseDataFragment extends Fragment implements PaginationSou
     @Override
     public void loadMore() {
         if (!mEofData) {
-            int nextDataOffset = getNextDataOffset(mOffset);
+            int nextDataOffset;
+            nextDataOffset = getNextDataOffset(mOffset);
             if (nextDataOffset > 0) {
                 mFooterView.setVisibility(View.VISIBLE);
                 loadData(nextDataOffset);
