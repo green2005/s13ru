@@ -16,6 +16,7 @@
         android:layout_alignParentTop="true"
         android:text="place"
         android:layout_weight="1"
+        android:textSize="@dimen/abc_text_size_body_1_material"
         />
 
     <TextView
@@ -26,6 +27,7 @@
         android:layout_centerHorizontal="true"
         android:text="date"
         android:layout_weight="1"
+        android:textSize="@dimen/abc_text_size_body_1_material"
         />
 
     <TextView
@@ -36,6 +38,7 @@
         android:layout_alignParentRight="true"
         android:text="time"
         android:layout_weight="1"
+        android:textSize="@dimen/abc_text_size_body_1_material"
         />
 
 </LinearLayout>

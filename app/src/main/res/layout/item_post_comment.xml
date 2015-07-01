@@ -42,7 +42,8 @@
                 android:paddingLeft="8dp"
                 android:paddingTop="14dp"
                 android:text="userName"
-                android:textSize="@dimen/abc_text_size_body_2_material" />
+                android:textSize="@dimen/abc_text_size_medium_material"
+                />
         </LinearLayout>
 
         <RelativeLayout
@@ -93,6 +94,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/lvHeader"
         android:paddingTop="12dp"
+        android:textSize="@dimen/abc_text_size_caption_material"
         android:text="it's a date" />
 
     <TextView
@@ -100,5 +102,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/tvDate"
+        android:paddingTop="4dp"
+        android:textSize="@dimen/abc_text_size_body_1_material"
         android:text="it's a text" />
 </RelativeLayout>

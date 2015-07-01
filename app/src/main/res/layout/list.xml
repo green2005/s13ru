@@ -22,6 +22,7 @@
   		android:layout_toLeftOf="@id/i_more"
   		android:layout_width="wrap_content"
   		android:layout_height="wrap_content"
+        android:textSize="@dimen/abc_text_size_body_1_material"
   		android:text="Text"/>
   		
 </RelativeLayout>
