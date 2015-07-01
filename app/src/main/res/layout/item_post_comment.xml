@@ -12,7 +12,7 @@
         android:layout_height="1dp"
         android:layout_alignParentTop="true"
         android:background="@color/divider"
-        android:paddingBottom="6dp" />
+        android:paddingBottom="4dp" />
 
     <LinearLayout
         android:id="@+id/lvHeader"
@@ -97,7 +97,7 @@
         android:textSize="@dimen/abc_text_size_caption_material"
         android:text="it's a date" />
 
-    <TextView
+    <com.parser.LinkifiedTextView
         android:id="@+id/tvComment"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

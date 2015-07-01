@@ -55,16 +55,17 @@ public class NewsDetailAdapter extends SimpleCursorAdapter {
 
     @Override
     public boolean isEnabled(int position) {
-        return true;
-        /*Cursor cursor = getCursor();
+         Cursor cursor = getCursor();
         if (cursor == null){
             return super.isEnabled(position);
         }
         cursor.moveToPosition(position);
         int viewType = getItemViewType(position);
         return viewType == NewsDetailDBHelper.NewsItemType.REPLY.ordinal();
-    */
+
     }
+
+
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
@@ -111,7 +112,7 @@ public class NewsDetailAdapter extends SimpleCursorAdapter {
             if (convertedViewType != viewType || cnView == null)
                 cnView = mInflater.inflate(R.layout.item_post_comment, null);
             TextView tvUser = (TextView) cnView.findViewById(R.id.tvUserName);
-            TextView tvComment = (TextView) cnView.findViewById(R.id.tvComment);
+            LinkifiedTextView tvComment = (LinkifiedTextView) cnView.findViewById(R.id.tvComment);
             TextView tvDate = (TextView) cnView.findViewById(R.id.tvDate);
             TextView tvKarmaUp = (TextView) cnView.findViewById(R.id.tvUps);
             TextView tvKarmaDown = (TextView) cnView.findViewById(R.id.tvDowns);
@@ -134,13 +135,13 @@ public class NewsDetailAdapter extends SimpleCursorAdapter {
                 imvUserImage.setVisibility(View.GONE);
             }
             tvUser.setText(cursor.getString(cursor.getColumnIndex(NewsDetailDBHelper.AUTHOR_COLUMN)));
+
             tvComment.setText(Html.fromHtml(cursor.getString(cursor.getColumnIndex(NewsDetailDBHelper.TEXT_COLUMN))));
-            Linkify.addLinks(tvComment, Linkify.ALL);
+         //   tvComment.setMovementMethod(null);
+         //   Linkify.addLinks(tvComment, Linkify.ALL);
         }
         cnView.setTag(R.string.DETAIL_VIEW_TYPE, viewType);
-
-        cnView.setEnabled(false);
-        
+       //cnView.setEnabled(true);
         return cnView;
     }
 }
