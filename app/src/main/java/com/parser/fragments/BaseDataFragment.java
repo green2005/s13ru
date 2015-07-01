@@ -155,8 +155,8 @@ public abstract class BaseDataFragment extends Fragment implements PaginationSou
             mDataSource = new DataSource(processor, new DataSource.Callbacks() {
                 @Override
                 public void onError(String errorMessage) {
-
                     mState = LoadState.ERROR;
+                    mProgress.setVisibility(View.GONE);
                     mFooterView.setVisibility(View.GONE);
                     if ((mSwipe != null) && (mSwipe.isRefreshing())) {
                         mSwipe.setRefreshing(false);
@@ -165,11 +165,14 @@ public abstract class BaseDataFragment extends Fragment implements PaginationSou
                     if (context != null) {
                         ErrorHelper.showError(context, errorMessage);
                     }
+                    onLoadDone(0);
                 }
 
                 @Override
                 public void onLoadDone(int recordsFetched) {
-                    mState = LoadState.BROWSING;
+                    if (mState != LoadState.ERROR) {
+                        mState = LoadState.BROWSING;
+                    }
                     mFooterView.setVisibility(View.GONE);
                     if ((mSwipe != null) && (mSwipe.isRefreshing())) {
                         mSwipe.setRefreshing(false);
@@ -212,7 +215,7 @@ public abstract class BaseDataFragment extends Fragment implements PaginationSou
 
     @Override
     public void loadMore() {
-        if (!mEofData) {
+        if (!mEofData  &&  mState != LoadState.ERROR) {
             int nextDataOffset;
             nextDataOffset = getNextDataOffset(mOffset);
             if (nextDataOffset > 0) {
@@ -221,5 +224,4 @@ public abstract class BaseDataFragment extends Fragment implements PaginationSou
             }
         }
     }
-
 }

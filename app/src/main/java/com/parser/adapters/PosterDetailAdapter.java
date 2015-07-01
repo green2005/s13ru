@@ -19,14 +19,12 @@ import com.parser.loader.ImageLoader;
 public class PosterDetailAdapter extends SimpleCursorAdapter {
     private LayoutInflater mInflater;
     private ImageLoader mImageLoader;
-    private Context mContext;
 
 
     public PosterDetailAdapter(Context context, int layout, Cursor c, String[] from, int[] to, int flags) {
         super(context, layout, c, from, to, flags);
         mInflater = LayoutInflater.from(context);
         mImageLoader = ImageLoader.get(context);
-        mContext = context;
     }
 
     @Override
@@ -100,7 +98,7 @@ public class PosterDetailAdapter extends SimpleCursorAdapter {
             convertView.setTag(PosterDetailDBHelper.POSTER_RECORD_TYPE.IMAGE_ATTACHMENT.ordinal());
             imageView = (ResizableImageView) convertView.findViewById(R.id.image);
         }
-        if (imageView == null){
+        if (imageView == null) {
             imageView = (ResizableImageView) convertView.findViewById(R.id.image);
         }
         if (mImageLoader != null) {
@@ -114,10 +112,12 @@ public class PosterDetailAdapter extends SimpleCursorAdapter {
             convertView = mInflater.inflate(R.layout.item_place_date, null);
             convertView.setTag(PosterDetailDBHelper.POSTER_RECORD_TYPE.TIMEPLACE_RECORD.ordinal());
         }
-        TextView tvPlace = (TextView) convertView.findViewById(R.id.tvPlace);
+        LinkifiedTextView tvPlace = (LinkifiedTextView) convertView.findViewById(R.id.tvPlace);
         TextView tvDate = (TextView) convertView.findViewById(R.id.tvDate);
         TextView tvTime = (TextView) convertView.findViewById(R.id.tvTime);
-        tvPlace.setText(CursorHelper.getString(cursor, PosterDetailDBHelper.PLACE_COLUMN));
+
+        String place = CursorHelper.getString(cursor, PosterDetailDBHelper.PLACE_COLUMN);
+        tvPlace.setText(Html.fromHtml(place));
         tvDate.setText(CursorHelper.getString(cursor, PosterDetailDBHelper.DATE_COLUMN));
         tvTime.setText(CursorHelper.getString(cursor, PosterDetailDBHelper.TIME_COLUMN));
         return convertView;

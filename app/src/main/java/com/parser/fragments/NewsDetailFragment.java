@@ -115,7 +115,8 @@ public class NewsDetailFragment extends BaseDataFragment implements DetailFragme
             String akismet = CursorHelper.getString(cursor, NewsDetailDBHelper.AKISMET);
             String ak_js = CursorHelper.getString(cursor, NewsDetailDBHelper.AK_JS);
             final ProgressDialog pg = new ProgressDialog(context);
-            pg.setTitle(context.getString(R.string.please_wait));
+            pg.setMessage(context.getString(R.string.please_wait));
+            pg.setCancelable(false);
             pg.show();
             connector.addComment(comment, akismet, ak_js, postId, new RequestListener() {
                 @Override
@@ -150,7 +151,6 @@ public class NewsDetailFragment extends BaseDataFragment implements DetailFragme
 
                         resolver.bulkInsert(NewsContentProvider.NEWS_DETAIL_URI, valueses);
                         resolver.notifyChange(NewsContentProvider.NEWS_DETAIL_URI, null);
-                        //loadData(0);
                     }
                 }
             });
@@ -252,12 +252,32 @@ public class NewsDetailFragment extends BaseDataFragment implements DetailFragme
                         break;
                     }
                     case (2): {
-
+                        reply();
                         break;
                     }
                 }
             }
         });
+    }
+
+    private void reply() {
+        final BlogConnector connector = BlogConnector.getBlogConnector();
+        if (!connector.loggedIn()) {
+            Activity context = getActivity();
+            if (context != null) {
+                Toast.makeText(context, R.string.not_authenticated, Toast.LENGTH_SHORT).show();
+            }
+            return;
+        }
+        Cursor cursor = mAdapter.getCursor();
+        if (cursor == null) {
+            return;
+        }
+        cursor.moveToPosition(mSelectedRecord);
+        String authorName = CursorHelper.getString(cursor, NewsDetailDBHelper.AUTHOR_COLUMN);
+        mCommentEdit.setText(authorName + " : ");
+        mCommentEdit.setSelection(authorName.length()+3);
+        mCommentEdit.requestFocus();
     }
 
     private void addKarma(final boolean karmaUp) {

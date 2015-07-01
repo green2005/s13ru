@@ -11,6 +11,10 @@ public class ErrorHelper {
 
     public static  void showError(Context context, String errorMessage) {
         if (context != null) {
+            String msgBadInet = context.getString(R.string.unable_resolve_host);
+            if (errorMessage.contains(msgBadInet)){
+                errorMessage = context.getString(R.string.check_inet);
+            }
             AlertDialog.Builder builder = new AlertDialog.Builder(context);
             builder.setNegativeButton(context.getResources().getString(R.string.ok), new AlertDialog.OnClickListener() {
                 @Override

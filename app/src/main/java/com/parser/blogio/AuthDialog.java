@@ -53,6 +53,7 @@ public class AuthDialog extends Dialog {
     }
 
 
+
     public AuthDialog(Context context) {
         super(context);
         setTitle(context.getString(R.string.auth_dialog_title));

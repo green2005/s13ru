@@ -52,4 +52,6 @@
     <string name = "not_authenticated">Необходима аутентификация</string>
     <string name = "please_wait">Пожалуйста подождите</string>
     <string name = "your_comment">Ваш комментарий</string>
+    <string name = "unable_resolve_host">Unable to resolve host</string>
+    <string name = "check_inet">Проверьте подключение к сети Интернет</string>
 </resources>
