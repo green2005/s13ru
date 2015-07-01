@@ -25,6 +25,7 @@ public class DataSource {
 
     public interface Callbacks {
         public void onError(String errorMessage);
+
         public void onLoadDone(int recordsFetched);
     }
 
@@ -38,38 +39,36 @@ public class DataSource {
         Thread loadThread = new Thread(new Runnable() {
             @Override
             public void run() {
+                InputStream stream = null;
                 try {
-                    InputStream stream ;
-                    if (url.contains(S13_URL)){
+                    if (url.contains(S13_URL)) {
                         BlogConnector blogConnector = BlogConnector.getBlogConnector();
                         stream = blogConnector.getInputStream(url, UTF8_CHARSET);
-                    } else
-                    {
+                    } else {
                         stream = getInputStream(url);
                     }
-                    try {
-                         mRecordsFetched = mProcessor.process(stream, isTopRequest, url);
-                    } finally {
-                        if (stream != null) {
-                            stream.close();
-                        }
-                    }
-                }
-                catch (final Exception e){
+                    mRecordsFetched = mProcessor.process(stream, isTopRequest, url);
+                } catch (final Exception e) {
                     mHandler.post(new Runnable() {
                         @Override
                         public void run() {
-                            if (mCallbacks != null){
+                            if (mCallbacks != null) {
                                 mCallbacks.onError(e.getMessage());
                             }
                         }
                     });
                 }
+                try {
+                    if (stream != null) {
+                        stream.close();
+                    }
+                } catch (Exception e) {
+                }
 
                 mHandler.post(new Runnable() {
                     @Override
                     public void run() {
-                        if (mCallbacks != null){
+                        if (mCallbacks != null) {
                             mCallbacks.onLoadDone(mRecordsFetched);
                         }
                     }

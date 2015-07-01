@@ -15,6 +15,7 @@ import android.widget.TextView;
 import com.parser.LinkifiedTextView;
 import com.parser.R;
 import com.parser.ResizableImageView;
+import com.parser.db.CursorHelper;
 import com.parser.db.NewsDetailDBHelper;
 import com.parser.loader.ImageLoader;
 import com.parser.quickaction.ActionItem;
@@ -33,8 +34,7 @@ public class NewsDetailAdapter extends SimpleCursorAdapter {
         mInflater = LayoutInflater.from(context);
         mImageLoader = ImageLoader.get(context);
         mContext = context;
-     }
-
+    }
 
 
     @Override
@@ -45,8 +45,9 @@ public class NewsDetailAdapter extends SimpleCursorAdapter {
     @Override
     public int getItemViewType(int position) {
         Cursor cursor = getCursor();
-        if (cursor != null && cursor.moveToPosition(position)) {
-            return cursor.getInt(cursor.getColumnIndex(NewsDetailDBHelper.RECORD_TYPE_COLUMN));
+        if (cursor != null) {
+            cursor.moveToPosition(position);
+            return CursorHelper.getInt(cursor, NewsDetailDBHelper.RECORD_TYPE_COLUMN);
         } else {
             return 0;
         }
@@ -54,13 +55,15 @@ public class NewsDetailAdapter extends SimpleCursorAdapter {
 
     @Override
     public boolean isEnabled(int position) {
-        Cursor cursor = getCursor();
+        return true;
+        /*Cursor cursor = getCursor();
         if (cursor == null){
             return super.isEnabled(position);
         }
         cursor.moveToPosition(position);
         int viewType = getItemViewType(position);
         return viewType == NewsDetailDBHelper.NewsItemType.REPLY.ordinal();
+    */
     }
 
     @Override
@@ -74,11 +77,11 @@ public class NewsDetailAdapter extends SimpleCursorAdapter {
         }
         int viewType = getItemViewType(position);
         if (viewType == NewsDetailDBHelper.NewsItemType.TITLE.ordinal()) {
-            if (convertedViewType != viewType || cnView == null){
+            if (convertedViewType != viewType || cnView == null) {
                 cnView = mInflater.inflate(R.layout.item_post_title, null);
             }
             TextView tvTitle = (TextView) cnView.findViewById(R.id.tvTitle);
-            TextView tvDate = (TextView)cnView.findViewById(R.id.tvDate);
+            TextView tvDate = (TextView) cnView.findViewById(R.id.tvDate);
             tvDate.setText(cursor.getString(cursor.getColumnIndex(NewsDetailDBHelper.DATE_COLUMN)));
             tvTitle.setText(Html.fromHtml(cursor.getString(cursor.getColumnIndex(NewsDetailDBHelper.TEXT_COLUMN))));
             Linkify.addLinks(tvTitle, Linkify.ALL);
@@ -86,7 +89,7 @@ public class NewsDetailAdapter extends SimpleCursorAdapter {
             if (convertedViewType != viewType || cnView == null)
                 cnView = mInflater.inflate(R.layout.item_post_text, null);
             LinkifiedTextView tvText = (LinkifiedTextView) cnView.findViewById(R.id.tvText);
-         //   tvText.setMovementMethod(LinkMovementMethod.getInstance());
+            //   tvText.setMovementMethod(LinkMovementMethod.getInstance());
             tvText.setText(Html.fromHtml(cursor.getString(cursor.getColumnIndex(NewsDetailDBHelper.TEXT_COLUMN))));
             Linkify.addLinks(tvText, Linkify.ALL);
 
@@ -97,7 +100,7 @@ public class NewsDetailAdapter extends SimpleCursorAdapter {
             String url = cursor.getString(cursor.getColumnIndex(NewsDetailDBHelper.TEXT_COLUMN));
             int imageWidth = cursor.getInt(cursor.getColumnIndex(NewsDetailDBHelper.IMAGE_WIDTH_COLUMN));
             int imageHeight = cursor.getInt(cursor.getColumnIndex(NewsDetailDBHelper.IMAGE_HEIGTH_COLUMN));
-            if (imageWidth > 0){
+            if (imageWidth > 0) {
                 imageView.setOriginalImageSize(imageWidth, imageHeight);
             }
             mImageLoader.loadImage(imageView, url);
@@ -112,17 +115,22 @@ public class NewsDetailAdapter extends SimpleCursorAdapter {
             TextView tvDate = (TextView) cnView.findViewById(R.id.tvDate);
             TextView tvKarmaUp = (TextView) cnView.findViewById(R.id.tvUps);
             TextView tvKarmaDown = (TextView) cnView.findViewById(R.id.tvDowns);
+
+
+            //TextView tvTest = (TextView)cnView.findViewById(R.id.tvtest);
+            //tvTest.setText(CursorHelper.getString(cursor, NewsDetailDBHelper.RECORD_TYPE_COLUMN));
+
+
             tvKarmaUp.setText(cursor.getString(cursor.getColumnIndex(NewsDetailDBHelper.KARMA_UP_COLUMN)));
             tvKarmaDown.setText(cursor.getString(cursor.getColumnIndex(NewsDetailDBHelper.KARMA_DOWN_COLUMN)));
 
             tvDate.setText(cursor.getString(cursor.getColumnIndex(NewsDetailDBHelper.DATE_COLUMN)));
-            ImageView imvUserImage = (ImageView)cnView.findViewById(R.id.userPick);
+            ImageView imvUserImage = (ImageView) cnView.findViewById(R.id.userPick);
             String userImageUrl = cursor.getString(cursor.getColumnIndex(NewsDetailDBHelper.AUTHOR_IMAGE_COLUMN));
-            if (!TextUtils.isEmpty(userImageUrl)){
+            if (!TextUtils.isEmpty(userImageUrl)) {
                 mImageLoader.loadImage(imvUserImage, userImageUrl);
                 imvUserImage.setVisibility(View.VISIBLE);
-            } else
-            {
+            } else {
                 imvUserImage.setVisibility(View.GONE);
             }
             tvUser.setText(cursor.getString(cursor.getColumnIndex(NewsDetailDBHelper.AUTHOR_COLUMN)));
@@ -130,6 +138,9 @@ public class NewsDetailAdapter extends SimpleCursorAdapter {
             Linkify.addLinks(tvComment, Linkify.ALL);
         }
         cnView.setTag(R.string.DETAIL_VIEW_TYPE, viewType);
+
+        cnView.setEnabled(false);
+        
         return cnView;
     }
 }

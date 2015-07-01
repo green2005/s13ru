@@ -34,6 +34,9 @@ public class VKFeedItem {
 
     public void processImageAttachment() {
         JSONObject attachmentJson = mJo.optJSONObject("attachment");
+        if (attachmentJson == null){
+            return;
+        }
         JSONObject photoJson = attachmentJson.optJSONObject("photo");
         if (photoJson != null) {
             mImageUrl = photoJson.optString("src_big");
