@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import com.parser.DataSource;
 
 public class NewsDetailProcessor extends Processor {
@@ -37,8 +38,15 @@ public class NewsDetailProcessor extends Processor {
 
     private static final String CAN_CHANGE_KARMA_PREFIX = "ckratingKarma";
 
+    private static final String COMMENT_PREFIX = ">";
+    private static final String COMMENT_POSTFIX = "</span>";
+
     private static final String DEFAULT_IMAGE_HEIGHT = "270";
     private static final String DEFAULT_IMAGE_WIDTH = "411";
+
+    private static final String VIDEO_PREF = "<iframe";
+    private static final String VIDEO_POSTF = "</iframe>";
+
 
     private NewsDetailDBHelper mDBHelper;
     private Context mContext;
@@ -71,7 +79,11 @@ public class NewsDetailProcessor extends Processor {
         Pattern pTitle = Pattern.compile(TITLE_PREF + ".*?" + TITLE_POSTF);
         Pattern pDate = Pattern.compile("class=\"metadata\">.*?</a>");
         Pattern pDate2 = Pattern.compile("</strong>.*?<");
+
         Pattern pImage2 = Pattern.compile(IMG_PREF + ".*?" + IMG_POSTF);
+
+        Pattern pVideo = Pattern.compile(VIDEO_PREF + ".*?" + VIDEO_POSTF);
+
         Pattern pImageUrl = Pattern.compile(IMG_URL_PREF + ".*?" + IMG_URL_POSTF);
 
         Pattern pComment = Pattern.compile("li class=\" item\" id=\"comment.*?</li>");
@@ -79,12 +91,12 @@ public class NewsDetailProcessor extends Processor {
 
         Pattern pAuthorName1 = Pattern.compile("'>.*?</span>");
         Pattern pAuthorName2 = Pattern.compile("/>.*?</span>");
-        Pattern pAuthorImage = Pattern.compile(AUTHOR_IMAGE_PREF+".*?"+AUTHOR_IMAGE_POSTF);
+        Pattern pAuthorImage = Pattern.compile(AUTHOR_IMAGE_PREF + ".*?" + AUTHOR_IMAGE_POSTF);
 
         Pattern pCommentText = Pattern.compile("<span id=\"co_.*?</span>");
-        Pattern pCommentId = Pattern.compile(COMMENT_ID_PREFIX + ".*?"+COMMENT_ID_POSTFIX);
+        Pattern pCommentId = Pattern.compile(COMMENT_ID_PREFIX + ".*?" + COMMENT_ID_POSTFIX);
 
-        Pattern pCommentTex2t = Pattern.compile(">.*?</span>");
+        Pattern pCommentTex2t = Pattern.compile(COMMENT_PREFIX + ".*?" + COMMENT_POSTFIX);
 
         Pattern pThumbsDown = Pattern.compile("alt=\"Thumb down\".*?</span>");
         Pattern pThumbsUp = Pattern.compile("alt=\"Thumb up\".*?</span>");
@@ -168,7 +180,7 @@ public class NewsDetailProcessor extends Processor {
         int textStart;
 
         if (mText.find()) {
-            String text = mText.group().substring(ITEM_TEXT_PREF.length()); //.substring("class=\"itemtext\"".length()).replace("<script", "").substring(1);
+            String text = mText.group().substring(ITEM_TEXT_PREF.length());
             text = text.substring(0, text.length() - ITEM_TEXT_POSTF.length());
             Matcher mImage = pImage2.matcher(text);
             while (mImage.find()) {
@@ -179,6 +191,17 @@ public class NewsDetailProcessor extends Processor {
                 addTextItem(items, itemText);
                 processImageItem(items, mImage.group(), pImageUrl, pWidth, pHeight);
             }
+
+            Matcher mVideo = pVideo.matcher(text);
+            while (mVideo.find()) {
+                int textEnd = mVideo.start();
+                textStart = imageEnd;
+                imageEnd = mVideo.end();
+                String itemText = text.substring(textStart, textEnd);
+                addTextItem(items, itemText);
+                processVideoItem(items, mVideo.group(), pImageUrl, pWidth, pHeight);
+            }
+
             text = text.substring(imageEnd);
             addTextItem(items, text);
         }
@@ -200,8 +223,7 @@ public class NewsDetailProcessor extends Processor {
 
             if (comment.contains(CAN_CHANGE_KARMA_PREFIX)) {
                 item.setCanChangeKarma(1);
-            } else
-            {
+            } else {
                 item.setCanChangeKarma(0);
             }
 
@@ -215,7 +237,11 @@ public class NewsDetailProcessor extends Processor {
             if (mCommentText.find()) {
                 mCommentText = pCommentTex2t.matcher(mCommentText.group());
                 if (mCommentText.find()) {
-                    item.setText(mCommentText.group().substring(1));
+                    String commentText = mCommentText.group().substring(COMMENT_PREFIX.length());
+                    commentText = commentText.substring(0, commentText.length() - COMMENT_POSTFIX.length());
+                    commentText = commentText.replace("<p>", "");
+                    commentText = commentText.replace("</p>", "");
+                    item.setText(commentText);
                 }
             }
             Matcher mCommentId = pCommentId.matcher(comment);
@@ -235,7 +261,7 @@ public class NewsDetailProcessor extends Processor {
         }
     }
 
-    private String getAuthorName(String authorText, Pattern pAuthorName1, Pattern pAuthorName2){
+    private String getAuthorName(String authorText, Pattern pAuthorName1, Pattern pAuthorName2) {
         Matcher mAuthor = pAuthorName1.matcher(authorText);
         if (mAuthor.find()) {
             authorText = mAuthor.group().substring(2);
@@ -251,10 +277,10 @@ public class NewsDetailProcessor extends Processor {
         if (authorLen > 7) {
             authorText = authorText.substring(0, authorText.length() - 7);
         }
-        return  authorText;
+        return authorText;
     }
 
-    private String getAuthorImgage(String authorText, Pattern pAuthorImage){
+    private String getAuthorImgage(String authorText, Pattern pAuthorImage) {
         Matcher mImage = pAuthorImage.matcher(authorText);
         if (mImage.find()) {
             String authorImage = mImage.group().substring(AUTHOR_IMAGE_PREF.length()); //substring(("src='").length()).replace("'", "");
@@ -265,7 +291,7 @@ public class NewsDetailProcessor extends Processor {
         return "";
     }
 
-    private String getKarma(String comment, Pattern pThumb, Pattern pThumb2){
+    private String getKarma(String comment, Pattern pThumb, Pattern pThumb2) {
         Matcher mThumb = pThumb.matcher(comment);
         if (mThumb.find()) {
             mThumb = pThumb2.matcher(mThumb.group());
@@ -293,8 +319,7 @@ public class NewsDetailProcessor extends Processor {
                 String width = mWidth.group().substring(WIDTH_PREF.length());
                 width = width.substring(0, width.length() - WIDTH_POSTF.length());
                 imageItem.setWidth(width);
-            } else
-            {
+            } else {
                 imageItem.setWidth(DEFAULT_IMAGE_WIDTH);
             }
 
@@ -302,12 +327,32 @@ public class NewsDetailProcessor extends Processor {
                 String height = mHeight.group().substring(HEIGHT_PREF.length());
                 height = height.substring(0, height.length() - HEIGHT_POSTF.length());
                 imageItem.setHeight(height);
-            } else
-            {
+            } else {
                 imageItem.setHeight(DEFAULT_IMAGE_HEIGHT);
             }
             imageItem.setPostUrl(mUrl);
             items.add(imageItem);
+        }
+    }
+
+    private void processVideoItem(List<NewsDetailItem> items, String textPart, Pattern pImageUrl, Pattern pWidth, Pattern pHeight) {
+        Matcher mImageUrl = pImageUrl.matcher(textPart);
+        if (mImageUrl.find()) {
+            String videoUrl = mImageUrl.group().substring(IMG_URL_PREF.length());
+            videoUrl = videoUrl.substring(0, videoUrl.length() - IMG_URL_POSTF.length());
+            NewsDetailItem videoItem = new NewsDetailItem();
+            int endPos = videoUrl.lastIndexOf("/");
+            if (endPos > 0) {
+                videoUrl = videoUrl.substring(endPos+1, videoUrl.length());
+            }
+            endPos = videoUrl.indexOf("?");
+            if (endPos > 0) {
+                videoUrl = videoUrl.substring(0, endPos );
+            }
+            videoItem.setText(videoUrl);
+            videoItem.setContentType(NewsDetailDBHelper.NewsItemType.VIDEO.ordinal());
+            videoItem.setPostUrl(mUrl);
+            items.add(videoItem);
         }
     }
 

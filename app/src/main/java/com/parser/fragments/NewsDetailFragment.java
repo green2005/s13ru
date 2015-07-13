@@ -8,21 +8,20 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.content.Loader;
+import android.support.design.widget.FloatingActionButton;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.CursorAdapter;
-import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.parser.ErrorHelper;
 import com.parser.R;
+import com.parser.activities.CommentEditDialog;
+import com.parser.adapters.AdapterPositionListener;
 import com.parser.adapters.NewsDetailAdapter;
 import com.parser.blogio.AuthDialog;
 import com.parser.blogio.BlogConnector;
@@ -44,16 +43,17 @@ public class NewsDetailFragment extends BaseDataFragment implements DetailFragme
 
     private QuickAction mQuickAction;
     private int mSelectedRecord;
-    private EditText mCommentEdit;
     private ActionItem mKarmaUpAction;
     private ActionItem mKarmaDownAction;
-    private RelativeLayout mEditLayout;
+    private FloatingActionButton mActionButton;
+    private BlogConnector mConnector;
 
     public static NewsDetailFragment getNewFragment(Bundle params) {
         NewsDetailFragment fragment = new NewsDetailFragment();
         fragment.setArguments(params);
         return fragment;
     }
+
 
     public void setArguments(Bundle arguments) {
         super.setArguments(arguments);
@@ -63,40 +63,48 @@ public class NewsDetailFragment extends BaseDataFragment implements DetailFragme
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = super.onCreateView(inflater, container, savedInstanceState);
-        initListView();
-        initEditLayout(view);
-        return view;
-    }
-
-    private void initEditLayout(View view) {
-        mEditLayout = (RelativeLayout) (view.findViewById(R.id.editing_layout));
-        mEditLayout.setVisibility(View.GONE);
-        ImageButton sendBtn = (ImageButton) mEditLayout.findViewById(R.id.sendBtn);
-        mCommentEdit = (EditText) mEditLayout.findViewById(R.id.commentEdit);
-        sendBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                sendComment(mCommentEdit.getText().toString());
-            }
-        });
+    public void onDestroyView() {
+        super.onDestroyView();
+        mAdapter.releaseLoaders();
     }
 
     @Override
-    public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-        super.onLoadFinished(loader, cursor);
-        Context context = getActivity();
-        if (context != null && cursor != null && cursor.getCount() > 0) {
-            String userName = AuthDialog.getUserName(context);
-            String pwd = AuthDialog.getPwd(context);
-            if (!TextUtils.isEmpty(userName) && !TextUtils.isEmpty(pwd)) {
-                mEditLayout.setVisibility(View.VISIBLE);
-            } else {
-                mEditLayout.setVisibility(View.GONE);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        mConnector = BlogConnector.getBlogConnector();
+        View view = super.onCreateView(inflater, container, savedInstanceState);
+        assert view != null;
+        mActionButton = (FloatingActionButton) view.findViewById(R.id.fab);
+        mActionButton.setVisibility(View.GONE);
+        mActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mConnector.loggedIn()) {
+                    editComment(null);
+                } else {
+                    Context context = getActivity();
+                    if (context != null) {
+                        Toast.makeText(context, R.string.not_authenticated, Toast.LENGTH_SHORT).show();
+                    }
+                }
             }
+        });
+        initListView();
+        return view;
+    }
+
+    private void editComment(String initialComment) {
+        Context context = getActivity();
+        if (context != null) {
+            android.support.v4.app.FragmentManager fm = getFragmentManager();
+            CommentEditDialog.getNewDialog(initialComment, new CommentEditDialog.OnDoneEditingListener() {
+                @Override
+                public void onDoneEditing(String comment) {
+                    sendComment(comment);
+                }
+            }).show(fm, "enter your dialog");
         }
     }
+
 
     private void sendComment(final String comment) {
         Cursor cursor = getAdapter().getCursor();
@@ -110,15 +118,14 @@ public class NewsDetailFragment extends BaseDataFragment implements DetailFragme
         cursor.moveToFirst();
         String postId = CursorHelper.getString(cursor, NewsDetailDBHelper.COMMENT_ID_COLUMN);
         final String postUrl = CursorHelper.getString(cursor, NewsDetailDBHelper.POST_ID);
-        final BlogConnector connector = BlogConnector.getBlogConnector();
-        if (connector.loggedIn()) {
+        if (mConnector.loggedIn()) {
             String akismet = CursorHelper.getString(cursor, NewsDetailDBHelper.AKISMET);
             String ak_js = CursorHelper.getString(cursor, NewsDetailDBHelper.AK_JS);
             final ProgressDialog pg = new ProgressDialog(context);
             pg.setMessage(context.getString(R.string.please_wait));
             pg.setCancelable(false);
             pg.show();
-            connector.addComment(comment, akismet, ak_js, postId, new RequestListener() {
+            mConnector.addComment(comment, akismet, ak_js, postId, new RequestListener() {
                 @Override
                 public void onRequestDone(BlogConnector.QUERY_RESULT result, String errorMessage) {
                     if (pg.isShowing()) {
@@ -135,9 +142,7 @@ public class NewsDetailFragment extends BaseDataFragment implements DetailFragme
                         if (context == null) {
                             return;
                         }
-                        if (mCommentEdit != null) {
-                            mCommentEdit.setText("");
-                        }
+
                         ContentResolver resolver = context.getContentResolver();
                         ContentValues[] valueses = new ContentValues[1];
                         ContentValues values = new ContentValues();
@@ -261,8 +266,7 @@ public class NewsDetailFragment extends BaseDataFragment implements DetailFragme
     }
 
     private void reply() {
-        final BlogConnector connector = BlogConnector.getBlogConnector();
-        if (!connector.loggedIn()) {
+        if (!mConnector.loggedIn()) {
             Activity context = getActivity();
             if (context != null) {
                 Toast.makeText(context, R.string.not_authenticated, Toast.LENGTH_SHORT).show();
@@ -275,9 +279,10 @@ public class NewsDetailFragment extends BaseDataFragment implements DetailFragme
         }
         cursor.moveToPosition(mSelectedRecord);
         String authorName = CursorHelper.getString(cursor, NewsDetailDBHelper.AUTHOR_COLUMN);
-        mCommentEdit.setText(authorName + " : ");
-        mCommentEdit.setSelection(authorName.length()+3);
-        mCommentEdit.requestFocus();
+        editComment(authorName + " : ");
+//        mCommentEdit.setText(authorName + " : ");
+//        mCommentEdit.setSelection(authorName.length()+3);
+//        mCommentEdit.requestFocus();
     }
 
     private void addKarma(final boolean karmaUp) {
@@ -331,6 +336,18 @@ public class NewsDetailFragment extends BaseDataFragment implements DetailFragme
         Activity activity = getActivity();
         if (activity != null && mAdapter == null) {
             mAdapter = new NewsDetailAdapter(activity, R.layout.item_news_feed_image, null, NewsDetailDBHelper.getFields(), null, 0);
+            AdapterPositionListener listener = new AdapterPositionListener() {
+                @Override
+                public void onBottomReached() {
+                    mActionButton.setVisibility(View.VISIBLE);
+                }
+
+                @Override
+                public void onBottomEscaped() {
+                    mActionButton.setVisibility(View.GONE);
+                }
+            };
+            mAdapter.setPositionChangeListener(listener);
         }
         return mAdapter;
     }

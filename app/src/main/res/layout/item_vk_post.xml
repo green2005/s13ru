@@ -24,8 +24,8 @@
 
         <ImageView
             android:id="@+id/userPick"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
             android:layout_marginTop="6dp"
             android:paddingTop="8dp" />
 
@@ -34,8 +34,9 @@
             android:layout_height="wrap_content"
             android:id="@+id/tvUserName"
             android:paddingLeft="8dp"
-            android:paddingTop="14dp"
+            android:paddingTop="22dp"
             android:text="userName"
+            android:textColor="@color/primary_text"
             android:textSize="@dimen/abc_text_size_medium_material" />
     </LinearLayout>
 
@@ -55,7 +56,8 @@
         android:id="@+id/tvComment"
         android:text="it's a text"
         android:paddingTop="6dp"
-        android:textSize="@dimen/abc_text_size_body_1_material"
+        android:textColor="@color/primary_text"
+        android:textSize="16sp"
         android:layout_alignParentLeft="true"
         android:layout_below="@+id/tvDate" />
 </RelativeLayout>

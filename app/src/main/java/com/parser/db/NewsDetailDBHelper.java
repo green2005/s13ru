@@ -16,7 +16,8 @@ public class NewsDetailDBHelper {
         TEXT,
         IMAGE,
         REPLY_HEADER,
-        REPLY
+        REPLY,
+        VIDEO
     }
 
     public static final String TABLE_NAME = "newsdetail";

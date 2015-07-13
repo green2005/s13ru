@@ -13,6 +13,8 @@
         android:textSize="@dimen/abc_text_size_title_material"
         android:id="@+id/tvTitle"
         android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:textColor="@color/primary_text"
+        />
 
 </RelativeLayout>

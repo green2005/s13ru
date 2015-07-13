@@ -4,11 +4,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingTop="8dp">
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="@dimen/abc_text_size_title_material"        
+        android:textSize="@dimen/abc_text_size_title_material"
         android:text="@string/commentHeader"
         android:id="@+id/tvCommentHeader"
-        android:layout_gravity="center_horizontal" />
+        android:layout_gravity="center_horizontal"
+        android:textColor="@color/primary_text" />
 </LinearLayout>

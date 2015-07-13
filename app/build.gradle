@@ -6,10 +6,10 @@ android {
 
     defaultConfig {
         applicationId "com.parser"
-        minSdkVersion 11
+        minSdkVersion 14
         targetSdkVersion 21
-        versionCode 8
-        versionName "1.5"
+        versionCode 10
+        versionName "1.6.1"
     }
     buildTypes {
         release {
@@ -22,5 +22,6 @@ android {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.github.chrisbanes.photoview:library:1.2.3'
-    compile 'com.android.support:appcompat-v7:21.0.3'
+    compile 'com.android.support:appcompat-v7:22.2.0'
+    compile 'com.android.support:design:22.2.0'
 }

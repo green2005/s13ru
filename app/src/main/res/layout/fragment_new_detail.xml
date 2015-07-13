@@ -1,5 +1,6 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingLeft="@dimen/activity_horizontal_margin"
@@ -18,8 +19,7 @@
     <android.support.v4.widget.SwipeRefreshLayout
         android:layout_height="fill_parent"
         android:layout_width="fill_parent"
-        android:id="@+id/swipe"
-        android:layout_above="@+id/editing_layout">
+        android:id="@+id/swipe">
 
         <ListView
             android:layout_width="fill_parent"
@@ -33,41 +33,17 @@
         android:layout_width="0px"
         android:layout_height="0px" />
 
-    <RelativeLayout
-        android:layout_alignParentBottom="true"
-        android:layout_width="fill_parent"
+    <!--    android:src="@android:drawable/ic_menu_edit"
+    -->
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/editing_layout"
-        android:paddingLeft="8dp"
-        android:paddingTop="16dp"
-        android:paddingRight="8dp"
-        android:paddingBottom="16dp">
-
-        <EditText
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/commentEdit"
-            android:layout_toLeftOf="@+id/sendBtn"
-             android:hint="@string/your_comment" />
-
-        <!--
-        android:background="@android:drawable/ic_menu_send"
-        -->
-
-        <ImageButton
-            android:layout_alignParentTop="true"
-            android:layout_alignTop="@+id/commentEdit"
-            android:layout_alignBottom="@+id/commentEdit"
-            android:layout_alignParentRight="true"
-            android:layout_height="wrap_content"
-            android:layout_width="48dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            android:src="@drawable/ic_send"
-            android:id="@+id/sendBtn"
-            android:layout_alignParentEnd="true" />
-
-
-    </RelativeLayout>
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:src="@drawable/fab_ic_add"
+        app:elevation="6dp"
+        app:pressedTranslationZ="12dp"
+        app:borderWidth="0dp" />
 
 </RelativeLayout>
