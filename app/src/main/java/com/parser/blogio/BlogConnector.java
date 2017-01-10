@@ -1,6 +1,7 @@
 package com.parser.blogio;
 
 import android.os.Handler;
+import android.text.TextUtils;
 
 import com.parser.DataSource;
 
@@ -34,9 +35,9 @@ public class BlogConnector {
     private final String LOGIN_URL = "http://s13.ru/wp-login.php";
 
     private static final String COMMENT_POST_URL = "http://s13.ru/wp-comments-post.php";
-    private final String THUMB_UP_URL = "http://s13.ru/wp-content/plugins/comment-rating/ck-processkarma.php?id=!id&action=add&path=s13.ru/wp-content/plugins/comment-rating/&imgIndex=1_16_";
-    private final String THUMB_DOWN_URL = "http://s13.ru/wp-content/plugins/comment-rating/ck-processkarma.php?id=!id&action=subtract&path=s13.ru/wp-content/plugins/comment-rating/&imgIndex=1_16_";
-
+    private final String THUMB_UP_URL = "http://s13.ru/wp-admin/admin-ajax.php"; //"http://s13.ru/wp-content/plugins/comment-rating/ck-processkarma.php?id=!id&action=add&path=s13.ru/wp-content/plugins/comment-rating/&imgIndex=1_16_";
+    private final String THUMB_DOWN_URL = "http://s13.ru/wp-admin/admin-ajax.php"; //"http://s13.ru/wp-content/plugins/comment-rating/ck-processkarma.php?id=!id&action=subtract&path=s13.ru/wp-content/plugins/comment-rating/&imgIndex=1_16_";
+    private static final String POSTDATA = "POSTDATA";
 
     public enum QUERY_RESULT {
         OK,
@@ -67,18 +68,18 @@ public class BlogConnector {
             HttpProtocolParams.setContentCharset(params, charSet);
             rq.setParams(params);
         }
-        addHeaders(rq);
+        addHeaders(rq,"","");
         HttpResponse response = mHttpClient.execute(rq);
         return response.getEntity().getContent();
     }
 
-    public void changeKarma(final String idMessage, final boolean karmaUp, final RequestListener listener) {
+    public void changeKarma(final String idMessage, final boolean karmaUp, final String akismet, final RequestListener listener) {
         final Handler handler = new Handler();
         new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
-                    doChangeKarma(idMessage, karmaUp);
+                    doChangeKarma(idMessage, akismet, karmaUp);
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
@@ -173,7 +174,7 @@ public class BlogConnector {
         httppost.setParams(params);
         mHttpClient.getParams().setParameter("http.protocol.content-charset", "UTF-8");
 
-        addHeaders(httppost);
+        addHeaders(httppost,"","");
         nameValuePairs.add(new BasicNameValuePair("log", login));
         nameValuePairs.add(new BasicNameValuePair("pwd", pwd));
         nameValuePairs.add(new BasicNameValuePair("wp-submit",
@@ -194,7 +195,22 @@ public class BlogConnector {
         return page.toLowerCase().contains("logout");
     }
 
-    private boolean doChangeKarma(String idMessage, boolean karmaUp) throws Exception {
+    //
+    private String getPostData(boolean karmaUp, String postID, String nonce){
+        String postData;
+        if (karmaUp){
+            postData = "action=vortex_system_comment_like_button";
+        } else
+        {
+            postData = "action=vortex_system_comment_dislike_button";
+        }
+        postData = postData+"&post_id="+postID+"&nonce="+nonce;
+        //POSTDATA=action=vortex_system_comment_dislike_button&post_id=537357&nonce=3954af50a8
+        return postData;
+    }
+
+
+    private boolean doChangeKarma(String idMessage, String akismet, boolean karmaUp) throws Exception {
         String url;
         if (karmaUp) {
             url = THUMB_UP_URL;
@@ -203,16 +219,39 @@ public class BlogConnector {
 
         }
         url = url.replace("!id", idMessage);
-        HttpGet rq = new HttpGet(url);
-        addHeaders(rq);
-        mHttpClient.execute(rq);
+//        HttpPost rq = new HttpPost(url);
+        String name = POSTDATA;
+        String value = getPostData(karmaUp, idMessage, akismet);
+        //addHeaders(rq, name, value);
+        HttpPost httppost = new HttpPost(url);
+        addHeaders(httppost,"","");
+        HttpParams params = new BasicHttpParams();
+        HttpProtocolParams.setContentCharset(params, "UTF-8");
+        HttpProtocolParams.setHttpElementCharset(params, "UTF-8");
+        httppost.setParams(params);
+        mHttpClient.getParams().setParameter("http.protocol.content-charset", "UTF-8");
+        List<BasicNameValuePair> nameValuePairs = new ArrayList<>();
+        if (karmaUp){
+            nameValuePairs.add(new BasicNameValuePair("action", "vortex_system_comment_like_button"));
+        }else {
+            nameValuePairs.add(new BasicNameValuePair("action", "vortex_system_comment_dislike_button"));
+        }nameValuePairs.add(new BasicNameValuePair("post_id", idMessage));
+        nameValuePairs.add(new BasicNameValuePair("nonce", akismet));
+
+
+        httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs, "UTF8"));
+
+        HttpResponse response = mHttpClient.execute(httppost);
+        String rsp = response.getStatusLine().toString();
+
+//        mHttpClient.execute(httppost);
         return true;
     }
 
 
     private boolean doAddComment(String commentText, String akismet, String ak_js, String postId) throws Exception {
         HttpPost httppost = new HttpPost(COMMENT_POST_URL);
-        addHeaders(httppost);
+        addHeaders(httppost,"","");
         HttpParams params = new BasicHttpParams();
         HttpProtocolParams.setContentCharset(params, "UTF-8");
         HttpProtocolParams.setHttpElementCharset(params, "UTF-8");
@@ -240,12 +279,16 @@ public class BlogConnector {
         }
     }
 
-    private void addHeaders(HttpRequestBase request) {
+    private void addHeaders(HttpRequestBase request, String name, String value) {
         request.addHeader("Host", "s13.ru");
         request.addHeader("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:14.0) Gecko/20100101 Firefox/14.0.1");
         request.addHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
         request.addHeader("Accept-Language", "ru,en-us;q=0.7,en;q=0.3");
         request.addHeader("Connection", "keep-alive");
+        if (!TextUtils.isEmpty(name)){
+            request.addHeader(name, value);
+        }
+
 //        httppost.addHeader("Host", "s13.ru");
 //        httppost.addHeader("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:14.0) Gecko/20100101 Firefox/14.0.1");
 //        httppost.addHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");

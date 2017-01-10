@@ -23,5 +23,19 @@
             android:key="@string/authenticate_key">
         </PreferenceScreen>
 
+        <CheckBoxPreference
+            android:title="Загрузка изображений"
+            android:defaultValue="true"
+            android:summary="Отключите для экономии трафика"
+            android:key="@string/load_images_key"
+            >
+        </CheckBoxPreference>
+
+        <PreferenceScreen
+            android:title="Черный список"
+            android:summary="Перечень пользователей, чьи комментарии не видны"
+            android:key="@string/black_list">
+        </PreferenceScreen>
+
     </PreferenceCategory>
 </PreferenceScreen>

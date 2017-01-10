@@ -23,6 +23,9 @@
         <ListView
             android:id="@+id/mainListView"
             android:layout_width="fill_parent"
+            android:divider="@color/divider"
+            android:dividerHeight="2px"
+
             android:layout_height="wrap_content" />
     </android.support.v4.widget.SwipeRefreshLayout>
 </RelativeLayout>

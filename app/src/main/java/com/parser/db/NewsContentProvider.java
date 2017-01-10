@@ -24,6 +24,9 @@ public class NewsContentProvider extends ContentProvider {
     private static final int VK_DETAIL_ID = 10;
     private static final int POSTER_DETAIL = 11;
     private static final int POSTER_DETAIL_ID = 12;
+    private static final int BLACKLIST = 13;
+    private static final int BLACKLIST_ID = 14;
+
 
 
     private static final String AUTHORITY = "com.parser";
@@ -71,8 +74,13 @@ public class NewsContentProvider extends ContentProvider {
                     + AUTHORITY + "/" + PosterDetailDBHelper.TABLE_NAME + "/#"
     );
 
-//    public static final String CONTENT_TYPE_PREFIX = "vnd.android.cursor.dir/vnd.";
-    //  public static final String CONTENT_ITEM_TYPE_PREFIX = "vnd.android.cursor.item/vnd.";
+    public static Uri BLACKLIST_URI = Uri.parse(CONTENT_URI_PREFIX
+                    + AUTHORITY + "/" + BlackListDBHelper.TABLE_NAME
+    );
+
+    public static Uri BLACKLIST_URI_ID = Uri.parse(CONTENT_URI_PREFIX
+                    + AUTHORITY + "/" + BlackListDBHelper.TABLE_NAME + "/#"
+    );
 
     private DBHelper mDbHelper;
 
@@ -89,20 +97,45 @@ public class NewsContentProvider extends ContentProvider {
         sURIMatcher.addURI(AUTHORITY, VKDetailDBHelper.TABLE_NAME + "/#", VK_DETAIL_ID);
         sURIMatcher.addURI(AUTHORITY, PosterDetailDBHelper.TABLE_NAME, POSTER_DETAIL);
         sURIMatcher.addURI(AUTHORITY, PosterDetailDBHelper.TABLE_NAME + "/#", POSTER_DETAIL_ID);
+        sURIMatcher.addURI(AUTHORITY, BlackListDBHelper.TABLE_NAME, BLACKLIST);
+        sURIMatcher.addURI(AUTHORITY, BlackListDBHelper.TABLE_NAME + "/#", BLACKLIST_ID);
     }
 
     @Override
     public boolean onCreate() {
         mDbHelper = new DBHelper(getContext());
+       // mDbHelper.getWritableDatabase();
         return false;
     }
+
+
 
     @Override
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
         int uriType = sURIMatcher.match(uri);
         String tableName = getTableNameByUriType(uriType);
         Uri contentUri = getContectUribyUriType(uriType);
-        Cursor cr = mDbHelper.getReadableDatabase().query(tableName, projection, selection, selectionArgs, null, null, sortOrder);
+        Cursor cr;
+        if (uriType == NEWS || uriType == NEWS_ID) {
+            String queryText;
+            queryText = "select news.* " +
+                    " from " + NewsFeedDBHelper.TABLE_NAME + " news ";
+            cr = mDbHelper.getReadableDatabase().rawQuery(queryText, null);
+        } else if (uriType == NEWS_DETAIL || uriType == NEWS_DETAIL_ID) {
+            String queryText;
+            if (selectionArgs.length > 0)
+                queryText = "select news.* from " + NewsDetailDBHelper.TABLE_NAME + " news " +
+                        " left join " + BlackListDBHelper.TABLE_NAME + " blackList on blackList." + BlackListDBHelper.USER_COLUMN + "=" +
+                        " news." + NewsDetailDBHelper.AUTHOR_COLUMN + " where " + " blackList." + BlackListDBHelper.ID_COLUMN + " is null and" +
+                        " news." + NewsDetailDBHelper.POST_ID + "=" + "\"" + selectionArgs[0] + "\"";
+            else
+                queryText = "select news.* from " + NewsDetailDBHelper.TABLE_NAME + " news " +
+                        " left join " + BlackListDBHelper.TABLE_NAME + " blackList on blackList." + BlackListDBHelper.USER_COLUMN + "=" +
+                        " news." + NewsDetailDBHelper.AUTHOR_COLUMN + " where blackList." + BlackListDBHelper.ID_COLUMN + " is null";
+            cr = mDbHelper.getReadableDatabase().rawQuery(queryText, null);
+        } else {
+            cr = mDbHelper.getReadableDatabase().query(tableName, projection, selection, selectionArgs, null, null, sortOrder);
+        }
         cr.setNotificationUri(getContext().getContentResolver(), contentUri);
         return cr;
     }
@@ -114,7 +147,20 @@ public class NewsContentProvider extends ContentProvider {
 
     @Override
     public Uri insert(Uri uri, ContentValues values) {
-          return null;
+        return null;
+        /*SQLiteDatabase db = mDbHelper.getWritableDatabase();
+        int uriType = sURIMatcher.match(uri);
+        String tableName = getTableNameByUriType(uriType);
+        db.beginTransaction();
+        try {
+            db.insertWithOnConflict(tableName, null, values, SQLiteDatabase.CONFLICT_IGNORE);
+            db.setTransactionSuccessful();
+        } finally {
+            db.endTransaction();
+        }
+        return uri;
+        // return super.insert(uri, values);
+    */
     }
 
     @Override
@@ -193,9 +239,19 @@ public class NewsContentProvider extends ContentProvider {
                 contentUri = POSTER_DETAIL_CONTENT_URI_ID;
                 break;
             }
+
+            case (BLACKLIST): {
+                contentUri = BLACKLIST_URI;
+                break;
+            }
+            case (BLACKLIST_ID): {
+                contentUri = BLACKLIST_URI_ID;
+                break;
+            }
         }
         return contentUri;
     }
+
 
     private String getTableNameByUriType(int uriType) {
         String tableName = null;
@@ -246,6 +302,14 @@ public class NewsContentProvider extends ContentProvider {
             }
             case (POSTER_DETAIL_ID): {
                 tableName = PosterDetailDBHelper.TABLE_NAME;
+                break;
+            }
+            case (BLACKLIST): {
+                tableName = BlackListDBHelper.TABLE_NAME;
+                break;
+            }
+            case (BLACKLIST_ID): {
+                tableName = BlackListDBHelper.TABLE_NAME;
                 break;
             }
         }

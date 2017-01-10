@@ -105,11 +105,21 @@ public class PosterDetailFragment extends BaseDataFragment implements DetailFrag
     }
 
     @Override
-    public String getTitle(Context context) {
+    public String getToolBarTitle(Context context) {
         if (context != null) {
             return context.getResources().getString(R.string.poster_fragment_title);
         } else
             return null;
+    }
+
+    @Override
+    public String getItemTitle() {
+        return null;
+    }
+
+    @Override
+    public String getUrl() {
+        return mLink;
     }
 }
 

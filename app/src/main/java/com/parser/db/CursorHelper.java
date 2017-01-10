@@ -8,7 +8,7 @@ public class CursorHelper {
             return "";
         }
         int columnIndex = cursor.getColumnIndex(columnName);
-        if (columnIndex < 0) {
+        if (columnIndex < 0 || cursor.getCount() == 0) {
             return "";
         }
         return cursor.getString(columnIndex);

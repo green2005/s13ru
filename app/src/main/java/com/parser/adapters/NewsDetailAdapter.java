@@ -2,16 +2,18 @@ package com.parser.adapters;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.preference.PreferenceManager;
 import android.text.Html;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubeIntents;
@@ -22,7 +24,9 @@ import com.parser.LinkifiedTextView;
 import com.parser.R;
 import com.parser.ResizableImageView;
 import com.parser.db.CursorHelper;
+import com.parser.db.DBHelper;
 import com.parser.db.NewsDetailDBHelper;
+import com.parser.fragments.OnCommentItemClickListener;
 import com.parser.loader.ImageLoader;
 
 import java.util.HashMap;
@@ -31,11 +35,13 @@ import java.util.Map;
 public class NewsDetailAdapter extends SimpleCursorAdapter {
     private static final int VIEW_TYPE_COUNT = 6;
 
+
     private LayoutInflater mInflater;
     private ImageLoader mImageLoader;
-    private AdapterPositionListener mListener;
-    private ThumbnailListener thumbnailListener;
+     private ThumbnailListener thumbnailListener;
     private Context mContext;
+    private boolean mLoadImages;
+    private OnCommentItemClickListener mCommentClickListener;
 
 
     private final Map<YouTubeThumbnailView, YouTubeThumbnailLoader> thumbnailViewToLoaderMap = new HashMap<>();
@@ -47,9 +53,16 @@ public class NewsDetailAdapter extends SimpleCursorAdapter {
         mImageLoader = ImageLoader.get(context);
         mContext = context;
         thumbnailListener = new ThumbnailListener(context);
-
+        SharedPreferences preferences;
+       // preferences = mContext.getSharedPreferences(mContext.getResources().getString(R.string.load_images_key),Context.MODE_PRIVATE);
+       // mLoadImages = preferences.getBoolean(mContext.getResources().getString(R.string.load_images_key), true);
+        preferences = PreferenceManager.getDefaultSharedPreferences(mContext.getApplicationContext());
+        mLoadImages = preferences.getBoolean(mContext.getResources().getString(R.string.load_images_key), true);
     }
 
+    public void setOnCommentClickListener(OnCommentItemClickListener listener){
+        mCommentClickListener = listener;
+    }
 
     public void releaseLoaders() {
         for (YouTubeThumbnailLoader loader : thumbnailViewToLoaderMap.values()) {
@@ -57,9 +70,7 @@ public class NewsDetailAdapter extends SimpleCursorAdapter {
         }
     }
 
-    public void setPositionChangeListener(AdapterPositionListener listener) {
-        mListener = listener;
-    }
+
 
     @Override
     public int getViewTypeCount() {
@@ -79,13 +90,15 @@ public class NewsDetailAdapter extends SimpleCursorAdapter {
 
     @Override
     public boolean isEnabled(int position) {
-        Cursor cursor = getCursor();
+        return false;
+        /*Cursor cursor = getCursor();
         if (cursor == null) {
             return super.isEnabled(position);
         }
         cursor.moveToPosition(position);
         int viewType = getItemViewType(position);
         return viewType == NewsDetailDBHelper.NewsItemType.REPLY.ordinal();
+   */
     }
 
 
@@ -98,10 +111,8 @@ public class NewsDetailAdapter extends SimpleCursorAdapter {
 
         if (cnView != null) {
             convertedViewType = (Integer) cnView.getTag(R.string.DETAIL_VIEW_TYPE);
-            Integer bottomLeft = (Integer) cnView.getTag(R.string.BOTTOM_POSITION);
-            if (bottomLeft != null && bottomLeft == 1 && mListener != null) {
-                mListener.onBottomEscaped();
-            }        }
+
+        }
 
         int viewType = getItemViewType(position);
         if (viewType == NewsDetailDBHelper.NewsItemType.TITLE.ordinal()) {
@@ -120,16 +131,11 @@ public class NewsDetailAdapter extends SimpleCursorAdapter {
             cnView = getCommentView(cursor, cnView, convertedViewType, viewType);
         }
         cnView.setTag(R.string.DETAIL_VIEW_TYPE, viewType);
-        if (position == cursor.getCount() - 1) {
-            if (mListener != null) {
-                mListener.onBottomReached();
-                cnView.setTag(R.string.BOTTOM_POSITION, 1);
-            }
-        }
+
         return cnView;
     }
 
-    private View getTextView(Cursor cursor, View cnView, int convertedViewType, int viewType){
+    private View getTextView(Cursor cursor, View cnView, int convertedViewType, int viewType) {
         if (convertedViewType != viewType || cnView == null)
             cnView = mInflater.inflate(R.layout.item_post_text, null);
         LinkifiedTextView tvText = (LinkifiedTextView) cnView.findViewById(R.id.tvText);
@@ -137,8 +143,7 @@ public class NewsDetailAdapter extends SimpleCursorAdapter {
         return cnView;
     }
 
-    private View getTitleView(Cursor cursor, View cnView, int convertedViewType, int viewType)
-    {
+    private View getTitleView(Cursor cursor, View cnView, int convertedViewType, int viewType) {
         if (convertedViewType != viewType || cnView == null) {
             cnView = mInflater.inflate(R.layout.item_post_title, null);
         }
@@ -149,7 +154,12 @@ public class NewsDetailAdapter extends SimpleCursorAdapter {
         return cnView;
     }
 
-    private View getImageView(Cursor cursor, View cnView, int convertedViewType, int viewType){
+    private View getImageView(Cursor cursor, View cnView, int convertedViewType, int viewType) {
+        if (!mLoadImages){
+            View cn = new View(mContext);
+            cn.setVisibility(View.GONE);
+            return cn;
+        }
         if (convertedViewType != viewType || cnView == null)
             cnView = mInflater.inflate(R.layout.item_post_image, null);
         ResizableImageView imageView = (ResizableImageView) cnView.findViewById(R.id.image);
@@ -164,8 +174,7 @@ public class NewsDetailAdapter extends SimpleCursorAdapter {
     }
 
 
-
-    private View getCommentView(Cursor cursor, View cnView, int convertedViewType, int viewType){
+    private View getCommentView(Cursor cursor,View cnView, int convertedViewType, int viewType) {
         if (convertedViewType != viewType || cnView == null)
             cnView = mInflater.inflate(R.layout.item_post_comment, null);
         TextView tvUser = (TextView) cnView.findViewById(R.id.tvUserName);
@@ -173,25 +182,51 @@ public class NewsDetailAdapter extends SimpleCursorAdapter {
         TextView tvDate = (TextView) cnView.findViewById(R.id.tvDate);
         TextView tvKarmaUp = (TextView) cnView.findViewById(R.id.tvUps);
         TextView tvKarmaDown = (TextView) cnView.findViewById(R.id.tvDowns);
+        final View cView = cnView;
 
-        tvKarmaUp.setText(cursor.getString(cursor.getColumnIndex(NewsDetailDBHelper.KARMA_UP_COLUMN)));
-        tvKarmaDown.setText(cursor.getString(cursor.getColumnIndex(NewsDetailDBHelper.KARMA_DOWN_COLUMN)));
+        RelativeLayout lvMarks = (RelativeLayout) cnView.findViewById(R.id.lvMarks);
+        final int itemPos = getCursor().getPosition();
+        lvMarks.setOnClickListener((new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mCommentClickListener!=null){
+                    mCommentClickListener.onMoreBtnClick(itemPos, cView);
+                }
+            }
+        }));
+//        final ImageButton btn = (ImageButton) cnView.findViewById(R.id.morebtn);
+//        btn.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//            if (mCommentClickListener!=null){
+//                mCommentClickListener.onMoreBtnClick(getCursor().getPosition(), cView);
+//            }
+//            }
+//        });
 
-        tvDate.setText(cursor.getString(cursor.getColumnIndex(NewsDetailDBHelper.DATE_COLUMN)));
+        tvKarmaUp.setText(DBHelper.getStringFromCursor(NewsDetailDBHelper.KARMA_UP_COLUMN, cursor));
+        tvKarmaDown.setText(DBHelper.getStringFromCursor(NewsDetailDBHelper.KARMA_DOWN_COLUMN, cursor));
+
+        tvDate.setText(DBHelper.getStringFromCursor(NewsDetailDBHelper.DATE_COLUMN, cursor));
         ImageView imvUserImage = (ImageView) cnView.findViewById(R.id.userPick);
-        String userImageUrl = cursor.getString(cursor.getColumnIndex(NewsDetailDBHelper.AUTHOR_IMAGE_COLUMN));
+        String userImageUrl = DBHelper.getStringFromCursor(NewsDetailDBHelper.AUTHOR_IMAGE_COLUMN, cursor);
         if (!TextUtils.isEmpty(userImageUrl)) {
             mImageLoader.loadImage(imvUserImage, userImageUrl);
             imvUserImage.setVisibility(View.VISIBLE);
         } else {
             imvUserImage.setVisibility(View.GONE);
         }
-        tvUser.setText(cursor.getString(cursor.getColumnIndex(NewsDetailDBHelper.AUTHOR_COLUMN)));
-        tvComment.setText(Html.fromHtml(cursor.getString(cursor.getColumnIndex(NewsDetailDBHelper.TEXT_COLUMN))));
+        tvUser.setText(DBHelper.getStringFromCursor(NewsDetailDBHelper.AUTHOR_COLUMN, cursor));
+        tvComment.setText(Html.fromHtml(DBHelper.getStringFromCursor(NewsDetailDBHelper.TEXT_COLUMN, cursor)));
         return cnView;
     }
 
-    private View getVideoView(Cursor cursor, View cnView, int convertedViewType, int viewType){
+    private View getVideoView(Cursor cursor, View cnView, int convertedViewType, int viewType) {
+        if (!mLoadImages){
+            View cn = new View(mContext);
+            cn.setVisibility(View.GONE);
+            return cn;
+        }
         String youtubeId = CursorHelper.getString(cursor, NewsDetailDBHelper.TEXT_COLUMN);
         if (convertedViewType != viewType || cnView == null) {
             cnView = mInflater.inflate(R.layout.item_post_video, null);
@@ -199,7 +234,7 @@ public class NewsDetailAdapter extends SimpleCursorAdapter {
             thumbnail.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    String youTubeId =(String) v.getTag();
+                    String youTubeId = (String) v.getTag();
                     Intent intent = YouTubeIntents.createPlayVideoIntentWithOptions(mContext, youTubeId, true, false);
                     mContext.startActivity(intent);
                 }
@@ -238,7 +273,6 @@ public class NewsDetailAdapter extends SimpleCursorAdapter {
                 YouTubeThumbnailView view, YouTubeThumbnailLoader loader) {
             loader.setOnThumbnailLoadedListener(this);
             thumbnailViewToLoaderMap.put(view, loader);
-            // view.setImageResource(R.drawable.loading_thumbnail);
             String videoId = (String) view.getTag();
             loader.setVideo(videoId);
         }
@@ -246,10 +280,10 @@ public class NewsDetailAdapter extends SimpleCursorAdapter {
         @Override
         public void onInitializationFailure(
                 YouTubeThumbnailView view, YouTubeInitializationResult loader) {
-
-
-            Toast.makeText(mContext, "initFail", Toast.LENGTH_SHORT).show();
-            //   view.setImageResource(R.drawable.no_thumbnail);
+            //Toast.makeText(mContext, "initFail", Toast.LENGTH_SHORT).show();
+           // loader.getErrorDialog(this.mContext, 0);
+            view.setVisibility(View.GONE);
+            //initialize_failed = true;
         }
 
         @Override

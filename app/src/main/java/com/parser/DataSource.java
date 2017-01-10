@@ -47,7 +47,11 @@ public class DataSource {
                     } else {
                         stream = getInputStream(url);
                     }
-                    mRecordsFetched = mProcessor.process(stream, isTopRequest, url);
+                    if (stream == null) {
+                        mRecordsFetched = 0;
+                    } else {
+                        mRecordsFetched = mProcessor.process(stream, isTopRequest, url);
+                    }
                 } catch (final Exception e) {
                     mHandler.post(new Runnable() {
                         @Override
@@ -76,7 +80,6 @@ public class DataSource {
             }
         });
         loadThread.start();
-        //todo add Executor
     }
 
     private InputStream getInputStream(String href) {

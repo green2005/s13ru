@@ -38,7 +38,7 @@ public class NewsDetailProcessor extends Processor {
 
     private static final String CAN_CHANGE_KARMA_PREFIX = "ckratingKarma";
 
-    private static final String COMMENT_PREFIX = ">";
+    private static final String COMMENT_PREFIX = "</div></div></div>";
     private static final String COMMENT_POSTFIX = "</span>";
 
     private static final String DEFAULT_IMAGE_HEIGHT = "270";
@@ -93,21 +93,24 @@ public class NewsDetailProcessor extends Processor {
         Pattern pAuthorName2 = Pattern.compile("/>.*?</span>");
         Pattern pAuthorImage = Pattern.compile(AUTHOR_IMAGE_PREF + ".*?" + AUTHOR_IMAGE_POSTF);
 
-        Pattern pCommentText = Pattern.compile("<span id=\"co_.*?</span>");
+        Pattern pCommentText = Pattern.compile("<span id=\"co_.*?</li>");
         Pattern pCommentId = Pattern.compile(COMMENT_ID_PREFIX + ".*?" + COMMENT_ID_POSTFIX);
 
-        Pattern pCommentTex2t = Pattern.compile(COMMENT_PREFIX + ".*?" + COMMENT_POSTFIX);
-
-        Pattern pThumbsDown = Pattern.compile("alt=\"Thumb down\".*?</span>");
-        Pattern pThumbsUp = Pattern.compile("alt=\"Thumb up\".*?</span>");
+        Pattern pCommentTex2t = Pattern.compile("dislike-counter.*?comment-toolbar"); //Pattern.compile(COMMENT_PREFIX + ".*?" + COMMENT_POSTFIX);
+        Pattern pCommentText3 = Pattern.compile(COMMENT_PREFIX + ".*?" + COMMENT_POSTFIX);
+        Pattern pThumbsDown = Pattern.compile("dislike-counter-comment.*?</span>");
+        Pattern pThumbsUp = Pattern.compile("like-counter-comment.*?</span>");
         Pattern pThumb2 = Pattern.compile(THUMB_PREF + ".*?" + THUMB_POSTF);
 
         Pattern pCommentDate = Pattern.compile(COMMENTDATE_PREF + ".*?" + COMMENTDATE_POSTF);
         Pattern pWidth = Pattern.compile(WIDTH_PREF + ".*?" + WIDTH_POSTF);
         Pattern pHeight = Pattern.compile(HEIGHT_PREF + ".*?" + HEIGHT_POSTF);
 
-        Pattern pAkismet = Pattern
-                .compile("id=\"akismet_comment_nonce\".*?/>");
+        Pattern pAkismet = Pattern.compile("vortex_ajax_comment"+".*?"+";");
+
+        Pattern pAkismet2 = Pattern
+                .compile("\"nonce\":\".*?"+"\"");
+
         Pattern pValue = Pattern.compile("value=\".*?\"");
 
         Pattern pAk_js = Pattern
@@ -119,11 +122,11 @@ public class NewsDetailProcessor extends Processor {
         String postId = "";
         Matcher makismet_comment = pAkismet.matcher(response);
         if (makismet_comment.find()) {
-            Matcher mvalue = pValue.matcher(makismet_comment.group());
+            Matcher mvalue = pAkismet2.matcher(makismet_comment.group());
             if (mvalue.find()) {
                 akismet = mvalue.group();
                 akismet = akismet.replace("\"", "");
-                akismet = akismet.replace("value=", "");
+                akismet = akismet.replace("nonce:", "");
             }
         }
 
@@ -197,7 +200,10 @@ public class NewsDetailProcessor extends Processor {
                 int textEnd = mVideo.start();
                 textStart = imageEnd;
                 imageEnd = mVideo.end();
-                String itemText = text.substring(textStart, textEnd);
+                String itemText = "";
+                if (textEnd >= textStart) {
+                    itemText = text.substring(textStart, textEnd);
+                }
                 addTextItem(items, itemText);
                 processVideoItem(items, mVideo.group(), pImageUrl, pWidth, pHeight);
             }
@@ -218,14 +224,14 @@ public class NewsDetailProcessor extends Processor {
             item.setContentType(NewsDetailDBHelper.NewsItemType.REPLY.ordinal());
             item.setPostUrl(mUrl);
             items.add(item);
-
+            item.setAkismet(akismet);
             String comment = mComment.group();
 
-            if (comment.contains(CAN_CHANGE_KARMA_PREFIX)) {
+          //  if (comment.contains(CAN_CHANGE_KARMA_PREFIX)) {
                 item.setCanChangeKarma(1);
-            } else {
-                item.setCanChangeKarma(0);
-            }
+          //  } else {
+         //       item.setCanChangeKarma(0);
+         //   }
 
             Matcher mAuthor = pAuthor.matcher(comment);
             if (mAuthor.find()) {
@@ -235,13 +241,17 @@ public class NewsDetailProcessor extends Processor {
             }
             Matcher mCommentText = pCommentText.matcher(comment);
             if (mCommentText.find()) {
-                mCommentText = pCommentTex2t.matcher(mCommentText.group());
+                String s = mCommentText.group();
+                mCommentText = pCommentTex2t.matcher(s);
                 if (mCommentText.find()) {
-                    String commentText = mCommentText.group().substring(COMMENT_PREFIX.length());
-                    commentText = commentText.substring(0, commentText.length() - COMMENT_POSTFIX.length());
-                    commentText = commentText.replace("<p>", "");
-                    commentText = commentText.replace("</p>", "");
-                    item.setText(commentText);
+                    mCommentText = pCommentText3.matcher(mCommentText.group());
+                    if (mCommentText.find()) {
+                        String commentText = mCommentText.group().substring(COMMENT_PREFIX.length());
+                        commentText = commentText.substring(0, commentText.length() - COMMENT_POSTFIX.length());
+                        commentText = commentText.replace("<p>", "");
+                        commentText = commentText.replace("</p>", "");
+                        item.setText(commentText);
+                    }
                 }
             }
             Matcher mCommentId = pCommentId.matcher(comment);
@@ -343,11 +353,11 @@ public class NewsDetailProcessor extends Processor {
             NewsDetailItem videoItem = new NewsDetailItem();
             int endPos = videoUrl.lastIndexOf("/");
             if (endPos > 0) {
-                videoUrl = videoUrl.substring(endPos+1, videoUrl.length());
+                videoUrl = videoUrl.substring(endPos + 1, videoUrl.length());
             }
             endPos = videoUrl.indexOf("?");
             if (endPos > 0) {
-                videoUrl = videoUrl.substring(0, endPos );
+                videoUrl = videoUrl.substring(0, endPos);
             }
             videoItem.setText(videoUrl);
             videoItem.setContentType(NewsDetailDBHelper.NewsItemType.VIDEO.ordinal());

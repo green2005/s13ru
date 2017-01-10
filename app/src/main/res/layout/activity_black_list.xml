@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <ListView
+        android:id="@+id/lvBlackList"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:divider="@color/divider"
+        android:dividerHeight="2px"
+        android:layout_above="@+id/delBtn"
+        />
+
+    <Button
+        android:id="@+id/delBtn"
+        android:visibility="gone"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="12dp"
+        android:layout_marginLeft="52dp"
+        android:layout_marginRight="52dp"
+        android:layout_marginTop="12dp"
+        android:background="@drawable/btn"
+        android:text="@string/del"
+        android:textColor="@color/abc_secondary_text_material_dark" />
+
+    <TextView
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_centerInParent="true"
+        android:text="@string/black_list_empty"
+        android:id="@+id/labelListEmpty"
+        android:visibility="gone"
+        />
+
+</RelativeLayout>

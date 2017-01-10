@@ -66,8 +66,13 @@ public class PosterDetailAdapter extends SimpleCursorAdapter {
         return convertView;
     }
 
+    private int getTag(View v) {
+        Object o = v.getTag();
+        return (Integer) o;
+    }
+
     private View getTitleView(View convertView, Cursor cursor) {
-        if (convertView == null || convertView.getTag() != PosterDetailDBHelper.POSTER_RECORD_TYPE.TITLE.ordinal()) {
+        if (convertView == null || (getTag(convertView) != PosterDetailDBHelper.POSTER_RECORD_TYPE.TITLE.ordinal())) {
             convertView = mInflater.inflate(R.layout.item_poster_title, null);
             convertView.setTag(PosterDetailDBHelper.POSTER_RECORD_TYPE.TITLE.ordinal());
         }
@@ -77,7 +82,7 @@ public class PosterDetailAdapter extends SimpleCursorAdapter {
     }
 
     private View getDescriptionView(View convertView, Cursor cursor) {
-        if (convertView == null || convertView.getTag() != PosterDetailDBHelper.POSTER_RECORD_TYPE.DESCRIPTION.ordinal()) {
+        if (convertView == null || getTag(convertView) != PosterDetailDBHelper.POSTER_RECORD_TYPE.DESCRIPTION.ordinal()) {
             convertView = mInflater.inflate(R.layout.item_post_text, null);
             convertView.setTag(PosterDetailDBHelper.POSTER_RECORD_TYPE.DESCRIPTION.ordinal());
         }
@@ -93,7 +98,7 @@ public class PosterDetailAdapter extends SimpleCursorAdapter {
 
     private View getImageAttachmentView(View convertView, Cursor cursor) {
         ResizableImageView imageView = null;
-        if (convertView == null || convertView.getTag() != PosterDetailDBHelper.POSTER_RECORD_TYPE.IMAGE_ATTACHMENT.ordinal()) {
+        if (convertView == null || getTag(convertView) != PosterDetailDBHelper.POSTER_RECORD_TYPE.IMAGE_ATTACHMENT.ordinal()) {
             convertView = mInflater.inflate(R.layout.item_post_image, null);
             convertView.setTag(PosterDetailDBHelper.POSTER_RECORD_TYPE.IMAGE_ATTACHMENT.ordinal());
             imageView = (ResizableImageView) convertView.findViewById(R.id.image);
@@ -108,7 +113,7 @@ public class PosterDetailAdapter extends SimpleCursorAdapter {
     }
 
     private View getTimePlaceView(View convertView, Cursor cursor) {
-        if (convertView == null || convertView.getTag() != PosterDetailDBHelper.POSTER_RECORD_TYPE.TIMEPLACE_RECORD.ordinal()) {
+        if (convertView == null || getTag(convertView) != PosterDetailDBHelper.POSTER_RECORD_TYPE.TIMEPLACE_RECORD.ordinal()) {
             convertView = mInflater.inflate(R.layout.item_place_date, null);
             convertView.setTag(PosterDetailDBHelper.POSTER_RECORD_TYPE.TIMEPLACE_RECORD.ordinal());
         }
@@ -124,7 +129,7 @@ public class PosterDetailAdapter extends SimpleCursorAdapter {
     }
 
     private View getVideoAttachmentView(View convertView, Cursor cursor) {
-        if (convertView == null || convertView.getTag() != PosterDetailDBHelper.POSTER_RECORD_TYPE.IMAGE_ATTACHMENT.ordinal()) {
+        if (convertView == null || getTag(convertView) != PosterDetailDBHelper.POSTER_RECORD_TYPE.IMAGE_ATTACHMENT.ordinal()) {
             convertView = mInflater.inflate(R.layout.item_post_image, null);
             convertView.setTag(PosterDetailDBHelper.POSTER_RECORD_TYPE.IMAGE_ATTACHMENT.ordinal());
         }

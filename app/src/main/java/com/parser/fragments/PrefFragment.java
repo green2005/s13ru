@@ -5,15 +5,18 @@ import android.app.Fragment;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
+import android.preference.PreferenceManager;
 import android.preference.PreferenceScreen;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
 import com.parser.R;
+import com.parser.activities.BlackListEditActivity;
 import com.parser.blogio.AuthDialog;
 
 public class PrefFragment extends PreferenceFragment {
@@ -32,7 +35,9 @@ public class PrefFragment extends PreferenceFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getPreferenceManager().setSharedPreferencesName(getPreferencesName(getActivity()));
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
+        preferences.getBoolean(getActivity().getResources().getString(R.string.load_images_key), true);
+        //getPreferenceManager().setSharedPreferencesName(getPreferencesName(getActivity()));
         addPreferencesFromResource(R.xml.preferences);
     }
 
@@ -51,8 +56,16 @@ public class PrefFragment extends PreferenceFragment {
         } else
         if (key.equalsIgnoreCase(activity.getString(R.string.authenticate_key))){
             authenticate();
+        } else
+        if (key.equalsIgnoreCase(activity.getString(R.string.black_list))){
+            editBlackList();
         }
         return super.onPreferenceTreeClick(preferenceScreen, preference);
+    }
+
+    private void editBlackList(){
+        Intent intent =  new Intent(getActivity(), BlackListEditActivity.class);
+        startActivity(intent);
     }
 
     private void authenticate(){

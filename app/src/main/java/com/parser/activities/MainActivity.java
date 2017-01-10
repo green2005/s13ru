@@ -85,8 +85,7 @@ public class MainActivity extends ActionBarActivity {
                 break;
             }
             case SETTINGS_ITEM:{
-                Intent intent = new Intent(this, PreferencesActivity.class);
-                startActivity(intent);
+                showOptions();
                 return;
             }
         }
@@ -114,11 +113,24 @@ public class MainActivity extends ActionBarActivity {
         }
     }
 
-   // @Override
-  //  public boolean onCreateOptionsMenu(Menu menu) {
-   //     getMenuInflater().inflate(R.menu.main, menu);
-   //     return super.onCreateOptionsMenu(menu);
-   // }
+    private void showOptions(){
+        Intent intent = new Intent(this, PreferencesActivity.class);
+        startActivity(intent);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main, menu);
+        MenuItem settingsItem = menu.findItem(R.id.action_settings);
+        settingsItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                showOptions();
+                return true;
+            }
+        });
+        return super.onCreateOptionsMenu(menu);
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

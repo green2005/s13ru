@@ -6,22 +6,27 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
+        android:name=".NewsApplication"
         android:allowBackup="true"
         android:icon="@drawable/logo"
         android:label="@string/app_name"
-        android:name=".NewsApplication"
         android:theme="@style/AppTheme">
         <activity
             android:name=".activities.MainActivity"
-            android:launchMode="singleInstance"
-            android:label="@string/app_name">
+            android:label="@string/app_name"
+            android:launchMode="singleInstance">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity android:name=".activities.ImageZoomActivity" />
-        <activity android:name=".activities.PreferencesActivity"/>
+        <activity android:name=".activities.PreferencesActivity" />
+        <activity
+            android:name=".activities.BlackListEditActivity"
+            android:label="Черный список"
+            android:parentActivityName=".activities.PreferencesActivity" />
+
         <activity
             android:name=".activities.DetailActivity"
             android:parentActivityName=".activities.MainActivity"></activity>

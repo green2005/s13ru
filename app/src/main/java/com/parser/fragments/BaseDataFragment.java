@@ -95,6 +95,9 @@ public abstract class BaseDataFragment extends Fragment implements PaginationSou
         mSwipe.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
+                if (mState == LoadState.ERROR){
+                    mState = LoadState.BROWSING;
+                }
                 setDataEof(false);
                 loadData(0);
             }
@@ -205,7 +208,12 @@ public abstract class BaseDataFragment extends Fragment implements PaginationSou
         if (cursor != null && cursor.getCount() > 0) {
             mProgress.setVisibility(View.GONE);
         }
+        loadDone(cursor);
         getAdapter().swapCursor(cursor);
+    }
+
+    protected void loadDone(Cursor cursor){
+        //
     }
 
     @Override

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+
+    >
+    <item
+        android:title="@string/reply"
+        android:id="@+id/reply"
+        android:icon="@android:drawable/ic_menu_edit"
+        app:showAsAction="always"
+        />
+    <item
+        app:showAsAction="always"
+        android:title="share"
+        android:id="@+id/share"
+        app:actionProviderClass="com.parser.ShareLinkMenuActionProvider"
+        android:icon="@android:drawable/ic_menu_share"
+        />
+</menu>

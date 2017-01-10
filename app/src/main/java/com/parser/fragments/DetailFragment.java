@@ -4,5 +4,8 @@ package com.parser.fragments;
 import android.content.Context;
 
 public interface DetailFragment {
-    public String getTitle(Context context);
+    public String getToolBarTitle(Context context);
+    public String getItemTitle();
+    public String getUrl();
+
 }

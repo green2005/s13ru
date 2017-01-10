@@ -29,13 +29,6 @@ public class VKFeedDetailFragment extends BaseDataFragment implements DetailFrag
     private VKDetailsProcessor mProcessor;
     private VKNewsDetailAdapter mAdapter;
 
-    //may get full data with execute method, but it need access token
-    /*
-        return {"wall":
-    API.wall.getById({"posts":"-1_1"}), "wall_comment":
-    API.wall.getComments({"owner_id":"-1","post_id":"1","count":"2"})};
-         */
-
     private String mPost_id;
 
     public static VKFeedDetailFragment getNewFragment(Bundle args) {
@@ -127,10 +120,20 @@ public class VKFeedDetailFragment extends BaseDataFragment implements DetailFrag
     }
 
     @Override
-    public String getTitle(Context context) {
+    public String getToolBarTitle(Context context) {
         if (context != null) {
             return context.getResources().getString(R.string.vk_fragment_title);
         } else
             return null;
+    }
+
+    @Override
+    public String getItemTitle() {
+        return null;
+    }
+
+    @Override
+    public String getUrl() {
+        return mPost_id;
     }
 }

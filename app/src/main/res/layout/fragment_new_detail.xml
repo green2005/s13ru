@@ -24,7 +24,11 @@
         <ListView
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/mainListView" />
+            android:id="@+id/mainListView"
+            android:divider="@color/divider"
+            android:dividerHeight="2px"
+
+            />
     </android.support.v4.widget.SwipeRefreshLayout>
     <!-- Dummy item to prevent AutoCompleteTextView from receiving focus -->
     <LinearLayout
@@ -34,7 +38,7 @@
         android:layout_height="0px" />
 
     <!--    android:src="@android:drawable/ic_menu_edit"
-    -->
+
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"
         android:layout_width="wrap_content"
@@ -45,5 +49,5 @@
         app:elevation="6dp"
         app:pressedTranslationZ="12dp"
         app:borderWidth="0dp" />
-
+-->
 </RelativeLayout>
