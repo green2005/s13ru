@@ -38,8 +38,6 @@ import com.parser.db.NewsContentProvider;
 import com.parser.db.NewsDetailDBHelper;
 import com.parser.processors.NewsDetailProcessor;
 import com.parser.processors.Processor;
-import com.parser.quickaction.ActionItem;
-import com.parser.quickaction.QuickAction;
 
 public class NewsDetailFragment extends BaseDataFragment implements DetailFragment, MenuItem.OnMenuItemClickListener,
         OnCommentItemClickListener {
@@ -166,15 +164,6 @@ public class NewsDetailFragment extends BaseDataFragment implements DetailFragme
         }
         assert listView != null;
 
-        /*listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                mSelectedRecord = position;
-                updateQuickActions(position);
-                mQuickAction.setAnimStyle(QuickAction.ANIM_GROW_FROM_CENTER);
-                mQuickAction.show(view);
-            }
-        });*/
 
         listView.setOnScrollListener(new AbsListView.OnScrollListener() {
             @Override
@@ -193,98 +182,8 @@ public class NewsDetailFragment extends BaseDataFragment implements DetailFragme
                 }
             }
         });
-        //      prepareQuickAction();
     }
 
-    /*
-        private void updateQuickActions(int position) {
-            Context context = getActivity();
-            if (context == null) {
-                return;
-            }
-            if (mAdapter == null) {
-                return;
-            }
-            Cursor cursor = mAdapter.getCursor();
-            if (cursor == null) {
-                return;
-            }
-            if (cursor.moveToPosition(position)) {
-                int canChangeKarma = CursorHelper.getInt(cursor, NewsDetailDBHelper.CAN_CHANGE_KARMA);
-                if (canChangeKarma == 1) {
-                    mKarmaUpAction.setEnabled(true);
-                    mKarmaDownAction.setEnabled(true);
-                    mKarmaDownAction.setIcon(context.getResources().getDrawable(
-                            com.parser.R.drawable.commentdownbig));
-                    mKarmaUpAction.setIcon(context.getResources().getDrawable(
-                            com.parser.R.drawable.commentupbig));
-                } else {
-                    mKarmaUpAction.setEnabled(false);
-                    mKarmaDownAction.setEnabled(false);
-                    mKarmaDownAction.setIcon(context.getResources().getDrawable(
-                            R.drawable.commentdownbiggrey));
-                    mKarmaUpAction.setIcon(context.getResources().getDrawable(
-                            R.drawable.commentupbiggrey));
-                }
-            }
-            mQuickAction.refreshActionItem(mKarmaDownAction);
-            mQuickAction.refreshActionItem(mKarmaUpAction);
-        }
-
-        private void prepareQuickAction() {
-            Activity activity = getActivity();
-            mKarmaDownAction = new ActionItem();
-            // mKarmaDownAction.setTitle(activity.getString(R.string.dislike));
-            mKarmaDownAction.setIcon(activity.getResources().getDrawable(
-                    com.parser.R.drawable.commentdownbig));
-
-            mKarmaUpAction = new ActionItem();
-            //  mKarmaUpAction.setTitle(activity.getString(R.string.like));
-            mKarmaUpAction.setIcon(activity.getResources().getDrawable(
-                    com.parser.R.drawable.commentupbig));
-
-            ActionItem replyAction = new ActionItem();
-            // replyAction.setTitle(activity.getString(R.string.reply));
-            replyAction.setIcon(activity.getResources().getDrawable(
-                    com.parser.R.drawable.reply));
-
-            final ActionItem addToBlackList = new ActionItem();
-            addToBlackList.setIcon(getResources().getDrawable(R.drawable.add_to_blacklist));
-
-            mQuickAction = new QuickAction(activity);
-            mQuickAction.addActionItem(mKarmaDownAction);
-            mQuickAction.addActionItem(mKarmaUpAction);
-            mQuickAction.addActionItem(replyAction);
-            mQuickAction.addActionItem(addToBlackList);
-            mQuickAction.setOnActionItemClickListener(new QuickAction.OnActionItemClickListener() {
-                @Override
-                public void onItemClick(int pos) {
-                    switch (pos) {
-                        case (0): {
-                            if (mKarmaDownAction.getEnabled()) {
-                                addKarma(false);
-                            }
-                            break;
-                        }
-                        case (1): {
-                            if (mKarmaUpAction.getEnabled()) {
-                                addKarma(true);
-                            }
-                            break;
-                        }
-                        case (2): {
-                            reply();
-                            break;
-                        }
-                        case (3): {
-                            addToBlackList();
-                            break;
-                        }
-                    }
-                }
-            });
-        }
-    */
     private void addToBlackList(int recordIndex) {
         final Context context = getActivity();
         if (context == null) {
@@ -348,9 +247,6 @@ public class NewsDetailFragment extends BaseDataFragment implements DetailFragme
         cursor.moveToPosition(recordIndex);
         String authorName = CursorHelper.getString(cursor, NewsDetailDBHelper.AUTHOR_COLUMN);
         editComment(authorName + " : ");
-//        mCommentEdit.setText(authorName + " : ");
-//        mCommentEdit.setSelection(authorName.length()+3);
-//        mCommentEdit.requestFocus();
     }
 
     private void addKarma(final boolean karmaUp, int recordIndex) {
@@ -373,7 +269,7 @@ public class NewsDetailFragment extends BaseDataFragment implements DetailFragme
             return;
         }
         if (connector.loggedIn()) {
-            connector.changeKarma(commentId, karmaUp, akismet ,new RequestListener() {
+            connector.changeKarma(commentId, karmaUp, akismet, new RequestListener() {
                 @Override
                 public void onRequestDone(BlogConnector.QUERY_RESULT result, String errorMessage) {
                     Context context = getActivity();
@@ -566,16 +462,14 @@ public class NewsDetailFragment extends BaseDataFragment implements DetailFragme
 
         int location[] = new int[2];
         view.getLocationOnScreen(location);
-        int y = 8 - view.getHeight();
-        int x = view.getWidth()/3;
+        int y ;
+        int x = view.getWidth() / 3;
 
         popupView.setLayoutParams(new LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT));
         int height = 0;
         popupView.measure(height, height);
         height = popupView.getMeasuredHeight();
         y = 8 - height;
-        /* int popupHeight = popupView.getMeasuredHeight();
-        int topPos =  (popupHeight - height) / 2;*/
         mPopupWindow.showAsDropDown(view, x, y);
         if (canChangeKarma == 1) {
             RelativeLayout la = (RelativeLayout) popupView.findViewById(R.id.viewUp);
@@ -609,18 +503,6 @@ public class NewsDetailFragment extends BaseDataFragment implements DetailFragme
                 addToBlackList(itemPos);
             }
         });
-    }
-
-
-    private int getHeight() {
-        Activity activity = getActivity();
-        if (activity == null) {
-            return 0;
-        }
-        Display display = activity.getWindowManager().getDefaultDisplay();
-        DisplayMetrics metrics = new DisplayMetrics();
-        display.getMetrics(metrics);
-        return metrics.heightPixels;
     }
 
 
